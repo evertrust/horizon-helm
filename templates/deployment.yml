@@ -8,7 +8,7 @@ spec:
   revisionHistoryLimit: 5
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-horizon
+      app: {{ .Release.Name }}-app
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -17,11 +17,11 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-horizon
+        app: {{ .Release.Name }}-app
     spec:
       containers:
-        - name: {{ .Release.Name }}-horizon
-          image: {{ .Values.image }}
+        - name: {{ .Release.Name }}-app
+          image: {{ .Values.imageCredentials.registry}}/{{ .Values.image }}
           env:
             - name: MONGODB_URI
               valueFrom:
@@ -44,4 +44,4 @@ spec:
       volumes:
         - name: {{ .Release.Name }}-etc
           configMap:
-            name: {{ .Release.Name }}-etc
+            name: {{ .Release.Name }}-config

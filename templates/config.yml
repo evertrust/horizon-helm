@@ -137,13 +137,10 @@ data:
       vault.escrow = "default"
       vault.transient = "default"
       vaults {
-        include file("/horizon/etc/vaults.conf")
+        default {
+          vault_type = "{{ .Values.vault.type }}"
+          master_password = "{{ .Values.vault.password }}"
+        }
       }
-
     }
-  "horizon.lic": {{ .Values.horizon }}
-  "vaults.conf": |
-    default {
-	  vault_type = "{{ .Values.vault.type}}"
-	  master_password = "{{ .Values.vault.password }}"
-	}
+  "horizon.lic": {{ .Values.horizon.license }}
