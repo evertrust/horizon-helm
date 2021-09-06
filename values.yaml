@@ -10,7 +10,7 @@ mongodb:
 image: files.evertrust.fr:5051/horizon:2.0
 
 imageCredentials:
-  registry:
+  registry: files.evertrust.fr:5051
   username:
   password:
 
