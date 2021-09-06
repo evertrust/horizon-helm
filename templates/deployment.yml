@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+spec:
+  replicas: {{ .Values.replicaCount }}
+  minReadySeconds: 15
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-horizon
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-horizon
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-horizon
+          image: {{ .Values.image }}
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-mongo
+                  key: uri
+          volumeMounts:
+            - name: {{ .Release.Name }}-etc
+              mountPath: /horizon/etc
+          ports:
+            - name: http
+              containerPort: 9000
+            - name: akkamgmt
+              containerPort: 8558
+            - name: artery
+              containerPort: 25520
+      dnsPolicy: Default
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: {{ .Release.Name }}-etc
+          configMap:
+            name: {{ .Release.Name }}-etc

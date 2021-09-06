@@ -1,0 +1,149 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  "application.conf": |
+    # Akka configurations
+    akka {
+      extensions = ["akka.cluster.pubsub.DistributedPubSub"]
+      log-dead-letters = off
+      log-dead-letters-during-shutdown = off
+      http.parsing.max-uri-length = 64k
+      actor {
+        provider = "cluster"
+        serialize-messages = on
+        serializers {
+          scalapb = "actors.serializer.ProtobufSerializer"
+        }
+        serialization-bindings {
+          "actors.serializer.Serializable" = scalapb
+        }
+      }
+      remote {
+        log-remote-lifecycle-events = off
+        transport = tcp
+        artery.canonical {
+          hostname = "127.0.0.1"
+          port = 25520
+        }
+      }
+      discovery {
+        config.services = {
+          local-cluster = {
+            endpoints = [
+              {
+                host = "127.0.0.1"
+                port = 8558
+              }
+            ]
+          }
+        }
+      }
+      management {
+        http {
+          hostname = "127.0.0.1"
+          #bind-hostname = "0.0.0.0"
+        }
+        health-checks {
+          readiness-checks {
+            horizon = "healthcheck.HorizonHealthCheck"
+          }
+        }
+        cluster.bootstrap {
+          new-cluster-enabled = on
+          contact-point-discovery {
+            required-contact-point-nr = 1
+            service-name = "local-cluster"
+            discovery-method = config
+          }
+        }
+      }
+      cluster {
+        roles = [ "master" ]
+        singleton {
+          name = singleton
+          role = "master"
+        }
+        singleton-proxy {
+          singleton-name = ${akka.cluster.singleton.singleton-name}
+          role = "master"
+          singleton-identification-interval = 1s
+          buffer-size = 1000
+        }
+        pub-sub {
+          name = distributedPubSubMediator
+          role = "master"
+          routing-logic = random
+          send-to-dead-letters-when-no-subscribers = on
+        }
+      }
+    }
+
+    # Specific dispatcher to isolate the actors with blocking IO
+    blocking-io-dispatcher {
+      executor = "thread-pool-executor"
+      throughput = 1
+      thread-pool-executor {
+        fixed-pool-size = 10
+      }
+    }
+
+    # Play configurations
+    play {
+      http.filters= filters.acme.AcmeFilters
+      http.secret.key = "helloworld"
+      filters {
+        hosts.allowed = {{ .Values.play.allowed_hosts }}
+        enabled += "play.filters.cors.CORSFilter"
+        csrf.cookie.name=csrf-token
+      }
+      i18n.langs = [ "en", "en-US" ]
+      modules {
+        enabled += "play.modules.reactivemongo.ReactiveMongoModule"
+        enabled += "modules.HorizonModule"
+      }
+      assets {
+        path = "/public"
+        urlPrefix = "/assets"
+      }
+      mailer {
+        include file("conf.d/mailer.conf")
+      }
+    }
+
+    # Kamon configurations
+    include file("conf.d/kamon.conf")
+
+    # MongoDB configurations
+    mongodb.uri = "{{ .Values.mongodb.uri }}"
+
+    horizon {
+
+      # License file
+      license.file = "/horizon/etc/horizon.lic"
+
+      # Default Certificate constraints
+      default.constraints {
+        allowed.domains = "^(\\*\\.)?([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}$"
+        rsa.minimal.key.size = 2048
+        ec.allowed.curves = "secp256r1,secp384r1,secp521r1"
+      }
+
+      acme.url.scheme = "http"
+
+      # Vault configuration
+      vault.configuration = "default"
+      vault.escrow = "default"
+      vault.transient = "default"
+      vaults {
+        include file("/horizon/etc/vaults.conf")
+      }
+
+    }
+  "horizon.lic": {{ .Values.horizon }}
+  "vaults.conf": |
+    default {
+	  vault_type = "{{ .Values.vault.type}}"
+	  master_password = "{{ .Values.vault.password }}"
+	}
