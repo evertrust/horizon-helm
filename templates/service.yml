@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-lb
+spec:
+  type: LoadBalancer
+  ports:
+    - name: artery
+      protocol: TCP
+      port: 25520
+      targetPort: 25520
+    - name: http
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+    - name: akkamgmt
+      protocol: TCP
+      port: 8558
+      targetPort: 8558
+  selector:
+    app: {{ .Release.Name }}-app
