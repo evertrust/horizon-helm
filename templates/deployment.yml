@@ -40,7 +40,7 @@ spec:
               containerPort: 25520
       dnsPolicy: Default
       imagePullSecrets:
-        - name: regcred
+        - name: {{ .Release.Name }}-regcred
       volumes:
         - name: {{ .Release.Name }}-etc
           configMap:
