@@ -6,6 +6,7 @@ data:
   "application.conf": |
     # Akka configurations
     akka {
+      loglevel = "DEBUG"
       extensions = ["akka.cluster.pubsub.DistributedPubSub"]
       log-dead-letters = off
       log-dead-letters-during-shutdown = off
@@ -51,11 +52,8 @@ data:
           }
         }
         cluster.bootstrap {
-          new-cluster-enabled = on
           contact-point-discovery {
-            required-contact-point-nr = 1
-            service-name = "local-cluster"
-            discovery-method = config
+            discovery-method = kubernetes-api
           }
         }
       }
@@ -79,6 +77,7 @@ data:
         }
       }
     }
+    coordinated-shutdown.exit-jvm = on
 
     # Specific dispatcher to isolate the actors with blocking IO
     blocking-io-dispatcher {
@@ -113,7 +112,13 @@ data:
     }
 
     # Kamon configurations
-    include file("conf.d/kamon.conf")
+    kamon {
+      modules {
+        apm-reporter.enabled = no
+        prometheus-reporter.enabled = no
+        host-metrics.enabled = no
+      }
+    }
 
     # MongoDB configurations
     mongodb.uri = "{{ .Values.mongodb.uri }}"
