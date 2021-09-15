@@ -7,7 +7,7 @@ replicaCount: 1
 mongodb:
   uri:
 
-image: files.evertrust.fr:5051/horizon:2.0
+image: horizon:latest
 
 imageCredentials:
   registry: files.evertrust.fr:5051

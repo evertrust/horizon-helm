@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-deployment
+  labels:
+    app: {{ .Release.Name }}-app
 spec:
   replicas: {{ .Values.replicaCount }}
   minReadySeconds: 15
@@ -19,15 +21,45 @@ spec:
       labels:
         app: {{ .Release.Name }}-app
     spec:
+      serviceAccountName: {{ .Release.Name }}-acccount
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - {{ .Release.Name }}-app
+                topologyKey: kubernetes.io/hostname
+              weight: 100
       containers:
         - name: {{ .Release.Name }}-app
           image: {{ .Values.imageCredentials.registry}}/{{ .Values.image }}
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /alive
+              port: akkamgmt
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: akkamgmt
           env:
             - name: MONGODB_URI
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-mongo
                   key: uri
+            # The Kubernetes API discovery will use this service name to look for
+            # nodes with this value in the 'app' label.
+            # This can be customized with the 'pod-label-selector' setting.
+            - name: AKKA_CLUSTER_BOOTSTRAP_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: "metadata.labels['app']"
           volumeMounts:
             - name: {{ .Release.Name }}-etc
               mountPath: /horizon/etc
@@ -38,7 +70,7 @@ spec:
               containerPort: 8558
             - name: artery
               containerPort: 25520
-      dnsPolicy: Default
+      dnsPolicy: ClusterFirst
       imagePullSecrets:
         - name: {{ .Release.Name }}-regcred
       volumes:

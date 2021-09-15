@@ -12,7 +12,7 @@ data:
       log-dead-letters-during-shutdown = off
       http.parsing.max-uri-length = 64k
       actor {
-        provider = "cluster"
+        provider = cluster
         serialize-messages = on
         serializers {
           scalapb = "actors.serializer.ProtobufSerializer"
@@ -21,30 +21,18 @@ data:
           "actors.serializer.Serializable" = scalapb
         }
       }
-      remote {
-        log-remote-lifecycle-events = off
-        transport = tcp
-        artery.canonical {
-          hostname = "127.0.0.1"
-          port = 25520
-        }
-      }
       discovery {
-        config.services = {
-          local-cluster = {
-            endpoints = [
-              {
-                host = "127.0.0.1"
-                port = 8558
-              }
-            ]
-          }
+        method = kubernetes-api
+        kubernetes-api {
+          pod-namespace = "default"
+          pod-label-selector = "app={{ .Release.Name }}-app"
+          port-name = akkamgmt
         }
       }
       management {
         http {
-          hostname = "127.0.0.1"
-          #bind-hostname = "0.0.0.0"
+          bind-hostname = "0.0.0.0"
+          port = 8558
         }
         health-checks {
           readiness-checks {
@@ -53,22 +41,13 @@ data:
         }
         cluster.bootstrap {
           contact-point-discovery {
+            port-name = akkamgmt
             discovery-method = kubernetes-api
           }
         }
       }
       cluster {
-        roles = [ "master" ]
-        singleton {
-          name = singleton
-          role = "master"
-        }
-        singleton-proxy {
-          singleton-name = ${akka.cluster.singleton.singleton-name}
-          role = "master"
-          singleton-identification-interval = 1s
-          buffer-size = 1000
-        }
+        shutdown-after-unsuccessful-join-seed-nodes = 60s
         pub-sub {
           name = distributedPubSubMediator
           role = "master"
@@ -90,7 +69,7 @@ data:
 
     # Play configurations
     play {
-      http.filters= filters.acme.AcmeFilters
+      http.filters = filters.acme.AcmeFilters
       http.secret.key = "helloworld"
       filters {
         hosts.allowed = {{ .Values.play.allowed_hosts }}
@@ -149,3 +128,47 @@ data:
       }
     }
   "horizon.lic": {{ .Values.horizon.license }}
+  "logback.xml": |
+    <configuration>
+      <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
+      <conversionRule conversionWord="traceID" converterClass="kamon.instrumentation.logback.tools.TraceIDConverter" />
+      <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+      <pattern>%date{yyyy-MM-dd HH:mm:ss ZZZZ} - [%traceID] - [%level] - %message%n%xException{full}</pattern>
+      </encoder>
+      </appender>
+      <!-- Loggers -->
+      <logger name="play" level="WARN">
+      <appender-ref ref="STDOUT" />
+      </logger>
+      <logger name="akka" level="DEBUG">
+      <appender-ref ref="STDOUT" />
+      </logger>
+      <logger name="reactivemongo" level="WARN">
+      <appender-ref ref="STDOUT" />
+      </logger>
+      <logger name="actors" level="DEBUG">
+      <appender-ref ref="STDOUT" />
+      </logger>
+      <logger name="actions" level="DEBUG">
+      <appender-ref ref="STDOUT" />
+      </logger>
+      <logger name="controllers" level="DEBUG">
+      <appender-ref ref="STDOUT" />
+      </logger>
+      <logger name="filters" level="DEBUG">
+      <appender-ref ref="STDOUT" />
+      </logger>
+      <logger name="models" level="DEBUG">
+      <appender-ref ref="STDOUT"/>
+      </logger>
+      <logger name="modules" level="DEBUG">
+      <appender-ref ref="STDOUT"/>
+      </logger>
+      <logger name="pki-connectors" level="DEBUG">
+      <appender-ref ref="STDOUT" />
+      </logger>
+      <logger name="racs-connectors" level="DEBUG">
+      <appender-ref ref="STDOUT" />
+      </logger>
+    </configuration>
