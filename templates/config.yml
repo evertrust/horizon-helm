@@ -100,7 +100,7 @@ data:
     }
 
     # MongoDB configurations
-    mongodb.uri = "{{ .Values.mongodb.uri }}"
+    mongodb.uri = ${?MONGODB_URI}
 
     horizon {
 
