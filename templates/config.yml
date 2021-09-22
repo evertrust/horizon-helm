@@ -72,7 +72,7 @@ data:
       http.filters = filters.acme.AcmeFilters
       http.secret.key = "helloworld"
       filters {
-        hosts.allowed = {{ .Values.play.allowed_hosts }}
+        hosts.allowed = [{{ .Values.host }}]
         enabled += "play.filters.cors.CORSFilter"
         csrf.cookie.name=csrf-token
       }

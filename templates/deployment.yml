@@ -39,12 +39,12 @@ spec:
           image: {{ .Values.imageCredentials.registry}}/{{ .Values.image }}
           imagePullPolicy: IfNotPresent
           livenessProbe:
-            initialDelaySeconds: 15
+            initialDelaySeconds: 60
             httpGet:
               path: /alive
               port: akkamgmt
           readinessProbe:
-            initialDelaySeconds: 30
+            initialDelaySeconds: 90
             httpGet:
               path: /ready
               port: akkamgmt

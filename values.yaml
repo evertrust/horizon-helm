@@ -4,6 +4,8 @@
 
 replicaCount: 1
 
+host:
+
 # The MongoDB connection URI *MUST* explicitly state the authentication source
 # Should you use the default "admin" source, append &authSource=admin to your URI.
 mongodb:
@@ -16,9 +18,6 @@ imageCredentials:
   registry: files.evertrust.fr:5051
   username:
   password:
-
-play:
-  allowed_hosts: '["."]'
 
 horizon:
   license:
