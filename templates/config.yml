@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-config
+  namespace: {{ .Release.Name }}-ns
 data:
   "application.conf": |
     # Akka configurations
@@ -24,7 +25,7 @@ data:
       discovery {
         method = kubernetes-api
         kubernetes-api {
-          pod-namespace = "default"
+          pod-namespace = "{{ .Release.Name }}-ns"
           pod-label-selector = "app={{ .Release.Name }}-app"
           port-name = akkamgmt
         }

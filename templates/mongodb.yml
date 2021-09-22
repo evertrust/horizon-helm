@@ -2,22 +2,23 @@
 apiVersion: "apps/v1"
 kind: "StatefulSet"
 metadata:
-  name: "mongo-development"
+  name: {{ .Release.Name }}-mongo
+  namespace: {{ .Release.Name }}-ns
 spec:
-  serviceName: "mongo-development"
+  serviceName: {{ .Release.Name }}-mongo
   replicas: 1
   selector:
     matchLabels:
-      app: "mongo-development"
+      app: {{ .Release.Name }}-mongo
   template:
     metadata:
       labels:
-        app: "mongo-development"
+        app: {{ .Release.Name }}-mongo
     spec:
       containers:
-        - name: "mongo-development"
-          image: "mongo"
-          imagePullPolicy: "Always"
+        - name: {{ .Release.Name }}-mongo
+          image: mongo
+          imagePullPolicy: IfNotPresent
           env:
             - name: "MONGO_INITDB_ROOT_USERNAME"
               value: "test"
@@ -27,22 +28,23 @@ spec:
 
           ports:
             - containerPort: 27017
-              name: "mongodb"
+              name: mongodb
 
           volumeMounts:
-            - name: "mongodb-persistent-storage"
-              mountPath: "/var/lib/mongodb"
+            - name: {{ .Release.Name }}-mongo-ps
+              mountPath: /var/lib/mongodb
       volumes:
-        - name: "mongodb-persistent-storage"
+        - name: {{ .Release.Name }}-mongo-ps
           persistentVolumeClaim:
-            claimName: "mongodb-pvc-development"
+            claimName: {{ .Release.Name }}-mongo-pvc
 ---
-apiVersion: "v1"
-kind: "PersistentVolumeClaim"
+apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
-  name: "mongodb-pvc-development"
+  name: {{ .Release.Name }}-mongo-pvc
+  namespace: {{ .Release.Name }}-ns
   labels:
-    app: "mongo-development"
+    app: {{ .Release.Name }}-mongo
 spec:
   accessModes:
     - ReadWriteOnce
@@ -50,17 +52,18 @@ spec:
     requests:
       storage: 5Gi
 ---
-apiVersion: "v1"
-kind: "Service"
+apiVersion: v1
+kind: Service
 metadata:
-  name: "mongo-development"
+  name: {{ .Release.Name }}-mongo
+  namespace: {{ .Release.Name }}-ns
   labels:
-    app: "mongo-development"
+    app: {{ .Release.Name }}-mongo
 spec:
   ports:
-    - name: "mongodb"
+    - name: mongodb
       port: 27017
       targetPort: 27017
   selector:
-    app: "mongo-development"
+    app: {{ .Release.Name }}-mongo
   {{ end }}

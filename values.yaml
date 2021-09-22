@@ -9,7 +9,9 @@ host:
 # The MongoDB connection URI *MUST* explicitly state the authentication source
 # Should you use the default "admin" source, append &authSource=admin to your URI.
 mongodb:
-  enabled: false
+  install: false
+  username:
+  password:
   uri:
 
 image: horizon:latest
