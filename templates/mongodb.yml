@@ -1,0 +1,66 @@
+{{ if .Values.mongodb.enabled }}
+apiVersion: "apps/v1"
+kind: "StatefulSet"
+metadata:
+  name: "mongo-development"
+spec:
+  serviceName: "mongo-development"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "mongo-development"
+  template:
+    metadata:
+      labels:
+        app: "mongo-development"
+    spec:
+      containers:
+        - name: "mongo-development"
+          image: "mongo"
+          imagePullPolicy: "Always"
+          env:
+            - name: "MONGO_INITDB_ROOT_USERNAME"
+              value: "test"
+
+            - name: "MONGO_INITDB_ROOT_PASSWORD"
+              value: "testpwd"
+
+          ports:
+            - containerPort: 27017
+              name: "mongodb"
+
+          volumeMounts:
+            - name: "mongodb-persistent-storage"
+              mountPath: "/var/lib/mongodb"
+      volumes:
+        - name: "mongodb-persistent-storage"
+          persistentVolumeClaim:
+            claimName: "mongodb-pvc-development"
+---
+apiVersion: "v1"
+kind: "PersistentVolumeClaim"
+metadata:
+  name: "mongodb-pvc-development"
+  labels:
+    app: "mongo-development"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "mongo-development"
+  labels:
+    app: "mongo-development"
+spec:
+  ports:
+    - name: "mongodb"
+      port: 27017
+      targetPort: 27017
+  selector:
+    app: "mongo-development"
+  {{ end }}

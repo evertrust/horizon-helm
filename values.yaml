@@ -4,7 +4,10 @@
 
 replicaCount: 1
 
+# The MongoDB connection URI *MUST* explicitly state the authentication source
+# Should you use the default "admin" source, append &authSource=admin to your URI.
 mongodb:
+  enabled: false
   uri:
 
 image: horizon:latest
