@@ -5,13 +5,11 @@ kind: ServiceAccount
 apiVersion: v1
 metadata:
   name: {{ .Release.Name }}-acccount
-  namespace: {{ .Release.Name }}-ns
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ .Release.Name }}-reader
-  namespace: {{ .Release.Name }}-ns
 rules:
   - apiGroups: [""]
     resources: ["pods"]
@@ -21,7 +19,6 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ .Release.Name }}-read-pods
-  namespace: {{ .Release.Name }}-ns
 subjects:
   - kind: ServiceAccount
     name: {{ .Release.Name }}-acccount
