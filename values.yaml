@@ -14,8 +14,6 @@ issuer: letsencrypt-http
 # Should you use the default "admin" source, append &authSource=admin to your URI.
 mongodb:
   install: false
-  username:
-  password:
   uri:
 
 image: horizon:latest
@@ -29,5 +27,11 @@ horizon:
   license:
 
 vault:
-  type: ssv
-  password: evertrust
+  configuration: default
+  escrow: default
+  transient: default
+
+vaults:
+  - name: default
+    type: ssv
+    password: evertrust
