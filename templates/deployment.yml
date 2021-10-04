@@ -5,7 +5,6 @@ metadata:
   labels:
     app: {{ .Release.Name }}-app
 spec:
-  replicas: {{ .Values.replicaCount }}
   minReadySeconds: 15
   revisionHistoryLimit: 5
   selector:
@@ -21,7 +20,6 @@ spec:
       labels:
         app: {{ .Release.Name }}-app
     spec:
-      serviceAccountName: {{ .Release.Name }}-acccount
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -37,38 +35,40 @@ spec:
       containers:
         - name: {{ .Release.Name }}-app
           image: {{ .Values.imageCredentials.registry}}/{{ .Values.image }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           livenessProbe:
             initialDelaySeconds: 60
             httpGet:
               path: /alive
-              port: akkamgmt
+              port: management
           readinessProbe:
             initialDelaySeconds: 90
             httpGet:
               path: /ready
-              port: akkamgmt
+              port: management
           env:
             - name: MONGODB_URI
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-mongo
                   key: uri
-            # The Kubernetes API discovery will use this service name to look for
-            # nodes with this value in the 'app' label.
-            # This can be customized with the 'pod-label-selector' setting.
-            - name: AKKA_CLUSTER_BOOTSTRAP_SERVICE_NAME
+            - name: APPLICATION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-play-secret
+                  key: secret
+            - name: HOSTNAME
               valueFrom:
                 fieldRef:
                   apiVersion: v1
-                  fieldPath: "metadata.labels['app']"
+                  fieldPath: status.podIP
           volumeMounts:
             - name: {{ .Release.Name }}-etc
               mountPath: /horizon/etc
           ports:
             - name: http
               containerPort: 9000
-            - name: akkamgmt
+            - name: management
               containerPort: 8558
             - name: artery
               containerPort: 25520
