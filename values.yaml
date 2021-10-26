@@ -48,3 +48,7 @@ ingress:
     # CA authentication
     nginx.ingress.kubernetes.io/auth-tls-verify-client: optional_no_ca
     nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
+
+affinity: {}
+nodeSelector: {}
+tolerations: []

@@ -23,18 +23,6 @@ spec:
       labels:
         app: {{ .Release.Name }}-app
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: app
-                      operator: In
-                      values:
-                        - {{ .Release.Name }}-app
-                topologyKey: kubernetes.io/hostname
-              weight: 100
       containers:
         - name: {{ .Release.Name }}-app
           image: {{ .Values.imageCredentials.registry}}/{{ .Values.image }}
@@ -96,3 +84,9 @@ spec:
         - name: {{ .Release.Name }}-etc
           configMap:
             name: {{ .Release.Name }}-config
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
