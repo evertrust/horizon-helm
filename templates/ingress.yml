@@ -1,16 +1,15 @@
+{{ if semverCompare ">= 1.19.0-0" .Capabilities.KubeVersion.Version }}
 apiVersion: networking.k8s.io/v1
+  {{ else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1" }}
+apiVersion: networking.k8s.io/v1beta1
+  {{ else }}
+apiVersion: extensions/v1beta1
+  {{ end }}
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ing
   annotations:
-    # Nginx ingress controller
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    # Certificate issuance
-    cert-manager.io/cluster-issuer: {{ .Values.issuer }}
-    # CA authentication
-    nginx.ingress.kubernetes.io/auth-tls-verify-client: optional_no_ca
-    nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
+  {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
   rules:
     - host: {{ .Values.host }}
@@ -23,7 +22,9 @@ spec:
                 name: {{ .Release.Name }}-service
                 port:
                   name: http
+  {{ if .Values.ingress.tls }}
   tls:
-  - hosts:
-      - {{ .Values.host }}
-    secretName: {{ .Release.Name }}-cert
+    - hosts:
+        - {{ .Values.host }}
+      secretName: {{ .Release.Name }}-cert
+  {{ end }}

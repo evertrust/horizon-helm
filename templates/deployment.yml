@@ -5,6 +5,9 @@ metadata:
   labels:
     app: {{ .Release.Name }}-app
 spec:
+  {{ if .Values.hpa.enabled }}
+  replicas: {{ .Values.hpa.minReplicas }}
+  {{ end }}
   minReadySeconds: 15
   revisionHistoryLimit: 5
   selector:
@@ -35,7 +38,14 @@ spec:
       containers:
         - name: {{ .Release.Name }}-app
           image: {{ .Values.imageCredentials.registry}}/{{ .Values.image }}
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 100m
+            limits:
+              memory: 1Gi
+              cpu: 500m
           livenessProbe:
             initialDelaySeconds: 60
             httpGet:
@@ -50,18 +60,25 @@ spec:
             - name: MONGODB_URI
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-mongo
-                  key: uri
+                  name: {{ .Release.Name }}-secrets
+                  key: mongodb
             - name: APPLICATION_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-play-secret
-                  key: secret
+                  name: {{ .Release.Name }}-secrets
+                  key: play
             - name: HOSTNAME
               valueFrom:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+            {{- range .Values.horizon.vaults }}
+            - name: {{ .name | upper }}_VAULT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name }}-vault-secret
+                  key: password
+            {{ end }}
           volumeMounts:
             - name: {{ .Release.Name }}-etc
               mountPath: /horizon/etc
