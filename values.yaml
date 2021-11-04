@@ -21,6 +21,9 @@ imageCredentials:
   username:
   password:
 
+play:
+  secret:
+
 horizon:
   license:
   # The MongoDB connection URI *MUST* explicitly state the authentication source
@@ -34,7 +37,14 @@ horizon:
   vaults:
     - name: default
       type: ssv
-      password: evertrust
+      password:
+  smtp:
+    host: smtp-relay.gmail.com
+    port: 587
+    tls: true
+    ssl: false
+    user:
+    password:
 
 ingress:
   enabled: true
@@ -43,6 +53,7 @@ ingress:
     # Nginx ingress controller
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/app-root: /ui#/ra
     # Your cert-manager issuerz.
     cert-manager.io/cluster-issuer: letsencrypt-http
     # CA authentication
