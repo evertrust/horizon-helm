@@ -29,11 +29,11 @@ spec:
           imagePullPolicy: IfNotPresent
           resources:
             requests:
-              memory: 64Mi
-              cpu: 100m
+              memory: 2Gi
+              cpu: 1000m
             limits:
-              memory: 1Gi
-              cpu: 500m
+              memory: 3Gi
+              cpu: 1000m
           livenessProbe:
             initialDelaySeconds: 60
             httpGet:
@@ -61,11 +61,13 @@ spec:
                   apiVersion: v1
                   fieldPath: status.podIP
             {{- range .Values.horizon.vaults }}
-            - name: {{ .name | upper }}_VAULT_PASSWORD
+            {{- if eq .type "ssv" }}
+            - name: {{ .name | upper }}_SSV_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ .name }}-vault-secret
+                  name: {{ .name }}-ssv-secret
                   key: password
+            {{ end }}
             {{ end }}
           volumeMounts:
             - name: {{ .Release.Name }}-etc
