@@ -28,12 +28,7 @@ spec:
           image: {{ printf "%s:%s" .Values.image.registry (.Values.image.tag | default .Chart.AppVersion) }}
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" | quote}}
           resources:
-            requests:
-              memory: 2Gi
-              cpu: 1000m
-            limits:
-              memory: 3Gi
-              cpu: 1000m
+            {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
             initialDelaySeconds: 60
             httpGet:

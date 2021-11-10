@@ -54,6 +54,23 @@ mailer:
   user: "${?SMTP_USER}"
   password: "${?SMTP_PASSWORD}"
 
+# Configuration for your deployment resource requests.
+# Bear in mind that these requests are applied per-pod and not per deployment.
+# If you configured an autoscaler with a minimum of 3 pods, Horizon will consume
+# 3 times these resources.
+#
+# **Notes** : The JVM will automatically adapt the memory allocation pool
+# to the container allocated resources.
+#
+# ref https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+resources:
+  requests:
+    memory: 2Gi
+    cpu: 100m
+  limits:
+    memory: 3Gi
+    cpu: 1000m
+
 # Configuration for the horizontal pod autoscaler
 # that will apply to the Horizon deployment.
 #
