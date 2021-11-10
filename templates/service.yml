@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-service
   labels:
-    app: {{ .Release.Name }}-app
+  {{- include "horizon.labels" . | nindent 4 }}
 spec:
   type: ClusterIP
   ports:
@@ -16,4 +16,4 @@ spec:
       port: 9095
       targetPort: 9095
   selector:
-    app: {{ .Release.Name }}-app
+  {{- include "horizon.labels" . | nindent 4 }}

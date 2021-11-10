@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-discovery
   labels:
-    app: {{ .Release.Name }}-app
+  {{- include "horizon.labels" . | nindent 4 }}
 spec:
   ports:
     - name: management
@@ -15,6 +15,6 @@ spec:
       protocol: TCP
       targetPort: 25520
   selector:
-    app: {{ .Release.Name }}-app
+  {{- include "horizon.labels" . | nindent 4 }}
   clusterIP: None
   publishNotReadyAddresses: true

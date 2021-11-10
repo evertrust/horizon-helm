@@ -1,50 +1,105 @@
-horizon:
-  play:
-    secret: "${?PLAY_SECRET}"
-  license:
-    secretName: null
-    secretKey: null
-  # The MongoDB connection URI *MUST* explicitly state the authentication source
-  # Should you use the default "admin" source, append &authSource=admin to your URI.
-  mongodb:
-    uri:
-  vault:
-    configuration: default
-    escrow: default
-    transient: default
-  vaults:
-    default:
-      vault_type: ssv
-      master_password: "${?DEFAULT_SSV_SECRET}"
-  smtp:
-    host: smtp-relay.gmail.com
-    port: 587
-    tls: true
-    ssl: false
-    user: "${?SMTP_USER}"
-    password: "${?SMTP_PASSWORD}"
+# Configure the Play secret for the Horizon instance.
+# As this is used for cryptographic purposes, it should be fetched
+# from the environment.
+#
+# ref https://www.playframework.com/documentation/2.8.x/ApplicationSecret
+appSecret: "${?APPLICATION_SECRET}"
 
-hpa:
+# A valid Horizon license is required for the software to run.
+# You should store it (base64-encoded) in a Kubernetes secret and specify
+# the secret details here.
+# ref README.md
+license:
+  secretName: null
+  secretKey: null
+
+# Configuration for an Horizon external database
+# Refer to the Horizon installation guide to configure the installation correctly
+#
+# **NOTE** : The MongoDB connection URI *MUST* explicitly state the authentication
+# source. Should you use the default "admin" source, append &authSource=admin to your URI.
+externalDatabase:
+  # By default, we want to pull that value from the pod's environment.
+  # You can either inject it or store the value in your values.yaml file after
+  # modifying the line below.
+  uri: "${?MONGODB_URI}"
+
+# Define the vaults that can be used by Horizon.
+# By default, we want to use a simple symmetric vault and fetch
+# the secret from the pod's environment.
+# For more information, refer to the Horizon installation guide.
+vaults:
+  default:
+    vault_type: ssv
+    master_password: "${?DEFAULT_SSV_SECRET}"
+
+# Configure the vaults that will be used by Horizon for storing sensitive data .
+# Each vault name should be defined under the `vaults` key above.
+# For more information, refer to the Horizon installation guide.
+vault:
+  configuration: default
+  escrow: default
+  transient: default
+
+# Configuration for the Horizon mailer.
+# You should configure this if you want your Horizon instance to be able
+# to send emails.
+# You should fetch credentials from the environment if they are required.
+#
+mailer:
+  host: null
+  port: 587
+  tls: true
+  ssl: false
+  user: "${?SMTP_USER}"
+  password: "${?SMTP_PASSWORD}"
+
+# Configuration for the horizontal pod autoscaler
+# that will apply to the Horizon deployment.
+#
+# ref https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+horizontalAutoscaler:
   enabled: true
   minReplicas: 3
   maxReplicas: 10
 
-pdb:
+# Configuration for the disruption budget for your Horizon deployment.
+#
+# ref https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+disruptionBudget:
   enabled: true
   minAvailable: 2
 
-image: registry.evertrust.io/horizon:2.0.3
+# By default, we fetch the Horizon image from the Evertrust registry.
+# # If the tag is null or unset, the default value will be set the to the chart appVersion.
+image:
+  registry: registry.evertrust.io/horizon
+  tag: null
+  pullPolicy: IfNotPresent
 
+# As the official Evertrust registry is not in open-access,
+# you should specify an image pull secret that has
+# access to Horizon images.
+#
+# ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 
+# Configure an Ingress for the Horizon deployment.
+#
+# ref https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
   enabled: false
   annotations: {}
   hosts: []
   tls: []
 
-# The logback configuration allows
+# Configure the logger for this Horizon instance.
+# Sensible defaults are set, but you may need a more verbose logging
+# experience when debugging the application.
+#
+# ref https://www.playframework.com/documentation/2.8.x/ScalaLogging
 logback:
+  level: DEBUG
   pattern: "%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}"
   loggers:
     play: WARN
@@ -52,7 +107,24 @@ logback:
     akka.management.cluster: WARN
     reactivemongo: WARN
 
+# Configure environment variable injections into Horizon's pods.
+# This is the way you should inject secrets into the app if you wish
+# to use the Kubernetes secrets implementation.
+#
+# ref https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
 environment: {}
+
+# Configure affinity for the Horizon pods.
+#
+# ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
 affinity: {}
+
+# Configure a node selector for the Horizon pods.
+#
+# ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
 nodeSelector: {}
+
+# Configure taints for the Horizon pods.
+#
+# ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
 tolerations: []

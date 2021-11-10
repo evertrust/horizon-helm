@@ -3,7 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   labels:
-    app: {{ .Release.Name }}-app
+  {{- include "horizon.labels" . | nindent 4 }}
   name: {{ .Release.Name }}-monitor
 spec:
   endpoints:
@@ -11,7 +11,7 @@ spec:
       path: /metrics
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-app
+      app: {{ include "horizon.app" . }}
   namespaceSelector:
     matchNames:
     - {{ .Release.Namespace }}

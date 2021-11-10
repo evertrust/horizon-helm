@@ -1,12 +1,14 @@
-{{ if .Values.pdb.enabled }}
+{{ if .Values.disruptionBudget.enabled }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ .Release.Name }}-pdb
+  labels:
+  {{- include "horizon.labels" . | nindent 4 }}
 spec:
-  minAvailable: {{ .Values.pdb.minAvailable }}
+  minAvailable: {{ .Values.disruptionBudget.minAvailable | default "null" }}
+  maxUnavailable: {{ .Values.disruptionBudget.maxUnavailable | default "null" }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-app
-
+  {{- include "horizon.labels" . | nindent 6 }}
   {{ end }}

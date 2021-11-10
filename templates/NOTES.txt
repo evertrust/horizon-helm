@@ -1,1 +1,14 @@
-Installing Horizon...
+Thank you for installing {{ .Chart.Name }} {{ .Chart.AppVersion }}.
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }}
+  $ helm get all {{ .Release.Name }}
+
+{{- if .Values.ingress.enabled }}
+
+An ingress has been deployed and Horizon will be shortly available
+at {{ (empty .Values.ingress.tls) | ternary "https" "http" }}://{{ (first .Values.ingress.hosts).host }}
+{{ end }}
