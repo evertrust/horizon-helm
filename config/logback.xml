@@ -3,44 +3,12 @@
     <conversionRule conversionWord="traceID" converterClass="kamon.instrumentation.logback.tools.TraceIDConverter"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}</pattern>
+            <pattern>{{ .Values.logback.pattern }}</pattern>
         </encoder>
     </appender>
-    <!-- Loggers -->
-    <logger name="play" level="WARN">
+    {{- range $name, $level := .Values.logback.loggers }}
+    <logger name="{{ $name }}" level="{{ $level }}">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="akka.actor" level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="akka.management.cluster" level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="reactivemongo" level="WARN">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="actors" level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="actions" level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="controllers" level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="filters" level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="models" level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="modules" level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="pki-connectors" level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="racs-connectors" level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </logger>
+    {{- end }}
 </configuration>

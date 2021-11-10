@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-app
-          image: {{ .Values.imageCredentials.registry}}/{{ .Values.image }}
+          image: {{ .Values.image }}
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -45,33 +45,17 @@ spec:
               path: /ready
               port: management
           env:
-            - name: MONGODB_URI
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-secrets
-                  key: mongodb
-            - name: APPLICATION_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-secrets
-                  key: play
+            {{- toYaml .Values.environment | nindent 12 }}
             - name: HOSTNAME
               valueFrom:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
-            {{- range .Values.horizon.vaults }}
-            {{- if eq .type "ssv" }}
-            - name: {{ .name | upper }}_SSV_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .name }}-ssv-secret
-                  key: password
-            {{ end }}
-            {{ end }}
           volumeMounts:
             - name: {{ .Release.Name }}-etc
               mountPath: /horizon/etc
+            - name: {{ .Release.Name }}-license
+              mountPath: /horizon/license
           ports:
             - name: http
               containerPort: 9000
@@ -81,11 +65,17 @@ spec:
               containerPort: 25520
       dnsPolicy: ClusterFirst
       imagePullSecrets:
-        - name: {{ .Release.Name }}-regcred
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
       volumes:
         - name: {{ .Release.Name }}-etc
           configMap:
             name: {{ .Release.Name }}-config
+        - name: {{ .Release.Name }}-license
+          secret:
+            secretName: {{ .Values.horizon.license.secretName }}
+            items:
+              - key: {{ .Values.horizon.license.secretKey }}
+                path: horizon.lic
       affinity:
         {{- toYaml .Values.affinity | nindent 8 }}
       nodeSelector:

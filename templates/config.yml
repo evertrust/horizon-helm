@@ -4,4 +4,4 @@ metadata:
   name: {{ .Release.Name }}-config
 data:
 {{ tpl (.Files.Glob "config/*").AsConfig . | indent 2 }}
-  "horizon.lic": {{ .Values.horizon.license }}
+

@@ -1,4 +1,6 @@
-{{ if semverCompare ">= 1.19.0-0" .Capabilities.KubeVersion.Version }}
+{{ if .Values.ingress.enabled}}
+  {{- $serviceName := printf "%s-%s" .Release.Name "service" -}}
+  {{ if semverCompare ">= 1.19.0-0" .Capabilities.KubeVersion.Version }}
 apiVersion: networking.k8s.io/v1
   {{ else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1" }}
 apiVersion: networking.k8s.io/v1beta1
@@ -12,19 +14,21 @@ metadata:
   {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
   rules:
-    - host: {{ .Values.host }}
+    {{ range .Values.ingress.hosts }}
+    {{- $pathType := printf "%s" .pathType -}}
+    - host: {{ .host | quote }}
       http:
         paths:
-          - path: /
-            pathType: ImplementationSpecific
+          {{- range (.paths | default (list "/")) }}
+          - path: {{ . }}
+            pathType: {{ $pathType }}
             backend:
               service:
-                name: {{ .Release.Name }}-service
+                name: {{ $serviceName }}
                 port:
                   name: http
-  {{ if .Values.ingress.tls }}
+  {{ end }}
+  {{ end }}
   tls:
-    - hosts:
-        - {{ .Values.host }}
-      secretName: {{ .Release.Name }}-cert
+    {{- toYaml .Values.ingress.tls | nindent 2 }}
   {{ end }}
