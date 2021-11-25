@@ -16,4 +16,4 @@ spec:
       port: 9095
       targetPort: 9095
   selector:
-  {{- include "horizon.labels" . | nindent 4 }}
+  {{- include "horizon.baseLabels" . | nindent 4 }}

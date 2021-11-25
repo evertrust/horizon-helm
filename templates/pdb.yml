@@ -10,5 +10,5 @@ spec:
   maxUnavailable: {{ .Values.disruptionBudget.maxUnavailable | default "null" }}
   selector:
     matchLabels:
-  {{- include "horizon.labels" . | nindent 6 }}
+  {{- include "horizon.baseLabels" . | nindent 6 }}
   {{ end }}

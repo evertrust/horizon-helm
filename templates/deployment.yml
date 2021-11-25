@@ -12,7 +12,7 @@ spec:
   revisionHistoryLimit: 5
   selector:
     matchLabels:
-  {{- include "horizon.labels" . | nindent 6 }}
+  {{- include "horizon.baseLabels" . | nindent 6 }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -26,7 +26,7 @@ spec:
       containers:
         - name: {{ include "horizon.app" . }}
           image: {{ printf "%s:%s" .Values.image.registry (.Values.image.tag | default .Chart.AppVersion) }}
-          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" | quote}}
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" | quote }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
