@@ -21,3 +21,5 @@
 .idea/
 *.tmproj
 .vscode/
+# Dev value files
+values.*.yml
