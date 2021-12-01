@@ -35,12 +35,11 @@ imagePullSecrets:
 ```
 
 ### License
-You must have a valid license to deploy Horizon. Create a secret in the namespace you want to deploy Horizon to and reference it in your `values.yaml` under the `horizon.license` key:
+You must have a valid license to deploy Horizon. Create a secret in the namespace you want to deploy Horizon to and reference it in your `values.yaml` under the `license` key:
 ```yaml
-horizon:
-  license:
-    secretName: horizon-license
-    secretKey: license
+license:
+  secretName: horizon-license
+  secretKey: license
 ```
 
 ### Secrets
