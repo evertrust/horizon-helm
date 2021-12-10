@@ -1,0 +1,521 @@
+{
+    "title": "Chart Values",
+    "type": "object",
+    "properties": {
+        "kubeVersion": {
+            "type": "string",
+            "default": "\"\"",
+            "description": "Force target Kubernetes version (using Helm capabilities if not set)"
+        },
+        "nameOverride": {
+            "type": "string",
+            "default": "\"\"",
+            "description": "String to partially override horizon.fullname"
+        },
+        "fullnameOverride": {
+            "type": "string",
+            "default": "\"\"",
+            "description": "String to fully override horizon.fullname"
+        },
+        "commonLabels": {
+            "type": "object",
+            "default": "{}",
+            "description": "Labels to add to all deployed objects"
+        },
+        "commonAnnotations": {
+            "type": "object",
+            "default": "{}",
+            "description": "Annotations to add to all deployed objects"
+        },
+        "image": {
+            "type": "object",
+            "properties": {
+                "registry": {
+                    "type": "string",
+                    "default": "registry.evertrust.io",
+                    "description": "Horizon image registry"
+                },
+                "repository": {
+                    "type": "string",
+                    "default": "horizon",
+                    "description": "Horizon image repository"
+                },
+                "tag": {
+                    "type": "string",
+                    "default": "2.0.4",
+                    "description": "Horizon image tag (immutable tags are recommended)"
+                },
+                "pullPolicy": {
+                    "type": "string",
+                    "default": "IfNotPresent",
+                    "description": "Horizon image pull policy"
+                },
+                "pullSecrets": {
+                    "type": "array",
+                    "default": "[]",
+                    "description": "Horizon image pull secrets"
+                }
+            }
+        },
+        "updateStrategy": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RollingUpdate",
+                    "description": "Horizon deployment strategy type"
+                },
+                "rollingUpdate": {
+                    "type": "object",
+                    "default": "{}",
+                    "description": "Rolling update spec"
+                }
+            }
+        },
+        "priorityClassName": {
+            "type": "string",
+            "default": "\"\"",
+            "description": "Horizon pod priority class name"
+        },
+        "hostAliases": {
+            "type": "array",
+            "default": "[]",
+            "description": "Horizon pod host aliases"
+        },
+        "extraVolumes": {
+            "type": "array",
+            "default": "[]",
+            "description": "Optionally specify extra list of additional volumes for Horizon pods"
+        },
+        "extraVolumeMounts": {
+            "type": "array",
+            "default": "[]",
+            "description": "Optionally specify extra list of additional volumeMounts for Horizon container(s)"
+        },
+        "sidecars": {
+            "type": "array",
+            "default": "[]",
+            "description": "Add additional sidecar containers to the Horizon pod"
+        },
+        "lifecycleHooks": {
+            "type": "object",
+            "default": "{}",
+            "description": "Add lifecycle hooks to the Horizon deployment"
+        },
+        "podLabels": {
+            "type": "object",
+            "default": "{}",
+            "description": "Extra labels for Horizon pods"
+        },
+        "podAnnotations": {
+            "type": "object",
+            "default": "{}",
+            "description": "Annotations for Horizon pods"
+        },
+        "podAffinityPreset": {
+            "type": "string",
+            "default": "\"\"",
+            "description": "Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`"
+        },
+        "podAntiAffinityPreset": {
+            "type": "string",
+            "default": "soft",
+            "description": "Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`"
+        },
+        "nodeAffinityPreset": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "\"\"",
+                    "description": "Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`"
+                },
+                "key": {
+                    "type": "string",
+                    "default": "\"\"",
+                    "description": "Node label key to match. Ignored if `affinity` is set"
+                },
+                "values": {
+                    "type": "array",
+                    "default": "[]",
+                    "description": "Node label values to match. Ignored if `affinity` is set"
+                }
+            }
+        },
+        "affinity": {
+            "type": "object",
+            "default": "{}",
+            "description": "Affinity for pod assignment"
+        },
+        "nodeSelector": {
+            "type": "object",
+            "default": "{}",
+            "description": "Node labels for pod assignment"
+        },
+        "tolerations": {
+            "type": "object",
+            "default": "{}",
+            "description": "Tolerations for pod assignment"
+        },
+        "resources": {
+            "type": "object",
+            "properties": {
+                "limits": {
+                    "type": "object",
+                    "default": "{}",
+                    "description": "The resources limits for the Horizon container"
+                },
+                "requests": {
+                    "type": "object",
+                    "default": "{}",
+                    "description": "The requested resources for the Horizon container"
+                }
+            }
+        },
+        "podSecurityContext": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enabled Horizon pods' Security Context"
+                },
+                "fsGroup": {
+                    "type": "number",
+                    "default": 1001,
+                    "description": "Set Horizon pod's Security Context fsGroup"
+                }
+            }
+        },
+        "containerSecurityContext": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enabled Horizon containers' Security Context"
+                },
+                "runAsUser": {
+                    "type": "number",
+                    "default": 1001,
+                    "description": "Set Horizon container's Security Context runAsUser"
+                },
+                "runAsNonRoot": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Set Horizon container's Security Context runAsNonRoot"
+                }
+            }
+        },
+        "livenessProbe": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable livenessProbe"
+                },
+                "initialDelaySeconds": {
+                    "type": "number",
+                    "default": 90,
+                    "description": "Initial delay seconds for livenessProbe"
+                },
+                "periodSeconds": {
+                    "type": "number",
+                    "default": 10,
+                    "description": "Period seconds for livenessProbe"
+                },
+                "timeoutSeconds": {
+                    "type": "number",
+                    "default": 5,
+                    "description": "Timeout seconds for livenessProbe"
+                },
+                "failureThreshold": {
+                    "type": "number",
+                    "default": 6,
+                    "description": "Failure threshold for livenessProbe"
+                },
+                "successThreshold": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Success threshold for livenessProbe"
+                }
+            }
+        },
+        "readinessProbe": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable readinessProbe"
+                },
+                "initialDelaySeconds": {
+                    "type": "number",
+                    "default": 60,
+                    "description": "Initial delay seconds for readinessProbe"
+                },
+                "periodSeconds": {
+                    "type": "number",
+                    "default": 5,
+                    "description": "Period seconds for readinessProbe"
+                },
+                "timeoutSeconds": {
+                    "type": "number",
+                    "default": 3,
+                    "description": "Timeout seconds for readinessProbe"
+                },
+                "failureThreshold": {
+                    "type": "number",
+                    "default": 3,
+                    "description": "Failure threshold for readinessProbe"
+                },
+                "successThreshold": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Success threshold for readinessProbe"
+                }
+            }
+        },
+        "customLivenessProbe": {
+            "type": "object",
+            "default": "{}",
+            "description": "Custom livenessProbe that overrides the default one"
+        },
+        "customReadinessProbe": {
+            "type": "object",
+            "default": "{}",
+            "description": "Custom readinessProbe that overrides the default one"
+        },
+        "horizontalAutoscaler": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable Horizontal POD autoscaling for Horizon"
+                },
+                "minReplicas": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Minimum number of Horizon replicas"
+                },
+                "maxReplicas": {
+                    "type": "number",
+                    "default": 3,
+                    "description": "Maximum number of Horizon replicas"
+                },
+                "targetCPU": {
+                    "type": "number",
+                    "default": 50,
+                    "description": "Target CPU utilization percentage"
+                },
+                "targetMemory": {
+                    "type": "number",
+                    "default": 50,
+                    "description": "Target Memory utilization percentage"
+                }
+            }
+        },
+        "disruptionBudget": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Created a PodDisruptionBudget"
+                },
+                "minAvailable": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Min number of pods that must still be available after the eviction"
+                },
+                "maxUnavailable": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Max number of pods that can be unavailable after the eviction"
+                }
+            }
+        },
+        "environment": {
+            "type": "array",
+            "default": "[]",
+            "description": "Extra env vars passed to the Horizon pods"
+        },
+        "service": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "ClusterIP",
+                    "description": "Kubernetes service type"
+                },
+                "clusterIP": {
+                    "type": "string",
+                    "default": "\"\"",
+                    "description": "Keycloak service clusterIP IP"
+                },
+                "loadBalancerIP": {
+                    "type": "string",
+                    "default": "\"\"",
+                    "description": "loadBalancerIP for the SuiteCRM Service (optional, cloud specific)"
+                },
+                "loadBalancerSourceRanges": {
+                    "type": "array",
+                    "default": "[]",
+                    "description": "Address that are allowed when service is LoadBalancer"
+                },
+                "externalTrafficPolicy": {
+                    "type": "string",
+                    "default": "Cluster",
+                    "description": "Enable client source IP preservation"
+                },
+                "annotations": {
+                    "type": "object",
+                    "default": "{}",
+                    "description": "Annotations for Keycloak service"
+                }
+            }
+        },
+        "ingress": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Set to true to enable ingress record generation"
+                },
+                "ingressClassName": {
+                    "type": "string",
+                    "default": "\"\"",
+                    "description": "IngressClass that will be be used to implement the Ingress (Kubernetes 1.18+)"
+                },
+                "annotations": {
+                    "type": "object",
+                    "default": "{}",
+                    "description": "Additional annotations for the Ingress resource. To enable certificate autogeneration, place here your cert-manager annotations."
+                },
+                "hosts": {
+                    "type": "array",
+                    "default": "[]",
+                    "description": "Routing configuration for the ingress"
+                },
+                "tls": {
+                    "type": "array",
+                    "default": "[]",
+                    "description": "Enable TLS configuration for the ingress"
+                }
+            }
+        },
+        "appSecret": {
+            "type": "string",
+            "default": "${?APPLICATION_SECRET}",
+            "description": "Application secret used for encrypting session data and cookies"
+        },
+        "license": {
+            "type": "object",
+            "properties": {
+                "secretName": {
+                    "type": "string",
+                    "default": "\"\"",
+                    "description": "Existing secret name where the Horizon license is stored"
+                },
+                "secretKey": {
+                    "type": "string",
+                    "default": "\"\"",
+                    "description": "Existing secret key where the Horizon license is stored"
+                }
+            }
+        },
+        "externalDatabase": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string",
+                    "default": "${?MONGODB_URI}",
+                    "description": "External MongoDB URI"
+                }
+            }
+        },
+        "vaults": {
+            "type": "object",
+            "default": "[]",
+            "description": "Horizon vaults configuration"
+        },
+        "vault": {
+            "type": "object",
+            "properties": {
+                "configuration": {
+                    "type": "string",
+                    "default": "default",
+                    "description": "Name of the vault used for configuration purposes"
+                },
+                "escrow": {
+                    "type": "string",
+                    "default": "default",
+                    "description": "Name of the vault used for escrowing purposes"
+                },
+                "transient": {
+                    "type": "string",
+                    "default": "default",
+                    "description": "Name of the vault used for storing transient keys"
+                }
+            }
+        },
+        "mailer": {
+            "type": "object",
+            "properties": {
+                "host": {
+                    "type": "string",
+                    "default": "\"\"",
+                    "description": "SMTP host"
+                },
+                "port": {
+                    "type": "number",
+                    "default": 587,
+                    "description": "SMTP host port"
+                },
+                "tls": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable TLS for this SMTP host"
+                },
+                "ssl": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable SSL for this SMTP host"
+                },
+                "user": {
+                    "type": "string",
+                    "default": "${?SMTP_USER}",
+                    "description": "Authentication username for this SMTP host"
+                },
+                "password": {
+                    "type": "string",
+                    "default": "${?SMTP_PASSWORD}",
+                    "description": "Authentication password for this SMTP host"
+                }
+            }
+        },
+        "logback": {
+            "type": "object",
+            "properties": {
+                "level": {
+                    "type": "string",
+                    "default": "DEBUG",
+                    "description": "Global level below wich messages will not be logged"
+                },
+                "pattern": {
+                    "type": "string",
+                    "default": "%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}",
+                    "description": "Log messages pattern"
+                },
+                "loggers": {
+                    "type": "object",
+                    "default": "{}",
+                    "description": "Enabled loggers in the `name: LEVEL` format"
+                }
+            }
+        }
+    }
+}

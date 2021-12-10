@@ -1,17 +1,25 @@
 {{ if .Values.ingress.enabled }}
-  {{ if not (.Capabilities.APIVersions.Has "networking.k8s.io/v1") }}
-  {{- fail "This Helm Chart only supports ingresses in the networking.k8s.io/v1 API. Set ingress.enabled to false and create your ingress separatly." }}
-{{- end }}
-{{- $serviceName := printf "%s-%s" .Release.Name "service" -}}
-apiVersion: networking.k8s.io/v1
+apiVersion: {{ include "common.capabilities.ingress.apiVersion" . }}
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-ing
+  name: {{ template "common.names.fullname" . }}
   annotations:
   {{- toYaml .Values.ingress.annotations | nindent 4 }}
-  labels:
-  {{- include "horizon.labels" . | nindent 4 }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  annotations:
+  {{- if .Values.ingress.annotations }}
+  {{- include "common.tplvalues.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
 spec:
+  {{- if and .Values.ingress.ingressClassName (eq "true" (include "common.ingress.supportsIngressClassname" .)) }}
+  ingressClassName: {{ .Values.ingress.ingressClassName | quote }}
+  {{- end }}
   rules:
     {{ range .Values.ingress.hosts }}
     {{- $pathType := printf "%s" .pathType -}}
@@ -20,14 +28,12 @@ spec:
         paths:
           {{- range (.paths | default (list "/")) }}
           - path: {{ . }}
+            {{- if eq "true" (include "common.ingress.supportsPathType" $) }}
             pathType: {{ $pathType }}
-            backend:
-              service:
-                name: {{ $serviceName }}
-                port:
-                  name: http
-          {{- end }}
-    {{- end }}
+            {{- end }}
+            backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" $) "servicePort" "http" "context" $)  | nindent 14 }}
+  {{- end }}
+  {{- end }}
   tls:
-    {{- toYaml .Values.ingress.tls | nindent 2 }}
+  {{- toYaml .Values.ingress.tls | nindent 2 }}
   {{ end }}

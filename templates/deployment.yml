@@ -1,44 +1,85 @@
-apiVersion: apps/v1
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
 kind: Deployment
 metadata:
-  name: {{ include "horizon.deployment" . }}
-  labels:
-  {{- include "horizon.labels" . | nindent 4 }}
+  name: {{ template "common.names.fullname" . }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
 spec:
   {{ if .Values.horizontalAutoscaler.enabled }}
   replicas: {{ .Values.horizontalAutoscaler.minReplicas }}
   {{ end }}
-  minReadySeconds: 15
-  revisionHistoryLimit: 5
   selector:
-    matchLabels:
-  {{- include "horizon.baseLabels" . | nindent 6 }}
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
+  strategy: {{- include "common.tplvalues.render" (dict "value" .Values.updateStrategy "context" $ ) | nindent 4 }}
   template:
     metadata:
-      labels:
-    {{- include "horizon.labels" . | nindent 8 }}
+      labels: {{- include "common.labels.standard" . | nindent 8 }}
+    {{- if .Values.podLabels }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
+    {{- end }}
+    annotations:
+    {{- if .Values.podAnnotations }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
+    {{- end }}
     spec:
+      {{- if .Values.hostAliases }}
+      hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.hostAliases "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.affinity "context" $) | nindent 8 }}
+      {{- else }}
+      affinity:
+        podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.podAffinityPreset "context" $) | nindent 10 }}
+        podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.podAntiAffinityPreset "context" $) | nindent 10 }}
+        nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.nodeAffinityPreset.type "key" .Values.nodeAffinityPreset.key "values" .Values.nodeAffinityPreset.values) | nindent 10 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.tolerations "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName | quote }}
+      {{- end }}
+      {{- if .Values.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
       containers:
-        - name: {{ include "horizon.app" . }}
-          image: {{ printf "%s:%s" .Values.image.registry (.Values.image.tag | default .Chart.AppVersion) }}
+        - name: horizon
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" $) }}
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" | quote }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.lifecycleHooks }}
+          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.lifecycleHooks "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
-            initialDelaySeconds: 60
             httpGet:
               path: /alive
               port: management
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+          {{- end }}
+          {{- if .Values.readinessProbe.enabled }}
           readinessProbe:
-            initialDelaySeconds: 90
             httpGet:
               path: /ready
               port: management
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+          {{- end }}
+          resources: {{- toYaml .Values.resources | nindent 12 }}
           env:
             {{- toYaml .Values.environment | nindent 12 }}
             - name: HOSTNAME
@@ -71,9 +112,3 @@ spec:
             items:
               - key: {{ required "You must specify a license secret" .Values.license.secretKey }}
                 path: horizon.lic
-      affinity:
-      {{- toYaml .Values.affinity | nindent 8 }}
-      nodeSelector:
-      {{- toYaml .Values.nodeSelector | nindent 8 }}
-      tolerations:
-  {{- toYaml .Values.tolerations | nindent 8 }}

@@ -2,16 +2,17 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  labels:
-  {{- include "horizon.labels" . | nindent 4 }}
-  name: {{ .Release.Name }}-monitor
+  name: {{ template "common.names.fullname" . }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
 spec:
   endpoints:
     - port: kamon
       path: /metrics
   selector:
-    matchLabels:
-      app: {{ include "horizon.app" . }}
+    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
   namespaceSelector:
     matchNames:
     - {{ .Release.Namespace }}

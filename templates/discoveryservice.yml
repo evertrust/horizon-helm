@@ -2,8 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-discovery
-  labels:
-  {{- include "horizon.labels" . | nindent 4 }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
 spec:
   ports:
     - name: management
@@ -14,7 +16,6 @@ spec:
       port: 25520
       protocol: TCP
       targetPort: 25520
-  selector:
-  {{- include "horizon.baseLabels" . | nindent 4 }}
+  selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
   clusterIP: None
   publishNotReadyAddresses: true
