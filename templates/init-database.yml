@@ -1,0 +1,27 @@
+{{ if .Values.externalDatabase.initDatabase }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.mongodb.initdbScriptsConfigMap }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+data:
+  # language=js
+  createAdminUser.js: |
+    use horizon;
+    db.security_local_identities.insert({
+        "identifier": "{{ .Values.externalDatabase.initUsername }}",
+        "hash": "{{ .Values.externalDatabase.initPasswordHash }}",
+        "name": "Horizon Administrator"
+    });
+    db.security_principals.insert({
+        "identifier": "{{ .Values.externalDatabase.initUsername }}",
+        "permissions": [
+            {"value": "configuration:*"},
+            {"value": "lifecycle:*"},
+            {"value": "discovery:*"}],
+        "roles":[]
+    });
+{{ end }}

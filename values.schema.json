@@ -353,12 +353,12 @@
                 "clusterIP": {
                     "type": "string",
                     "default": "\"\"",
-                    "description": "Keycloak service clusterIP IP"
+                    "description": "Horizon service clusterIP IP"
                 },
                 "loadBalancerIP": {
                     "type": "string",
                     "default": "\"\"",
-                    "description": "loadBalancerIP for the SuiteCRM Service (optional, cloud specific)"
+                    "description": "loadBalancerIP for the Horizon Service (optional, cloud specific)"
                 },
                 "loadBalancerSourceRanges": {
                     "type": "array",
@@ -373,7 +373,7 @@
                 "annotations": {
                     "type": "object",
                     "default": "{}",
-                    "description": "Annotations for Keycloak service"
+                    "description": "Annotations for Horizon service"
                 }
             }
         },
@@ -424,16 +424,6 @@
                     "type": "string",
                     "default": "\"\"",
                     "description": "Existing secret key where the Horizon license is stored"
-                }
-            }
-        },
-        "externalDatabase": {
-            "type": "object",
-            "properties": {
-                "uri": {
-                    "type": "string",
-                    "default": "${?MONGODB_URI}",
-                    "description": "External MongoDB URI"
                 }
             }
         },
@@ -514,6 +504,51 @@
                     "type": "object",
                     "default": "{}",
                     "description": "Enabled loggers in the `name: LEVEL` format"
+                }
+            }
+        },
+        "mongodb": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Set this to true to install a local MongoDB instance"
+                },
+                "database": {
+                    "type": "string",
+                    "default": "horizon",
+                    "description": "Database name to use when using a local MongoDB instance"
+                }
+            }
+        },
+        "externalDatabase": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string",
+                    "default": "\"\"",
+                    "description": "External MongoDB URI. If set, this will override the `mongodb.enabled` parameter."
+                },
+                "existingSecret": {
+                    "type": "object",
+                    "default": "{}",
+                    "description": "Name of a secret with the MongoDB URI"
+                },
+                "initDatabase": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Set this to true to create an administrator user"
+                },
+                "initUsername": {
+                    "type": "string",
+                    "default": "administrator",
+                    "description": "Username used when initializing the database"
+                },
+                "initPasswordHash": {
+                    "type": "string",
+                    "default": "$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/",
+                    "description": "Password hash used when initializing the database. Default: horizon"
                 }
             }
         }

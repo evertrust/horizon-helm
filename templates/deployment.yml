@@ -47,6 +47,17 @@ spec:
       {{- if .Values.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
+      initContainers:
+        - name: mongodb-checker
+          image: rtsp/mongosh:1.1.6
+          imagePullPolicy: IfNotPresent
+          command: [ "sh", "-c", "until mongosh --norc --quiet --eval \"exit()\" \"$MONGODB_URI\"; do echo \"Waiting for $MONGODB_URI...\"; sleep 2; done" ]
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.secrets.name" (dict "existingSecret" .Values.externalDatabase.existingSecret "context" $) }}
+                  key: {{ include "common.secrets.key" (dict "existingSecret" .Values.externalDatabase.existingSecret "key" "mongodb.uri") }}
       containers:
         - name: horizon
           image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" $) }}
@@ -87,6 +98,11 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.secrets.name" (dict "existingSecret" .Values.externalDatabase.existingSecret "context" $) }}
+                  key: {{ include "common.secrets.key" (dict "existingSecret" .Values.externalDatabase.existingSecret "key" "mongodb.uri") }}
           volumeMounts:
             - name: {{ .Release.Name }}-etc
               mountPath: /horizon/etc
@@ -100,8 +116,7 @@ spec:
             - name: artery
               containerPort: 25520
       dnsPolicy: ClusterFirst
-      imagePullSecrets:
-      {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{ include "common.images.renderPullSecrets" (dict "images" (list .Values.image) "context" $) }}
       volumes:
         - name: {{ .Release.Name }}-etc
           configMap:

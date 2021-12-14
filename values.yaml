@@ -9,7 +9,6 @@ nameOverride: ""
 ## @param fullnameOverride String to fully override horizon.fullname
 ##
 fullnameOverride: ""
-
 ## @param commonLabels Labels to add to all deployed objects
 ##
 commonLabels: {}
@@ -240,12 +239,12 @@ service:
   ## @param service.type Kubernetes service type
   ##
   type: ClusterIP
-  ## @param service.clusterIP Keycloak service clusterIP IP
+  ## @param service.clusterIP Horizon service clusterIP IP
   ## e.g:
   ## clusterIP: None
   ##
   clusterIP: ""
-  ## @param service.loadBalancerIP loadBalancerIP for the SuiteCRM Service (optional, cloud specific)
+  ## @param service.loadBalancerIP loadBalancerIP for the Horizon Service (optional, cloud specific)
   ## ref: https://kubernetes.io/docs/user-guide/services/#type-loadbalancer
   ##
   loadBalancerIP: ""
@@ -260,7 +259,7 @@ service:
   ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
   ##
   externalTrafficPolicy: Cluster
-  ## @param service.annotations Annotations for Keycloak service
+  ## @param service.annotations Annotations for Horizon service
   ##
   annotations: {}
 
@@ -309,18 +308,6 @@ appSecret: "${?APPLICATION_SECRET}"
 license:
   secretName: ""
   secretKey: ""
-
-## Configuration for an Horizon external database
-## Refer to the Horizon installation guide to configure the installation correctly
-##
-## **NOTE** : The MongoDB connection URI *MUST* explicitly state the authentication
-## source. Should you use the default "admin" source, append &authSource=admin to your URI.
-## @param externalDatabase.uri External MongoDB URI
-externalDatabase:
-  ## By default, we want to pull that value from the pod's environment.
-  ## You can either inject it or store the value in your values.yaml file after
-  ## modifying the line below.
-  uri: "${?MONGODB_URI}"
 
 ## Define the vaults that can be used by Horizon.
 ## By default, we want to use a simple symmetric vault and fetch
@@ -373,8 +360,7 @@ logback:
   level: DEBUG
   pattern: "%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}"
   loggers:
-    play: DEBUG
-    akka: DEBUG
+    play: WARN
     reactivemongo: WARN
     actors: DEBUG
     actions: DEBUG
@@ -384,3 +370,32 @@ logback:
     modules: DEBUG
     pki-connectors: DEBUG
     racs-connectors: DEBUG
+
+## @section Database parameters
+
+## Install a MongoDB instance
+## ref: https://github.com/bitnami/charts/tree/master/bitnami/mongodb
+## @param mongodb.enabled Set this to true to install a local MongoDB instance
+## @param mongodb.database Database name to use when using a local MongoDB instance
+## @skip mongodb.initdbScriptsConfigMap
+mongodb:
+  enabled: false
+  database: horizon
+  initdbScriptsConfigMap: horizon-database-init-scripts
+
+## Configuration for an Horizon external database
+## Refer to the Horizon installation guide to configure the installation correctly
+##
+## **NOTE** : The MongoDB connection URI *MUST* explicitly state the authentication
+## source. Should you use the default "admin" source, append &authSource=admin to your URI.
+## @param externalDatabase.uri External MongoDB URI. If set, this will override the `mongodb.enabled` parameter.
+## @param externalDatabase.existingSecret [object] Name of a secret with the MongoDB URI
+## @param externalDatabase.initDatabase Set this to true to create an administrator user
+## @param externalDatabase.initUsername Username used when initializing the database
+## @param externalDatabase.initPasswordHash Password hash used when initializing the database. Default: horizon
+externalDatabase:
+  uri: ""
+  existingSecret: {}
+  initDatabase: true
+  initUsername: administrator
+  initPasswordHash: $6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/
