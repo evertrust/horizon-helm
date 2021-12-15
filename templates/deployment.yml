@@ -54,10 +54,7 @@ spec:
           command: [ "sh", "-c", "until mongosh --norc --quiet --eval \"exit()\" \"$MONGODB_URI\"; do echo \"Waiting for $MONGODB_URI...\"; sleep 2; done" ]
           env:
             - name: MONGODB_URI
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "common.secrets.name" (dict "existingSecret" .Values.externalDatabase.existingSecret "context" $) }}
-                  key: {{ include "common.secrets.key" (dict "existingSecret" .Values.externalDatabase.existingSecret "key" "mongodb.uri") }}
+            {{- include "horizon.mongodb.uri" . | nindent 14 }}
       containers:
         - name: horizon
           image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" $) }}
@@ -92,17 +89,27 @@ spec:
           {{- end }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           env:
+            {{- if .Values.environment }}
             {{- toYaml .Values.environment | nindent 12 }}
+            {{- end }}
             - name: HOSTNAME
               valueFrom:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
             - name: MONGODB_URI
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "common.secrets.name" (dict "existingSecret" .Values.externalDatabase.existingSecret "context" $) }}
-                  key: {{ include "common.secrets.key" (dict "existingSecret" .Values.externalDatabase.existingSecret "key" "mongodb.uri") }}
+            {{- include "horizon.mongodb.uri" . | nindent 14 }}
+            - name: APPLICATION_SECRET
+            {{- include "horizon.appSecret" . | nindent 14 }}
+            {{- if .Values.mailer.password }}
+            - name: MAILER_PASSWORD {{- include "common.tplvalues.render" (dict "value" .Values.mailer.password "context" $) | nindent 14 }}
+            {{- end }}
+            {{- range $name, $params := .Values.vaults }}
+            {{- if $params.master_password }}
+            - name: {{ printf "%s_master_password" $name | upper -}}
+            {{- include "horizon.vaultMasterPassword" (dict "vault" $name) . | nindent 14 }}
+            {{- end }}
+            {{- end }}
           volumeMounts:
             - name: {{ .Release.Name }}-etc
               mountPath: /horizon/etc
@@ -116,7 +123,7 @@ spec:
             - name: artery
               containerPort: 25520
       dnsPolicy: ClusterFirst
-      {{ include "common.images.renderPullSecrets" (dict "images" (list .Values.image) "context" $) }}
+      {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.image) "context" $) | nindent 6 }}
       volumes:
         - name: {{ .Release.Name }}-etc
           configMap:

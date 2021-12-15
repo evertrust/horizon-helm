@@ -408,8 +408,8 @@
             }
         },
         "appSecret": {
-            "type": "string",
-            "default": "${?APPLICATION_SECRET}",
+            "type": "object",
+            "default": "{}",
             "description": "Application secret used for encrypting session data and cookies"
         },
         "license": {
@@ -429,7 +429,7 @@
         },
         "vaults": {
             "type": "object",
-            "default": "[]",
+            "default": "{}",
             "description": "Horizon vaults configuration"
         },
         "vault": {
@@ -451,6 +451,11 @@
                     "description": "Name of the vault used for storing transient keys"
                 }
             }
+        },
+        "allowedHosts": {
+            "type": "array",
+            "default": "[]",
+            "description": "Additional allowed hosts."
         },
         "mailer": {
             "type": "object",
@@ -477,12 +482,12 @@
                 },
                 "user": {
                     "type": "string",
-                    "default": "${?SMTP_USER}",
+                    "default": "\"\"",
                     "description": "Authentication username for this SMTP host"
                 },
                 "password": {
-                    "type": "string",
-                    "default": "${?SMTP_PASSWORD}",
+                    "type": "object",
+                    "default": "{}",
                     "description": "Authentication password for this SMTP host"
                 }
             }
@@ -512,7 +517,7 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "Set this to true to install a local MongoDB instance"
                 },
                 "database": {
@@ -526,14 +531,9 @@
             "type": "object",
             "properties": {
                 "uri": {
-                    "type": "string",
-                    "default": "\"\"",
-                    "description": "External MongoDB URI. If set, this will override the `mongodb.enabled` parameter."
-                },
-                "existingSecret": {
                     "type": "object",
                     "default": "{}",
-                    "description": "Name of a secret with the MongoDB URI"
+                    "description": "External MongoDB URI. If set, this will override the `mongodb.enabled` parameter."
                 },
                 "initDatabase": {
                     "type": "boolean",

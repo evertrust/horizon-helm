@@ -167,19 +167,20 @@ You can find a list of environment-fetched config values in `values.yaml` since 
 
 | Name                  | Description                                                     | Value                                                                             |
 | --------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `appSecret`           | Application secret used for encrypting session data and cookies | `${?APPLICATION_SECRET}`                                                          |
+| `appSecret`           | Application secret used for encrypting session data and cookies | `{}`                                                                              |
 | `license.secretName`  | Existing secret name where the Horizon license is stored        | `""`                                                                              |
 | `license.secretKey`   | Existing secret key where the Horizon license is stored         | `""`                                                                              |
-| `vaults`              | Horizon vaults configuration                                    | `[]`                                                                              |
+| `vaults`              | Horizon vaults configuration                                    | `{}`                                                                              |
 | `vault.configuration` | Name of the vault used for configuration purposes               | `default`                                                                         |
 | `vault.escrow`        | Name of the vault used for escrowing purposes                   | `default`                                                                         |
 | `vault.transient`     | Name of the vault used for storing transient keys               | `default`                                                                         |
+| `allowedHosts`        | Additional allowed hosts.                                       | `[]`                                                                              |
 | `mailer.host`         | SMTP host                                                       | `""`                                                                              |
 | `mailer.port`         | SMTP host port                                                  | `587`                                                                             |
 | `mailer.tls`          | Enable TLS for this SMTP host                                   | `true`                                                                            |
 | `mailer.ssl`          | Enable SSL for this SMTP host                                   | `false`                                                                           |
-| `mailer.user`         | Authentication username for this SMTP host                      | `${?SMTP_USER}`                                                                   |
-| `mailer.password`     | Authentication password for this SMTP host                      | `${?SMTP_PASSWORD}`                                                               |
+| `mailer.user`         | Authentication username for this SMTP host                      | `""`                                                                              |
+| `mailer.password`     | Authentication password for this SMTP host                      | `{}`                                                                              |
 | `logback.level`       | Global level below wich messages will not be logged             | `DEBUG`                                                                           |
 | `logback.pattern`     | Log messages pattern                                            | `%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}` |
 | `logback.loggers`     | Enabled loggers in the `name: LEVEL` format                     | `{}`                                                                              |
@@ -189,10 +190,9 @@ You can find a list of environment-fetched config values in `values.yaml` since 
 
 | Name                                | Description                                                                       | Value                                                                                                        |
 | ----------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `mongodb.enabled`                   | Set this to true to install a local MongoDB instance                              | `false`                                                                                                      |
+| `mongodb.enabled`                   | Set this to true to install a local MongoDB instance                              | `true`                                                                                                       |
 | `mongodb.database`                  | Database name to use when using a local MongoDB instance                          | `horizon`                                                                                                    |
-| `externalDatabase.uri`              | External MongoDB URI. If set, this will override the `mongodb.enabled` parameter. | `""`                                                                                                         |
-| `externalDatabase.existingSecret`   | Name of a secret with the MongoDB URI                                             | `{}`                                                                                                         |
+| `externalDatabase.uri`              | External MongoDB URI. If set, this will override the `mongodb.enabled` parameter. | `{}`                                                                                                         |
 | `externalDatabase.initDatabase`     | Set this to true to create an administrator user                                  | `true`                                                                                                       |
 | `externalDatabase.initUsername`     | Username used when initializing the database                                      | `administrator`                                                                                              |
 | `externalDatabase.initPasswordHash` | Password hash used when initializing the database. Default: horizon               | `$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/` |
