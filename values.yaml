@@ -430,6 +430,14 @@ mongodb:
 ## @param externalDatabase.initUsername Username used when initializing the database
 ## @param externalDatabase.initPasswordHash Password hash used when initializing the database. Default: horizon
 externalDatabase:
+  ## The uri field can be a reference to a secret.
+  ## E.g.
+  ##   uri:
+  ##     valueFrom:
+  ##       secretKeyRef:
+  ##         name: horizon-secret
+  ##         key: mongoDBUri
+  ##
   uri: {}
   initDatabase: true
   initUsername: administrator
