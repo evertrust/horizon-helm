@@ -281,8 +281,8 @@ ingress:
     ## e.g:
     ## annotations:
     ##   kubernetes.io/ingress.class: nginx
-  ##   cert-manager.io/cluster-issuer: cluster-issuer-name
-  ##
+    ##   cert-manager.io/cluster-issuer: cluster-issuer-name
+    ##
   annotations: {}
   ## @param ingress.hosts Routing configuration for the ingress
   hosts: []
@@ -439,6 +439,9 @@ externalDatabase:
   ##         key: mongoDBUri
   ##
   uri: {}
+  ## @param externalDatabase.waitForDatabase Set this to true to spawn an init container checking the connection to MongoDB
+  ## **NOTE** : this requires the bitnami/mongo image located on the Docker Hub. If not available, disable the init container.
+  waitForDatabase: true
   initDatabase: true
   initUsername: administrator
   initPasswordHash: $6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/

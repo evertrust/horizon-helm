@@ -47,14 +47,16 @@ spec:
       {{- if .Values.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
+      {{- if .Values.externalDatabase.waitForDatabase }}
       initContainers:
         - name: mongodb-checker
-          image: rtsp/mongosh:1.1.6
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.mongodb.image "global" .Values.mongodb.global) }}
           imagePullPolicy: IfNotPresent
-          command: [ "sh", "-c", "until mongosh --norc --quiet --eval \"exit()\" \"$MONGODB_URI\"; do echo \"Waiting for $MONGODB_URI...\"; sleep 2; done" ]
+          command: [ "sh", "-c", "until mongo --quiet --eval \"quit()\" \"$MONGODB_URI\"; do echo \"Waiting for $MONGODB_URI...\"; sleep 2; done" ]
           env:
             - name: MONGODB_URI
             {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}
+      {{- end }}
       containers:
         - name: horizon
           image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" $) }}

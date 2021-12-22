@@ -28,14 +28,22 @@ kubectl create secret docker-registry evertrust-registry \
 ```
 If deploying to a specific namespace, don't forget to namespace the secret accordingly.
 
-Once done, tell the chart to use the newly created secret by adding an entry in the `imagePullSecrets` key in `values.yaml`:
+Once done, tell the chart to use the newly created secret by adding an entry in the `image.pullSecrets` key in `values.yaml`:
 ```yaml
-imagePullSecrets:
-  - name: evertrust-registry
+image:
+  pullSecrets:
+    - name: evertrust-registry
 ```
 
 ### License
-You must have a valid license to deploy Horizon. Create a secret in the namespace you want to deploy Horizon to and reference it in your `values.yaml` under the `license` key:
+You must also have a valid license to deploy Horizon. Create a secret in the namespace you want to deploy Horizon to :
+```shell
+kubectl create secret generic horizon-license \
+--from-literal="license=<license>"
+```
+When doing so, take care to remove newlines in your license.
+
+Then, reference it in your `values.yaml` under the `license` key:
 ```yaml
 license:
   secretName: horizon-license
@@ -43,32 +51,39 @@ license:
 ```
 
 ### Secrets
-The chart is unopinionated about you should handle your secrets. Therefore, if you wish to use the Kubernetes secrets implementation, you must create the secrets beforehand and inject them in Horizon pods using the `environment` key in `values.yaml`.
+Secret values should not be stored in your `values.yaml` file in a production environment.
+Instead, you should create Kubernetes secrets beforehand or inject them directly into the pod.
 
-To get your application up and running, you may inject the following environment variables :
+Values that should be treated as secrets in this chart are :
+- `appSecret`
+- `vaults.*.master_password`
+- `mailer.password`
+- `externalDatabase.uri`
+
+For each of these values, either :
+- leave the field empty, so that a secret will be automatically generated.
+- specify a value directly (not recommended in productions as Helm values are exposed) :
 ```yaml
-environment:
-  - name: MONGODB_URI
-    value: <MONGO_URI>
-  - name: APPLICATION_SECRET
-    value: <APPLICATION_SECRET>
-  - name: DEFAULT_SSV_SECRET
-    value: <DEFAULT_SSV_SECRET>
+appSecret:
+  value: <app secret>
 ```
-You can also fetch those values from a Kubernetes secret :
+- derive the secret value from an existing Kubernetes secret :
 ```yaml
-environment:
-  - name: MONGO_URI
-      valueFrom:
-        secretKeyRef:
-          name: mongo-secret
-          key: uri
+appSecret:
+  valueFrom:
+    secretKeyRef:
+      name: <secret name>
+      key: <secret key>
 ```
 
-Another option would be to inject the env variables via a sidecar helper (like the [Hashicorp Vault](https://www.vaultproject.io/docs/platform/k8s/injector) one).  
-You can find a list of environment-fetched config values in `values.yaml` since they use the `"${?VAR_NAME}"` syntax. You may also add/remove environment-fetched variables at your convenience.
+### Database
+When installing the chart, you face multiple options regarding your database :
 
-### Parameters
+- By default, a local MongoDB standalone instance will be spawned in your cluster, using the [`bitnami/mongodb`](https://github.com/bitnami/charts/tree/master/bitnami/mongodb) chart. No additional configuration is required but it is not production ready.
+- If you want to use an existing MongoDB instance, provide the `externalDatabase.uri` value. The URI should be treated as a secret as it must include credentials.
+
+
+## Parameters
 
 #### Global parameters
 
