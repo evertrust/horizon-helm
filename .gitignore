@@ -1,3 +1,4 @@
 /.idea
 values.*.yml
 horizon-*.tgz
+.DS_Store
