@@ -1,12 +1,12 @@
 {{- define "horizon.rendersecret" -}}
-    {{- if .value }}
+    {{- if .value -}}
       {{- include "common.tplvalues.render" (dict "value" .value "context" .context) }}
-    {{- else }}
+    {{- else -}}
 valueFrom:
   secretKeyRef:
     name: {{ include "common.names.fullname" .context }}
     key: {{ .key }}
-    {{- end }}
+    {{- end -}}
 {{- end -}}
 
 
@@ -25,5 +25,4 @@ valueFrom:
     {{- range .Values.allowedHosts -}}
         {{- printf "\"%s\"," . -}}
     {{- end -}}
-    {{- printf "\"localhost:9000\"" -}}
 {{- end }}

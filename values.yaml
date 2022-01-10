@@ -320,9 +320,9 @@ license:
 ## By default, we want to use a simple symmetric vault and fetch
 ## the secret from the pod's environment.
 ## For more information, refer to the Horizon installation guide.
-## @param vaults [object] Horizon vaults configuration
+## @param vaults [array] Horizon vaults configuration
 vaults:
-  default:
+  - name: default
     vault_type: ssv
     ## The master_password field can be a reference to a secret.
     ## E.g.
@@ -354,7 +354,8 @@ vault:
 ##   - localhost:9000
 ##   - demo.example.org
 ##
-allowedHosts: []
+allowedHosts:
+  - localhost:9000
 
 ## Configuration for the Horizon mailer.
 ## You should configure this if you want your Horizon instance to be able

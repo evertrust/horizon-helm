@@ -32,7 +32,7 @@ Once done, tell the chart to use the newly created secret by adding an entry in 
 ```yaml
 image:
   pullSecrets:
-    - name: evertrust-registry
+    - evertrust-registry
 ```
 
 ### License
@@ -82,10 +82,15 @@ When installing the chart, you face multiple options regarding your database :
 - By default, a local MongoDB standalone instance will be spawned in your cluster, using the [`bitnami/mongodb`](https://github.com/bitnami/charts/tree/master/bitnami/mongodb) chart. No additional configuration is required but it is not production ready.
 - If you want to use an existing MongoDB instance, provide the `externalDatabase.uri` value. The URI should be treated as a secret as it must include credentials.
 
+## Running behind a Docker proxy
+If your installation environment requires you to whitelist images that can be pulled by the Kubernetes cluster, you must whitelist the `registry.evertrust.io/horizon` image.
+
+Additionally, the chart may spawn a local MongoDB instance and always checks for a valid MongoDB connection with the `docker.io/bitnami/mongodb` image.
+If you wish to skip the check, set `externalDatabase.waitForDatabase` to `false`.
 
 ## Parameters
 
-#### Global parameters
+### Global parameters
 
 | Name                | Description                                                          | Value |
 | ------------------- | -------------------------------------------------------------------- | ----- |
@@ -96,7 +101,7 @@ When installing the chart, you face multiple options regarding your database :
 | `commonAnnotations` | Annotations to add to all deployed objects                           | `{}`  |
 
 
-#### Horizon deployment parameters
+### Horizon deployment parameters
 
 | Name                                    | Description                                                                               | Value                   |
 | --------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------- |
@@ -155,7 +160,7 @@ When installing the chart, you face multiple options regarding your database :
 | `environment`                           | Extra env vars passed to the Horizon pods                                                 | `[]`                    |
 
 
-#### Horizon Service configuration
+### Horizon Service configuration
 
 | Name                               | Description                                                       | Value       |
 | ---------------------------------- | ----------------------------------------------------------------- | ----------- |
@@ -167,7 +172,7 @@ When installing the chart, you face multiple options regarding your database :
 | `service.annotations`              | Annotations for Horizon service                                   | `{}`        |
 
 
-#### Horizon Ingress configuration
+### Horizon Ingress configuration
 
 | Name                       | Description                                                                                                                      | Value   |
 | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------- |
@@ -178,14 +183,14 @@ When installing the chart, you face multiple options regarding your database :
 | `ingress.tls`              | Enable TLS configuration for the ingress                                                                                         | `[]`    |
 
 
-#### Horizon application parameters
+### Horizon application parameters
 
 | Name                  | Description                                                     | Value                                                                             |
 | --------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | `appSecret`           | Application secret used for encrypting session data and cookies | `{}`                                                                              |
 | `license.secretName`  | Existing secret name where the Horizon license is stored        | `""`                                                                              |
 | `license.secretKey`   | Existing secret key where the Horizon license is stored         | `""`                                                                              |
-| `vaults`              | Horizon vaults configuration                                    | `{}`                                                                              |
+| `vaults`              | Horizon vaults configuration                                    | `[]`                                                                              |
 | `vault.configuration` | Name of the vault used for configuration purposes               | `default`                                                                         |
 | `vault.escrow`        | Name of the vault used for escrowing purposes                   | `default`                                                                         |
 | `vault.transient`     | Name of the vault used for storing transient keys               | `default`                                                                         |
@@ -201,7 +206,7 @@ When installing the chart, you face multiple options regarding your database :
 | `logback.loggers`     | Enabled loggers in the `name: LEVEL` format                     | `{}`                                                                              |
 
 
-#### Database parameters
+### Database parameters
 
 | Name                                | Description                                                                       | Value                                                                                                        |
 | ----------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -211,5 +216,6 @@ When installing the chart, you face multiple options regarding your database :
 | `externalDatabase.initDatabase`     | Set this to true to create an administrator user                                  | `true`                                                                                                       |
 | `externalDatabase.initUsername`     | Username used when initializing the database                                      | `administrator`                                                                                              |
 | `externalDatabase.initPasswordHash` | Password hash used when initializing the database. Default: horizon               | `$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/` |
+| `externalDatabase.waitForDatabase`  | Set this to true to spawn an init container checking the connection to MongoDB    | `true`                                                                                                       |
 
 

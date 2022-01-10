@@ -106,10 +106,10 @@ spec:
             {{- if .Values.mailer.password }}
             - name: MAILER_PASSWORD {{- include "common.tplvalues.render" (dict "value" .Values.mailer.password "context" $) | nindent 14 }}
             {{- end }}
-            {{- range $name, $params := .Values.vaults }}
-            {{- if hasKey $params "master_password" }}
-            - name: {{ printf "%s_master_password" $name | upper }}
-            {{- include "horizon.rendersecret" (dict "value" $params.master_password "key" (printf "%sVaultMasterPassword" $name) "context" $) | nindent 14 }}
+            {{- range .Values.vaults }}
+            {{- if hasKey . "master_password" }}
+            - name: {{ printf "%s_master_password" .name | upper }}
+            {{- include "horizon.rendersecret" (dict "value" .master_password "key" (printf "%sVaultMasterPassword" .name) "context" $) | nindent 14 }}
             {{- end }}
             {{- end }}
           volumeMounts:
