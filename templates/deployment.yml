@@ -47,15 +47,14 @@ spec:
       {{- if .Values.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
-      {{- if .Values.externalDatabase.waitForDatabase }}
+      {{- if and (not .Values.externalDatabase.uri) .Values.mongodb.enabled }}
       initContainers:
-        - name: mongodb-checker
-          image: {{ include "common.images.image" (dict "imageRoot" .Values.mongodb.image "global" .Values.mongodb.global) }}
+        - name: wait-for-mongodb
+          image: groundnuty/k8s-wait-for:v1.3
           imagePullPolicy: IfNotPresent
-          command: [ "sh", "-c", "until mongo --quiet --eval \"quit()\" \"$MONGODB_URI\"; do echo \"Waiting for $MONGODB_URI...\"; sleep 2; done" ]
-          env:
-            - name: MONGODB_URI
-            {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}
+          args:
+            - "service"
+            - {{ .Values.mongodb.fullnameOverride }}
       {{- end }}
       containers:
         - name: horizon

@@ -82,11 +82,10 @@ When installing the chart, you face multiple options regarding your database :
 - By default, a local MongoDB standalone instance will be spawned in your cluster, using the [`bitnami/mongodb`](https://github.com/bitnami/charts/tree/master/bitnami/mongodb) chart. No additional configuration is required but it is not production ready.
 - If you want to use an existing MongoDB instance, provide the `externalDatabase.uri` value. The URI should be treated as a secret as it must include credentials.
 
-## Running behind a Docker proxy
+### Running behind a Docker registry proxy
 If your installation environment requires you to whitelist images that can be pulled by the Kubernetes cluster, you must whitelist the `registry.evertrust.io/horizon` image.
 
-Additionally, the chart may spawn a local MongoDB instance and always checks for a valid MongoDB connection with the `docker.io/bitnami/mongodb` image.
-If you wish to skip the check, set `externalDatabase.waitForDatabase` to `false`.
+Additionally, when configured to do so, the chart will spawn a local MongoDB instance with the `docker.io/bitnami/mongodb` image and check the database connectivity with the `docker.io/groundnuty/k8s-wait-for:v1.3` image.
 
 ## Parameters
 
@@ -212,10 +211,10 @@ If you wish to skip the check, set `externalDatabase.waitForDatabase` to `false`
 | ----------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | `mongodb.enabled`                   | Set this to true to install a local MongoDB instance                              | `true`                                                                                                       |
 | `mongodb.database`                  | Database name to use when using a local MongoDB instance                          | `horizon`                                                                                                    |
+| `mongodb.fullnameOverride`          | Local MongoDB installation name                                                   | `horizon-mongodb`                                                                                            |
 | `externalDatabase.uri`              | External MongoDB URI. If set, this will override the `mongodb.enabled` parameter. | `{}`                                                                                                         |
 | `externalDatabase.initDatabase`     | Set this to true to create an administrator user                                  | `true`                                                                                                       |
 | `externalDatabase.initUsername`     | Username used when initializing the database                                      | `administrator`                                                                                              |
 | `externalDatabase.initPasswordHash` | Password hash used when initializing the database. Default: horizon               | `$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/` |
-| `externalDatabase.waitForDatabase`  | Set this to true to spawn an init container checking the connection to MongoDB    | `true`                                                                                                       |
 
 
