@@ -126,7 +126,7 @@ Additionally, when configured to do so, the chart will spawn a local MongoDB ins
 | `nodeAffinityPreset.values`             | Node label values to match. Ignored if `affinity` is set                                  | `[]`                    |
 | `affinity`                              | Affinity for pod assignment                                                               | `{}`                    |
 | `nodeSelector`                          | Node labels for pod assignment                                                            | `{}`                    |
-| `tolerations`                           | Tolerations for pod assignment                                                            | `{}`                    |
+| `tolerations`                           | Tolerations for pod assignment                                                            | `[]`                    |
 | `resources.limits`                      | The resources limits for the Horizon container                                            | `{}`                    |
 | `resources.requests`                    | The requested resources for the Horizon container                                         | `{}`                    |
 | `podSecurityContext.enabled`            | Enabled Horizon pods' Security Context                                                    | `true`                  |

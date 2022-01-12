@@ -14,4 +14,4 @@ dependencies:
   - name: mongodb
     version: 10.30.6
     repository: https://charts.bitnami.com/bitnami
-    condition: and (not .Values.externalDatabase.uri) .Values.mongodb.enabled
+    condition: mongodb.enabled

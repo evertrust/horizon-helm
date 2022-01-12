@@ -153,8 +153,8 @@
             "description": "Node labels for pod assignment"
         },
         "tolerations": {
-            "type": "object",
-            "default": "{}",
+            "type": "array",
+            "default": "[]",
             "description": "Tolerations for pod assignment"
         },
         "resources": {
