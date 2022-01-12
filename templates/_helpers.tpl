@@ -1,17 +1,28 @@
-{{- define "horizon.app" -}}
-{{ printf "%s-%s" .Release.Name "app" }}
+{{- define "horizon.rendersecret" -}}
+    {{- if .value -}}
+      {{- include "common.tplvalues.render" (dict "value" .value "context" .context) }}
+    {{- else -}}
+valueFrom:
+  secretKeyRef:
+    name: {{ include "common.names.fullname" .context }}
+    key: {{ .key }}
+    {{- end -}}
 {{- end -}}
 
-{{- define "horizon.deployment" -}}
-{{ printf "%s-%s" .Release.Name "deployment" }}
-{{- end -}}
 
-{{- define "horizon.baseLabels" -}}
-app.kubernetes.io/app: horizon
-app.kubernetes.io/instance: {{ printf "%s-%s" "horizon" .Release.Name }}
-{{- end -}}
+{{- define "horizon.mongodbUri" }}
+{{- include "horizon.rendersecret" (dict "value" .context.Values.externalDatabase.uri "key" "mongoUri" "context" .context) }}
+{{- end }}
 
-{{- define "horizon.labels" -}}
-{{- include "horizon.baseLabels" . }}
-app.kubernetes.io/version: {{ .Chart.AppVersion }}
-{{- end -}}
+{{- define "horizon.appSecret" }}
+{{- include "horizon.rendersecret" (dict "value" .context.Values.appSecret "key" "appSecret" "context" .context) }}
+{{- end }}
+
+{{- define "horizon.allowedHosts" }}
+    {{- range .Values.ingress.hosts -}}
+        {{- printf "\"%s\"," .host -}}
+    {{- end -}}
+    {{- range .Values.allowedHosts -}}
+        {{- printf "\"%s\"," . -}}
+    {{- end -}}
+{{- end }}

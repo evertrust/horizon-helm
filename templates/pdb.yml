@@ -2,13 +2,21 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: {{ .Release.Name }}-pdb
-  labels:
-  {{- include "horizon.labels" . | nindent 4 }}
+  name: {{ template "common.names.fullname" . }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
 spec:
-  minAvailable: {{ .Values.disruptionBudget.minAvailable | default "null" }}
-  maxUnavailable: {{ .Values.disruptionBudget.maxUnavailable | default "null" }}
+  {{- if .Values.disruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.disruptionBudget.minAvailable }}
+  {{- end }}
+  {{- if .Values.disruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.disruptionBudget.maxUnavailable }}
+  {{- end }}
   selector:
-    matchLabels:
-  {{- include "horizon.baseLabels" . | nindent 6 }}
+    matchLabels: {{ include "common.labels.matchLabels" . | nindent 6 }}
   {{ end }}

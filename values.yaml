@@ -1,147 +1,447 @@
-# Configure the Play secret for the Horizon instance.
-# As this is used for cryptographic purposes, it should be fetched
-# from the environment.
-#
-# ref https://www.playframework.com/documentation/2.8.x/ApplicationSecret
-appSecret: "${?APPLICATION_SECRET}"
+## @section Global parameters
 
-# A valid Horizon license is required for the software to run.
-# You should store it (base64-encoded) in a Kubernetes secret and specify
-# the secret details here.
-# ref README.md
+## @param kubeVersion Force target Kubernetes version (using Helm capabilities if not set)
+##
+kubeVersion: ""
+## @param nameOverride String to partially override horizon.fullname
+##
+nameOverride: ""
+## @param fullnameOverride String to fully override horizon.fullname
+##
+fullnameOverride: ""
+## @param commonLabels Labels to add to all deployed objects
+##
+commonLabels: {}
+## @param commonAnnotations Annotations to add to all deployed objects
+##
+commonAnnotations: {}
+
+## @section Horizon deployment parameters
+
+## By default, we fetch the Horizon image from the Evertrust registry.
+## If the tag is null or unset, the default value will be set the to the chart appVersion.
+## As the official Evertrust registry is not in open-access,
+## you should specify an image pull secret that has
+## access to Horizon images.
+##
+## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+## @param image.registry Horizon image registry
+## @param image.repository Horizon image repository
+## @param image.tag Horizon image tag (immutable tags are recommended)
+## @param image.pullPolicy Horizon image pull policy
+## @param image.pullSecrets Horizon image pull secrets
+##
+image:
+  registry: registry.evertrust.io
+  repository: horizon
+  tag: 2.0.4
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+
+## @param updateStrategy.type Horizon deployment strategy type
+## @param updateStrategy.rollingUpdate [object] Rolling update spec
+## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+## NOTE: Set it to `Recreate` if you use a PV that cannot be mounted on multiple pods
+## e.g:
+## updateStrategy:
+##  type: RollingUpdate
+##  rollingUpdate:
+##    maxSurge: 25%
+##    maxUnavailable: 25%
+##
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+## @param priorityClassName Horizon pod priority class name
+##
+priorityClassName: ""
+## @param hostAliases Horizon pod host aliases
+## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
+##
+hostAliases: []
+## @param extraVolumes Optionally specify extra list of additional volumes for Horizon pods
+##
+extraVolumes: []
+## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for Horizon container(s)
+##
+extraVolumeMounts: []
+## @param sidecars Add additional sidecar containers to the Horizon pod
+## e.g:
+## sidecars:
+##   - name: your-image-name
+##     image: your-image
+##     imagePullPolicy: Always
+##     ports:
+##       - name: portname
+##         containerPort: 1234
+##
+sidecars: []
+## @param lifecycleHooks Add lifecycle hooks to the Horizon deployment
+##
+lifecycleHooks: {}
+## @param podLabels Extra labels for Horizon pods
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+##
+podLabels: {}
+## @param podAnnotations Annotations for Horizon pods
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+##
+podAnnotations: {}
+## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+##
+podAffinityPreset: ""
+## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+##
+podAntiAffinityPreset: soft
+## Node affinity preset
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+##
+nodeAffinityPreset:
+  ## @param nodeAffinityPreset.type Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+  ##
+  type: ""
+  ## @param nodeAffinityPreset.key Node label key to match. Ignored if `affinity` is set
+  ##
+  key: ""
+  ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set
+  ## E.g.
+  ## values:
+  ##   - e2e-az1
+  ##   - e2e-az2
+  ##
+  values: []
+## @param affinity Affinity for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+## NOTE: podAffinityPreset, podAntiAffinityPreset, and nodeAffinityPreset will be ignored when it's set
+##
+affinity: {}
+## @param nodeSelector Node labels for pod assignment
+## ref: https://kubernetes.io/docs/user-guide/node-selection/
+##
+nodeSelector: {}
+## @param tolerations Tolerations for pod assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: []
+## Horizon containers' resource requests and limits
+## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+## @param resources.limits [object] The resources limits for the Horizon container
+## @param resources.requests [object] The requested resources for the Horizon container
+##
+## **Notes** : The JVM will automatically adapt the memory allocation pool
+## to the container allocated resources.
+##
+resources:
+  limits: {}
+  requests:
+    memory: 512Mi
+    cpu: 300m
+## Configure Pods Security Context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+## @param podSecurityContext.enabled Enabled Horizon pods' Security Context
+## @param podSecurityContext.fsGroup Set Horizon pod's Security Context fsGroup
+##
+podSecurityContext:
+  enabled: true
+  fsGroup: 1001
+## Configure Container Security Context (only main container)
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+## @param containerSecurityContext.enabled Enabled Horizon containers' Security Context
+## @param containerSecurityContext.runAsUser Set Horizon container's Security Context runAsUser
+## @param containerSecurityContext.runAsNonRoot Set Horizon container's Security Context runAsNonRoot
+##
+containerSecurityContext:
+  enabled: true
+  runAsUser: 1001
+  runAsNonRoot: true
+## Configure extra options for Horizon containers' liveness and readiness probes
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+## @param livenessProbe.enabled Enable livenessProbe
+## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
+## @param livenessProbe.periodSeconds Period seconds for livenessProbe
+## @param livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
+## @param livenessProbe.failureThreshold Failure threshold for livenessProbe
+## @param livenessProbe.successThreshold Success threshold for livenessProbe
+##
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 90
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 6
+## @param readinessProbe.enabled Enable readinessProbe
+## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
+## @param readinessProbe.periodSeconds Period seconds for readinessProbe
+## @param readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
+## @param readinessProbe.failureThreshold Failure threshold for readinessProbe
+## @param readinessProbe.successThreshold Success threshold for readinessProbe
+##
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 5
+  timeoutSeconds: 3
+  successThreshold: 1
+  failureThreshold: 3
+## @param customLivenessProbe Custom livenessProbe that overrides the default one
+##
+customLivenessProbe: {}
+## @param customReadinessProbe Custom readinessProbe that overrides the default one
+#
+customReadinessProbe: {}
+
+## Horizon Autoscaling configuration
+## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+## @param horizontalAutoscaler.enabled Enable Horizontal POD autoscaling for Horizon
+## @param horizontalAutoscaler.minReplicas Minimum number of Horizon replicas
+## @param horizontalAutoscaler.maxReplicas Maximum number of Horizon replicas
+## @param horizontalAutoscaler.targetCPU Target CPU utilization percentage
+## @param horizontalAutoscaler.targetMemory Target Memory utilization percentage
+##
+horizontalAutoscaler:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPU: 50
+  targetMemory: 50
+
+## Pod Disruption Budget configuration
+## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+##
+disruptionBudget:
+  ## @param disruptionBudget.enabled Created a PodDisruptionBudget
+  ##
+  enabled: false
+  ## @param disruptionBudget.minAvailable Min number of pods that must still be available after the eviction
+  ##
+  minAvailable: 1
+  ## @param disruptionBudget.maxUnavailable Max number of pods that can be unavailable after the eviction
+  ##
+  maxUnavailable: 0
+
+## Configure environment variable injections into Horizon's pods.
+## This is the way you should inject secrets into the app if you wish
+## to use the Kubernetes secrets implementation.
+##
+## ref: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
+## @param environment [array] Extra env vars passed to the Horizon pods
+environment: []
+
+## @section Horizon Service configuration
+##
+service:
+  ## @param service.type Kubernetes service type
+  ##
+  type: ClusterIP
+  ## @param service.clusterIP Horizon service clusterIP IP
+  ## e.g:
+  ## clusterIP: None
+  ##
+  clusterIP: ""
+  ## @param service.loadBalancerIP loadBalancerIP for the Horizon Service (optional, cloud specific)
+  ## ref: https://kubernetes.io/docs/user-guide/services/#type-loadbalancer
+  ##
+  loadBalancerIP: ""
+  ## @param service.loadBalancerSourceRanges Address that are allowed when service is LoadBalancer
+  ## https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+  ## Example:
+  ## loadBalancerSourceRanges:
+  ##   - 10.10.10.0/24
+  ##
+  loadBalancerSourceRanges: []
+  ## @param service.externalTrafficPolicy Enable client source IP preservation
+  ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+  ##
+  externalTrafficPolicy: Cluster
+  ## @param service.annotations Annotations for Horizon service
+  ##
+  annotations: {}
+
+## @section Horizon Ingress configuration
+##
+## ref https://kubernetes.io/docs/concepts/services-networking/ingress/
+ingress:
+  ## @param ingress.enabled Set to true to enable ingress record generation
+  ##
+  enabled: false
+  ## @param ingress.ingressClassName IngressClass that will be be used to implement the Ingress (Kubernetes 1.18+)
+  ingressClassName: ""
+    ## @param ingress.annotations Additional annotations for the Ingress resource. To enable certificate autogeneration, place here your cert-manager annotations.
+    ## For a full list of possible ingress annotations, please see
+    ## ref: https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md
+    ## Use this parameter to set the required annotations for cert-manager, see
+    ## ref: https://cert-manager.io/docs/usage/ingress/#supported-annotations
+    ##
+    ## e.g:
+    ## annotations:
+    ##   kubernetes.io/ingress.class: nginx
+    ##   cert-manager.io/cluster-issuer: cluster-issuer-name
+    ##
+  annotations: {}
+  ## @param ingress.hosts Routing configuration for the ingress
+  hosts: []
+  ## @param ingress.tls Enable TLS configuration for the ingress
+  tls: []
+
+## @section Horizon application parameters
+
+## Configure the Play secret for the Horizon instance.
+## As this is used for cryptographic purposes, it should be fetched
+## from the environment.
+##
+## ref https://www.playframework.com/documentation/2.8.x/ApplicationSecret
+## @param appSecret [object] Application secret used for encrypting session data and cookies
+## E.g.
+## appSecret:
+##   valueFrom:
+##     secretKeyRef:
+##       name: horizon-secret
+##       key: appSecret
+##
+appSecret: {}
+
+## A valid Horizon license is required for the software to run.
+## You should store it (base64-encoded) in a Kubernetes secret and specify
+## the secret details here.
+## ref: README.md
+## @param license.secretName Existing secret name where the Horizon license is stored
+## @param license.secretKey Existing secret key where the Horizon license is stored
 license:
-  secretName: null
-  secretKey: null
+  secretName: ""
+  secretKey: ""
 
-# Configuration for an Horizon external database
-# Refer to the Horizon installation guide to configure the installation correctly
-#
-# **NOTE** : The MongoDB connection URI *MUST* explicitly state the authentication
-# source. Should you use the default "admin" source, append &authSource=admin to your URI.
-externalDatabase:
-  # By default, we want to pull that value from the pod's environment.
-  # You can either inject it or store the value in your values.yaml file after
-  # modifying the line below.
-  uri: "${?MONGODB_URI}"
-
-# Define the vaults that can be used by Horizon.
-# By default, we want to use a simple symmetric vault and fetch
-# the secret from the pod's environment.
-# For more information, refer to the Horizon installation guide.
+## Define the vaults that can be used by Horizon.
+## By default, we want to use a simple symmetric vault and fetch
+## the secret from the pod's environment.
+## For more information, refer to the Horizon installation guide.
+## @param vaults [array] Horizon vaults configuration
 vaults:
-  default:
+  - name: default
     vault_type: ssv
-    master_password: "${?DEFAULT_SSV_SECRET}"
+    ## The master_password field can be a reference to a secret.
+    ## E.g.
+    ##   master_password:
+    ##     valueFrom:
+    ##       secretKeyRef:
+    ##         name: horizon-secret
+    ##         key: defaultMasterPassword
+    ##
+    master_password: {}
 
-# Configure the vaults that will be used by Horizon for storing sensitive data .
-# Each vault name should be defined under the `vaults` key above.
-# For more information, refer to the Horizon installation guide.
+## Configure the vaults that will be used by Horizon for storing sensitive data .
+## Each vault name should be defined under the `vaults` key above.
+## For more information, refer to the Horizon installation guide.
+## @param vault.configuration Name of the vault used for configuration purposes
+## @param vault.escrow Name of the vault used for escrowing purposes
+## @param vault.transient Name of the vault used for storing transient keys
 vault:
   configuration: default
   escrow: default
   transient: default
 
-# Configuration for the Horizon mailer.
-# You should configure this if you want your Horizon instance to be able
-# to send emails.
-# You should fetch credentials from the environment if they are required.
-#
+## Additional allowed hosts that are whitelisted to access the Horizon UI.
+## Configured ingresses will automatically be added to the list, this should
+## only be used when port forwarding or when an ingress is created manually.
+## @param allowedHosts [array] Additional allowed hosts.
+## E.g.
+## allowedHosts:
+##   - localhost:9000
+##   - demo.example.org
+##
+allowedHosts:
+  - localhost:9000
+
+## Configuration for the Horizon mailer.
+## You should configure this if you want your Horizon instance to be able
+## to send emails.
+## You should fetch credentials from the environment if they are required.
+## @param mailer.host SMTP host
+## @param mailer.port SMTP host port
+## @param mailer.tls Enable TLS for this SMTP host
+## @param mailer.ssl Enable SSL for this SMTP host
+## @param mailer.user Authentication username for this SMTP host
+## @param mailer.password [object] Authentication password for this SMTP host
 mailer:
-  host: null
+  host: ""
   port: 587
   tls: true
   ssl: false
-  user: "${?SMTP_USER}"
-  password: "${?SMTP_PASSWORD}"
+  user: ""
+    ## The password field can be a reference to a secret.
+    ## E.g.
+    ##   password:
+    ##     valueFrom:
+    ##       secretKeyRef:
+    ##         name: horizon-secret
+    ##         key: mailerPassword
+    ##
+  password: {}
 
-# Configuration for your deployment resource requests.
-# Bear in mind that these requests are applied per-pod and not per deployment.
-# If you configured an autoscaler with a minimum of 3 pods, Horizon will consume
-# 3 times these resources.
-#
-# **Notes** : The JVM will automatically adapt the memory allocation pool
-# to the container allocated resources.
-#
-# ref https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-resources:
-  requests:
-    memory: 2Gi
-    cpu: 100m
-  limits:
-    memory: 3Gi
-    cpu: 1000m
-
-# Configuration for the horizontal pod autoscaler
-# that will apply to the Horizon deployment.
-#
-# ref https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
-horizontalAutoscaler:
-  enabled: true
-  minReplicas: 3
-  maxReplicas: 10
-
-# Configuration for the disruption budget for your Horizon deployment.
-#
-# ref https://kubernetes.io/docs/tasks/run-application/configure-pdb/
-disruptionBudget:
-  enabled: true
-  minAvailable: 2
-
-# By default, we fetch the Horizon image from the Evertrust registry.
-# # If the tag is null or unset, the default value will be set the to the chart appVersion.
-image:
-  registry: registry.evertrust.io/horizon
-  tag: null
-  pullPolicy: IfNotPresent
-
-# As the official Evertrust registry is not in open-access,
-# you should specify an image pull secret that has
-# access to Horizon images.
-#
-# ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-imagePullSecrets: []
-
-# Configure an Ingress for the Horizon deployment.
-#
-# ref https://kubernetes.io/docs/concepts/services-networking/ingress/
-ingress:
-  enabled: false
-  annotations: {}
-  hosts: []
-  tls: []
-
-# Configure the logger for this Horizon instance.
-# Sensible defaults are set, but you may need a more verbose logging
-# experience when debugging the application.
-#
-# ref https://www.playframework.com/documentation/2.8.x/ScalaLogging
+## Configure the logger for this Horizon instance.
+## Sensible defaults are set, but you may need a more verbose logging
+## experience when debugging the application.
+##
+## ref: https://www.playframework.com/documentation/2.8.x/ScalaLogging
+## @param logback.level Global level below wich messages will not be logged
+## @param logback.pattern Log messages pattern
+## @param logback.loggers [object] Enabled loggers in the `name: LEVEL` format
 logback:
   level: DEBUG
   pattern: "%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}"
   loggers:
     play: WARN
-    akka.actor: WARN
-    akka.management.cluster: WARN
     reactivemongo: WARN
+    actors: DEBUG
+    actions: DEBUG
+    controllers: DEBUG
+    filters: DEBUG
+    models: DEBUG
+    modules: DEBUG
+    pki-connectors: DEBUG
+    racs-connectors: DEBUG
 
-# Configure environment variable injections into Horizon's pods.
-# This is the way you should inject secrets into the app if you wish
-# to use the Kubernetes secrets implementation.
-#
-# ref https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
-environment: {}
+## @section Database parameters
 
-# Configure affinity for the Horizon pods.
-#
-# ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
-affinity: {}
+## Install a MongoDB instance
+## ref: https://github.com/bitnami/charts/tree/master/bitnami/mongodb
+## @param mongodb.enabled Set this to true to install a local MongoDB instance
+## @param mongodb.database Database name to use when using a local MongoDB instance
+## @param mongodb.fullnameOverride Local MongoDB installation name
+## @skip mongodb.initdbScriptsConfigMap
+## @skip mongodb.auth.rootPassword
+mongodb:
+  enabled: true
+  database: horizon
+  initdbScriptsConfigMap: horizon-database-init-scripts
+  fullnameOverride: horizon-mongodb
+  auth:
+    rootPassword: horizonpassword
 
-# Configure a node selector for the Horizon pods.
-#
-# ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
-nodeSelector: {}
-
-# Configure taints for the Horizon pods.
-#
-# ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
-tolerations: []
+## Configuration for an Horizon external database
+## Refer to the Horizon installation guide to configure the installation correctly
+##
+## **NOTE** : The MongoDB connection URI *MUST* explicitly state the authentication
+## source. Should you use the default "admin" source, append &authSource=admin to your URI.
+## @param externalDatabase.uri [object] External MongoDB URI. If set, this will override the `mongodb.enabled` parameter.
+## @param externalDatabase.initDatabase Set this to true to create an administrator user
+## @param externalDatabase.initUsername Username used when initializing the database
+## @param externalDatabase.initPasswordHash Password hash used when initializing the database. Default: horizon
+externalDatabase:
+  ## The uri field can be a reference to a secret.
+  ## E.g.
+  ##   uri:
+  ##     valueFrom:
+  ##       secretKeyRef:
+  ##         name: horizon-secret
+  ##         key: mongoDBUri
+  ##
+  uri: {}
+  initDatabase: true
+  initUsername: administrator
+  initPasswordHash: $6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/

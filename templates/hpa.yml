@@ -1,22 +1,33 @@
 {{ if .Values.horizontalAutoscaler.enabled | default false }}
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ .Release.Name }}-hpa
-  labels:
-  {{- include "horizon.labels" . | nindent 4 }}
+  name: {{ template "common.names.fullname" . }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
     kind: Deployment
-    name: {{ include "horizon.deployment" . }}
+    name: {{ template "common.names.fullname" . }}
   minReplicas: {{ .Values.horizontalAutoscaler.minReplicas }}
   maxReplicas: {{ .Values.horizontalAutoscaler.maxReplicas }}
   metrics:
+    {{- if .Values.horizontalAutoscaler.targetCPU }}
     - type: Resource
       resource:
         name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 50
+        targetAverageUtilization: {{ .Values.horizontalAutoscaler.targetCPU }}
+    {{- end }}
+    {{- if .Values.horizontalAutoscaler.targetMemory }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ .Values.horizontalAutoscaler.targetMemory }}
+  {{- end }}
   {{ end }}
