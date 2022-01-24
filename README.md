@@ -61,7 +61,7 @@ Values that should be treated as secrets in this chart are :
 - `externalDatabase.uri`
 
 For each of these values, either :
-- leave the field empty, so that a secret will be automatically generated.
+- leave the field empty, so that a secret will be automatically generated.*
 - specify a value directly (not recommended in productions as Helm values are exposed) :
 ```yaml
 appSecret:
@@ -75,6 +75,8 @@ appSecret:
       name: <secret name>
       key: <secret key>
 ```
+
+> :warning: *Always store auto-generated secrets in a safe place after they're generated. If you ever uninstall your Helm chart, the deletion of the SSV secret will lead to the impossibility of recovering most of your data.
 
 ### Database
 When installing the chart, you face multiple options regarding your database :

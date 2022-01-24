@@ -1,3 +1,17 @@
+{{- define "horizon.generatesecret"}}
+{{- $secret := lookup "v1" "Secret" .namespace .name }}
+
+{{- if and $secret $secret.data }}
+    {{- if hasKey $secret.data .key }}
+    {{- printf "%s: %s" .key (index $secret.data .key) }}
+    {{- else }}
+    {{- printf "%s: %s" .key (.default | b64enc | quote) }}
+    {{- end }}
+{{- else }}
+    {{- printf "%s: %s" .key (.default | b64enc | quote) }}
+{{- end }}
+{{- end -}}
+
 {{- define "horizon.rendersecret" -}}
     {{- if .value -}}
       {{- include "common.tplvalues.render" (dict "value" .value "context" .context) }}
