@@ -61,7 +61,7 @@ Values that should be treated as secrets in this chart are :
 - `externalDatabase.uri`
 
 For each of these values, either :
-- leave the field empty, so that a secret will be automatically generated.
+- leave the field empty, so that a secret will be automatically generated.*
 - specify a value directly (not recommended in productions as Helm values are exposed) :
 ```yaml
 appSecret:
@@ -75,6 +75,8 @@ appSecret:
       name: <secret name>
       key: <secret key>
 ```
+
+> :warning: *Always store auto-generated secrets in a safe place after they're generated. If you ever uninstall your Helm chart, the deletion of the SSV secret will lead to the impossibility of recovering most of your data.
 
 ### Database
 When installing the chart, you face multiple options regarding your database :
@@ -207,14 +209,15 @@ Additionally, when configured to do so, the chart will spawn a local MongoDB ins
 
 ### Database parameters
 
-| Name                                | Description                                                                       | Value                                                                                                        |
-| ----------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `mongodb.enabled`                   | Set this to true to install a local MongoDB instance                              | `true`                                                                                                       |
-| `mongodb.database`                  | Database name to use when using a local MongoDB instance                          | `horizon`                                                                                                    |
-| `mongodb.fullnameOverride`          | Local MongoDB installation name                                                   | `horizon-mongodb`                                                                                            |
-| `externalDatabase.uri`              | External MongoDB URI. If set, this will override the `mongodb.enabled` parameter. | `{}`                                                                                                         |
-| `externalDatabase.initDatabase`     | Set this to true to create an administrator user                                  | `true`                                                                                                       |
-| `externalDatabase.initUsername`     | Username used when initializing the database                                      | `administrator`                                                                                              |
-| `externalDatabase.initPasswordHash` | Password hash used when initializing the database. Default: horizon               | `$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/` |
+| Name                                | Description                                                                                                                                                                           | Value                                                                                                        |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `mongodb.enabled`                   | Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter | `true`                                                                                                       |
+| `mongodb.architecture`              | MongoDB&reg; architecture (`standalone` or `replicaset`)                                                                                                                              | `standalone`                                                                                                 |
+| `mongodb.database`                  | Database name to use when using a local MongoDB instance                                                                                                                              | `horizon`                                                                                                    |
+| `mongodb.fullnameOverride`          | Local MongoDB installation name                                                                                                                                                       | `horizon-mongodb`                                                                                            |
+| `externalDatabase.uri`              | External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`.                                                                                  | `{}`                                                                                                         |
+| `externalDatabase.initDatabase`     | Set this to true to create an administrator user                                                                                                                                      | `true`                                                                                                       |
+| `externalDatabase.initUsername`     | Username used when initializing the database                                                                                                                                          | `administrator`                                                                                              |
+| `externalDatabase.initPasswordHash` | Password hash used when initializing the database. Default: horizon                                                                                                                   | `$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/` |
 
 
