@@ -1,4 +1,5 @@
 /.idea
+/charts
 values.*.yml
 horizon-*.tgz
 .DS_Store
