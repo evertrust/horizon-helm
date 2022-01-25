@@ -105,6 +105,10 @@ spec:
             {{- if .Values.mailer.password }}
             - name: MAILER_PASSWORD {{- include "common.tplvalues.render" (dict "value" .Values.mailer.password "context" $) | nindent 14 }}
             {{- end }}
+            {{- if .Values.events.chainsign }}
+            - name: EVENT_SEAL_SECRET
+            {{- include "horizon.eventSealSecret" (dict "context" .) | nindent 14 }}
+            {{- end }}
             {{- range .Values.vaults }}
             {{- if hasKey . "master_password" }}
             - name: {{ printf "%s_master_password" .name | upper }}

@@ -34,7 +34,7 @@ valueFrom:
 {{- end -}}
 
 {{- define "horizon.mongodbUri" }}
-{{/* If the mongodb subchart is enabled, we force Horizon to use it. */}}
+{{- /* If the mongodb subchart is enabled, we force Horizon to use it. */}}
 {{- if .context.Values.mongodb.enabled }}
     {{- if .context.Values.externalDatabase.uri }}
     {{- fail "When mongodb.enabled is set to true, you cannot specify externalDatabase.uri" }}
@@ -52,6 +52,10 @@ valueFrom:
 
 {{- define "horizon.appSecret" }}
 {{- include "horizon.rendersecret" (dict "value" .context.Values.appSecret "key" "appSecret" "context" .context) }}
+{{- end }}
+
+{{- define "horizon.eventSealSecret" }}
+{{- include "horizon.rendersecret" (dict "value" .context.Values.events.secret "key" "eventSealSecret" "context" .context) }}
 {{- end }}
 
 {{- define "horizon.allowedHosts" }}
