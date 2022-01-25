@@ -522,7 +522,7 @@
             "properties": {
                 "level": {
                     "type": "string",
-                    "default": "DEBUG",
+                    "default": "debug",
                     "description": "Global level below wich messages will not be logged"
                 },
                 "pattern": {
@@ -548,17 +548,52 @@
                 "architecture": {
                     "type": "string",
                     "default": "standalone",
-                    "description": "MongoDB&reg; architecture (`standalone` or `replicaset`)"
+                    "description": "MongoDB architecture (`standalone` or `replicaset`)"
                 },
-                "database": {
-                    "type": "string",
-                    "default": "horizon",
-                    "description": "Database name to use when using a local MongoDB instance"
+                "auth": {
+                    "type": "object",
+                    "properties": {
+                        "rootPassword": {
+                            "type": "string",
+                            "default": "\"\"",
+                            "description": "MongoDB admin password"
+                        },
+                        "username": {
+                            "type": "string",
+                            "default": "horizon",
+                            "description": "MongoDB custom user"
+                        },
+                        "database": {
+                            "type": "string",
+                            "default": "horizon",
+                            "description": "MongoDB custom database"
+                        },
+                        "password": {
+                            "type": "string",
+                            "default": "secret_password",
+                            "description": "MongoDB custom password"
+                        }
+                    }
                 },
-                "fullnameOverride": {
-                    "type": "string",
-                    "default": "horizon-mongodb",
-                    "description": "Local MongoDB installation name"
+                "horizon": {
+                    "type": "object",
+                    "properties": {
+                        "init": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "Set this to true to initialize the local database for Horizon"
+                        },
+                        "username": {
+                            "type": "string",
+                            "default": "administrator",
+                            "description": "Administration username used when initializing the database"
+                        },
+                        "passwordHash": {
+                            "type": "string",
+                            "default": "$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/",
+                            "description": "Password hash used when initializing the database. Default: horizon"
+                        }
+                    }
                 }
             }
         },
@@ -569,21 +604,6 @@
                     "type": "object",
                     "default": "{}",
                     "description": "External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`."
-                },
-                "initDatabase": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Set this to true to create an administrator user"
-                },
-                "initUsername": {
-                    "type": "string",
-                    "default": "administrator",
-                    "description": "Username used when initializing the database"
-                },
-                "initPasswordHash": {
-                    "type": "string",
-                    "default": "$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/",
-                    "description": "Password hash used when initializing the database. Default: horizon"
                 }
             }
         }

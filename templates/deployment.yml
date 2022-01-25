@@ -54,7 +54,7 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - "service"
-            - {{ .Values.mongodb.fullnameOverride }}
+            - {{ template "horizon.mongodb.fullname" . }}
       {{- end }}
       containers:
         - name: horizon

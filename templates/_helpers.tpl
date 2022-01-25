@@ -33,6 +33,14 @@ valueFrom:
     {{- end -}}
 {{- end -}}
 
+{{/*
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "horizon.mongodb.fullname" -}}
+{{- printf "%s-%s" .Release.Name "mongodb" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
 {{- define "horizon.mongodbUri" }}
 {{- /* If the mongodb subchart is enabled, we force Horizon to use it. */}}
 {{- if .context.Values.mongodb.enabled }}

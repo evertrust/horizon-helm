@@ -442,21 +442,45 @@ logback:
 
 ## Install a MongoDB instance
 ## ref: https://github.com/bitnami/charts/tree/master/bitnami/mongodb
-## @param mongodb.enabled Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter
-## @param mongodb.architecture MongoDB&reg; architecture (`standalone` or `replicaset`)
-##
-## @param mongodb.database Database name to use when using a local MongoDB instance
-## @param mongodb.fullnameOverride Local MongoDB installation name
-## @skip mongodb.initdbScriptsConfigMap
-## @skip mongodb.auth.rootPassword
 mongodb:
+  ## @param mongodb.enabled Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter
+  ##
   enabled: true
+  ## @param mongodb.architecture MongoDB architecture (`standalone` or `replicaset`)
+  ##
   architecture: standalone
-  database: horizon
+  ## @skip mongodb.initdbScriptsConfigMap
+  ##
   initdbScriptsConfigMap: horizon-database-init-scripts
-  fullnameOverride: horizon-mongodb
+  ## MongoDB Authentication parameters
+  ##
   auth:
-    rootPassword: horizonpassword
+    ## @param mongodb.auth.rootPassword MongoDB admin password
+    ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#setting-the-root-password-on-first-run
+    ##
+    rootPassword: ""
+    ## @param mongodb.auth.username MongoDB custom user
+    ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#creating-a-user-and-database-on-first-run
+    ##
+    username: horizon
+    ## @param mongodb.auth.database MongoDB custom database
+    ##
+    database: horizon
+    ## @param mongodb.auth.password MongoDB custom password
+    ##
+    password: secret_password
+  ## Horizon initialization parameters
+  ##
+  horizon:
+    ## @param mongodb.horizon.init Set this to true to initialize the local database for Horizon
+    ##
+    init: true
+    ## @param mongodb.horizon.username Administration username used when initializing the database
+    ##
+    username: administrator
+    ## @param mongodb.horizon.passwordHash Password hash used when initializing the database. Default: horizon
+    ##
+    passwordHash: $6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/
 
 ## Configuration for an Horizon external database
 ## Refer to the Horizon installation guide to configure the installation correctly
@@ -464,9 +488,6 @@ mongodb:
 ## **NOTE** : The MongoDB connection URI *MUST* explicitly state the authentication
 ## source. Should you use the default "admin" source, append &authSource=admin to your URI.
 ## @param externalDatabase.uri [object] External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`.
-## @param externalDatabase.initDatabase Set this to true to create an administrator user
-## @param externalDatabase.initUsername Username used when initializing the database
-## @param externalDatabase.initPasswordHash Password hash used when initializing the database. Default: horizon
 externalDatabase:
   ## The uri field can be a reference to a secret.
   ## E.g.
@@ -477,6 +498,3 @@ externalDatabase:
   ##         key: mongoDBUri
   ##
   uri: {}
-  initDatabase: true
-  initUsername: administrator
-  initPasswordHash: $6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/
