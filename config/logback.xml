@@ -6,8 +6,8 @@
             <pattern>{{ .Values.logback.pattern }}</pattern>
         </encoder>
     </appender>
-    {{- range $name, $level := .Values.logback.loggers }}
-    <logger name="{{ $name }}" level="{{ $level }}">
+    {{- range .Values.logback.loggers }}
+    <logger name="{{ .name }}" level="{{ .level | upper }}">
         <appender-ref ref="STDOUT"/>
     </logger>
     {{- end }}

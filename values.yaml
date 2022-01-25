@@ -409,21 +409,34 @@ mailer:
 ## ref: https://www.playframework.com/documentation/2.8.x/ScalaLogging
 ## @param logback.level Global level below wich messages will not be logged
 ## @param logback.pattern Log messages pattern
-## @param logback.loggers [object] Enabled loggers in the `name: LEVEL` format
+## @param logback.loggers [array] Enabled loggers and their associated log level
 logback:
-  level: DEBUG
+  level: debug
   pattern: "%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}"
   loggers:
-    play: WARN
-    reactivemongo: WARN
-    actors: DEBUG
-    actions: DEBUG
-    controllers: DEBUG
-    filters: DEBUG
-    models: DEBUG
-    modules: DEBUG
-    pki-connectors: DEBUG
-    racs-connectors: DEBUG
+    ## E.g.
+    ## - name: reactivemongo
+    ##   level: warn
+    - name: play
+      level: warn
+    - name: reactivemongo
+      level: warn
+    - name: actors
+      level: debug
+    - name: actions
+      level: debug
+    - name: controllers
+      level: debug
+    - name: filters
+      level: debug
+    - name: models
+      level: debug
+    - name: modules
+      level: debug
+    - name: pki-connectors
+      level: debug
+    - name: racs-conenctors
+      level: debug
 
 ## @section Database parameters
 

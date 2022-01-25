@@ -42,7 +42,7 @@
                 },
                 "tag": {
                     "type": "string",
-                    "default": "2.0.4",
+                    "default": "2.1.0",
                     "description": "Horizon image tag (immutable tags are recommended)"
                 },
                 "pullPolicy": {
@@ -457,6 +457,31 @@
             "default": "[]",
             "description": "Additional allowed hosts."
         },
+        "events": {
+            "type": "object",
+            "properties": {
+                "chainsign": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether Horizon events should be signed and chained using the event seal secret."
+                },
+                "secret": {
+                    "type": "object",
+                    "default": "{}",
+                    "description": "Secret used to sign and chain events."
+                },
+                "ttl": {
+                    "type": "string",
+                    "default": "90 days",
+                    "description": "Duration during which events are kept in database."
+                },
+                "discoveryTtl": {
+                    "type": "string",
+                    "default": "30 days",
+                    "description": "Duration during which discovery events are kept in database."
+                }
+            }
+        },
         "mailer": {
             "type": "object",
             "properties": {
@@ -506,9 +531,9 @@
                     "description": "Log messages pattern"
                 },
                 "loggers": {
-                    "type": "object",
-                    "default": "{}",
-                    "description": "Enabled loggers in the `name: LEVEL` format"
+                    "type": "array",
+                    "default": "[]",
+                    "description": "Enabled loggers and their associated log level"
                 }
             }
         },

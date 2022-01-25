@@ -108,7 +108,7 @@ Additionally, when configured to do so, the chart will spawn a local MongoDB ins
 | --------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------- |
 | `image.registry`                        | Horizon image registry                                                                    | `registry.evertrust.io` |
 | `image.repository`                      | Horizon image repository                                                                  | `horizon`               |
-| `image.tag`                             | Horizon image tag (immutable tags are recommended)                                        | `2.0.4`                 |
+| `image.tag`                             | Horizon image tag (immutable tags are recommended)                                        | `2.1.0`                 |
 | `image.pullPolicy`                      | Horizon image pull policy                                                                 | `IfNotPresent`          |
 | `image.pullSecrets`                     | Horizon image pull secrets                                                                | `[]`                    |
 | `updateStrategy.type`                   | Horizon deployment strategy type                                                          | `RollingUpdate`         |
@@ -186,25 +186,29 @@ Additionally, when configured to do so, the chart will spawn a local MongoDB ins
 
 ### Horizon application parameters
 
-| Name                  | Description                                                     | Value                                                                             |
-| --------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `appSecret`           | Application secret used for encrypting session data and cookies | `{}`                                                                              |
-| `license.secretName`  | Existing secret name where the Horizon license is stored        | `""`                                                                              |
-| `license.secretKey`   | Existing secret key where the Horizon license is stored         | `""`                                                                              |
-| `vaults`              | Horizon vaults configuration                                    | `[]`                                                                              |
-| `vault.configuration` | Name of the vault used for configuration purposes               | `default`                                                                         |
-| `vault.escrow`        | Name of the vault used for escrowing purposes                   | `default`                                                                         |
-| `vault.transient`     | Name of the vault used for storing transient keys               | `default`                                                                         |
-| `allowedHosts`        | Additional allowed hosts.                                       | `[]`                                                                              |
-| `mailer.host`         | SMTP host                                                       | `""`                                                                              |
-| `mailer.port`         | SMTP host port                                                  | `587`                                                                             |
-| `mailer.tls`          | Enable TLS for this SMTP host                                   | `true`                                                                            |
-| `mailer.ssl`          | Enable SSL for this SMTP host                                   | `false`                                                                           |
-| `mailer.user`         | Authentication username for this SMTP host                      | `""`                                                                              |
-| `mailer.password`     | Authentication password for this SMTP host                      | `{}`                                                                              |
-| `logback.level`       | Global level below wich messages will not be logged             | `DEBUG`                                                                           |
-| `logback.pattern`     | Log messages pattern                                            | `%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}` |
-| `logback.loggers`     | Enabled loggers in the `name: LEVEL` format                     | `{}`                                                                              |
+| Name                  | Description                                                                      | Value                                                                             |
+| --------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `appSecret`           | Application secret used for encrypting session data and cookies                  | `{}`                                                                              |
+| `license.secretName`  | Existing secret name where the Horizon license is stored                         | `""`                                                                              |
+| `license.secretKey`   | Existing secret key where the Horizon license is stored                          | `""`                                                                              |
+| `vaults`              | Horizon vaults configuration                                                     | `[]`                                                                              |
+| `vault.configuration` | Name of the vault used for configuration purposes                                | `default`                                                                         |
+| `vault.escrow`        | Name of the vault used for escrowing purposes                                    | `default`                                                                         |
+| `vault.transient`     | Name of the vault used for storing transient keys                                | `default`                                                                         |
+| `allowedHosts`        | Additional allowed hosts.                                                        | `[]`                                                                              |
+| `events.chainsign`    | Whether Horizon events should be signed and chained using the event seal secret. | `true`                                                                            |
+| `events.secret`       | Secret used to sign and chain events.                                            | `{}`                                                                              |
+| `events.ttl`          | Duration during which events are kept in database.                               | `90 days`                                                                         |
+| `events.discoveryTtl` | Duration during which discovery events are kept in database.                     | `30 days`                                                                         |
+| `mailer.host`         | SMTP host                                                                        | `""`                                                                              |
+| `mailer.port`         | SMTP host port                                                                   | `587`                                                                             |
+| `mailer.tls`          | Enable TLS for this SMTP host                                                    | `true`                                                                            |
+| `mailer.ssl`          | Enable SSL for this SMTP host                                                    | `false`                                                                           |
+| `mailer.user`         | Authentication username for this SMTP host                                       | `""`                                                                              |
+| `mailer.password`     | Authentication password for this SMTP host                                       | `{}`                                                                              |
+| `logback.level`       | Global level below wich messages will not be logged                              | `DEBUG`                                                                           |
+| `logback.pattern`     | Log messages pattern                                                             | `%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}` |
+| `logback.loggers`     | Enabled loggers and their associated log level                                   | `[]`                                                                              |
 
 
 ### Database parameters
