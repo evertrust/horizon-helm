@@ -518,7 +518,12 @@
                 "enabled": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Set this to true to install a local MongoDB instance"
+                    "description": "Whether to deploy a mongodb server to satisfy the applications database requirements"
+                },
+                "architecture": {
+                    "type": "string",
+                    "default": "standalone",
+                    "description": "MongoDB&reg; architecture (`standalone` or `replicaset`)"
                 },
                 "database": {
                     "type": "string",

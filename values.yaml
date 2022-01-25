@@ -410,13 +410,17 @@ logback:
 
 ## Install a MongoDB instance
 ## ref: https://github.com/bitnami/charts/tree/master/bitnami/mongodb
-## @param mongodb.enabled Set this to true to install a local MongoDB instance
+## @param mongodb.enabled Whether to deploy a mongodb server to satisfy the applications database requirements
+## To use an external database set this to false and configure the externalDatabase parameters
+## @param mongodb.architecture MongoDB&reg; architecture (`standalone` or `replicaset`)
+##
 ## @param mongodb.database Database name to use when using a local MongoDB instance
 ## @param mongodb.fullnameOverride Local MongoDB installation name
 ## @skip mongodb.initdbScriptsConfigMap
 ## @skip mongodb.auth.rootPassword
 mongodb:
   enabled: true
+  architecture: standalone
   database: horizon
   initdbScriptsConfigMap: horizon-database-init-scripts
   fullnameOverride: horizon-mongodb

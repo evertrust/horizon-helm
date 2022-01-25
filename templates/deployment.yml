@@ -47,7 +47,7 @@ spec:
       {{- if .Values.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
-      {{- if and (not .Values.externalDatabase.uri) .Values.mongodb.enabled }}
+      {{- if .Values.mongodb.enabled }}
       initContainers:
         - name: wait-for-mongodb
           image: groundnuty/k8s-wait-for:v1.3

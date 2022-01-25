@@ -1,3 +1,8 @@
+{{/*
+Generates a secret key/value or infers the value from an existing secret.
+Usage:
+{{- include "horizon.generatesecret" (dict "namespace" $namespace "name" $secretName "key" $secretKey "default" $defaultValue) }}
+*/}}
 {{- define "horizon.generatesecret"}}
 {{- $secret := lookup "v1" "Secret" .namespace .name }}
 
@@ -12,6 +17,11 @@
 {{- end }}
 {{- end -}}
 
+{{/*
+Either render any template or fetch the secret from the default generated horizon secret
+Usage:
+{{- include "horizon.rendersecret" (dict "value" $valuesPath "key" $secretKey "context" .) }}
+*/}}
 {{- define "horizon.rendersecret" -}}
     {{- if .value -}}
       {{- include "common.tplvalues.render" (dict "value" .value "context" .context) }}
@@ -23,9 +33,13 @@ valueFrom:
     {{- end -}}
 {{- end -}}
 
-
 {{- define "horizon.mongodbUri" }}
+{{/* If the mongodb subchart is enabled, we force Horizon to use it. */}}
+{{- if .Values.mongodb.enabled }}
+{{- include "horizon.rendersecret" (dict "key" "mongoUri" "context" .context) }}
+{{- else }}
 {{- include "horizon.rendersecret" (dict "value" .context.Values.externalDatabase.uri "key" "mongoUri" "context" .context) }}
+{{- end }}
 {{- end }}
 
 {{- define "horizon.appSecret" }}
