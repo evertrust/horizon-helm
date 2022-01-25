@@ -35,10 +35,18 @@ valueFrom:
 
 {{- define "horizon.mongodbUri" }}
 {{/* If the mongodb subchart is enabled, we force Horizon to use it. */}}
-{{- if .Values.mongodb.enabled }}
-{{- include "horizon.rendersecret" (dict "key" "mongoUri" "context" .context) }}
+{{- if .context.Values.mongodb.enabled }}
+    {{- if .context.Values.externalDatabase.uri }}
+    {{- fail "When mongodb.enabled is set to true, you cannot specify externalDatabase.uri" }}
+    {{- else }}
+    {{- include "horizon.rendersecret" (dict "key" "mongoUri" "context" .context) }}
+    {{- end }}
 {{- else }}
-{{- include "horizon.rendersecret" (dict "value" .context.Values.externalDatabase.uri "key" "mongoUri" "context" .context) }}
+    {{- if .context.Values.externalDatabase.uri }}
+    {{- include "horizon.rendersecret" (dict "value" .context.Values.externalDatabase.uri "key" "mongoUri" "context" .context) }}
+    {{- else }}
+    {{- fail "When mongodb.enabled is set to false, you must specify externalDatabase.uri" }}
+    {{- end }}
 {{- end }}
 {{- end }}
 

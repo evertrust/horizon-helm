@@ -518,7 +518,7 @@
                 "enabled": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Whether to deploy a mongodb server to satisfy the applications database requirements"
+                    "description": "Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter"
                 },
                 "architecture": {
                     "type": "string",
@@ -543,7 +543,7 @@
                 "uri": {
                     "type": "object",
                     "default": "{}",
-                    "description": "External MongoDB URI. If set, this will override the `mongodb.enabled` parameter."
+                    "description": "External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`."
                 },
                 "initDatabase": {
                     "type": "boolean",
