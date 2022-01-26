@@ -34,7 +34,7 @@ commonAnnotations: {}
 image:
   registry: registry.evertrust.io
   repository: horizon
-  tag: 2.0.4
+  tag: 2.1.0
   pullPolicy: IfNotPresent
   pullSecrets: []
 
@@ -357,6 +357,25 @@ vault:
 allowedHosts:
   - localhost:9000
 
+## Configuration for Horizon events
+## @param events.chainsign Whether Horizon events should be signed and chained using the event seal secret.
+## @param events.secret [object] Secret used to sign and chain events.
+## @param events.ttl Duration during which events are kept in database.
+## @param events.discoveryTtl Duration during which discovery events are kept in database.
+events:
+  chainsign: true
+    ## The events.secret field can be a reference to a secret.
+    ## E.g.
+    ##   secret:
+    ##     valueFrom:
+    ##       secretKeyRef:
+    ##         name: horizon-secret
+    ##         key: eventSealSecret
+    ##
+  secret: {}
+  ttl: 90 days
+  discoveryTtl: 30 days
+
 ## Configuration for the Horizon mailer.
 ## You should configure this if you want your Horizon instance to be able
 ## to send emails.
@@ -390,51 +409,92 @@ mailer:
 ## ref: https://www.playframework.com/documentation/2.8.x/ScalaLogging
 ## @param logback.level Global level below wich messages will not be logged
 ## @param logback.pattern Log messages pattern
-## @param logback.loggers [object] Enabled loggers in the `name: LEVEL` format
+## @param logback.loggers [array] Enabled loggers and their associated log level
 logback:
-  level: DEBUG
+  level: debug
   pattern: "%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}"
   loggers:
-    play: WARN
-    reactivemongo: WARN
-    actors: DEBUG
-    actions: DEBUG
-    controllers: DEBUG
-    filters: DEBUG
-    models: DEBUG
-    modules: DEBUG
-    pki-connectors: DEBUG
-    racs-connectors: DEBUG
+    ## E.g.
+    ## - name: reactivemongo
+    ##   level: warn
+    - name: play
+      level: warn
+    - name: reactivemongo
+      level: warn
+    - name: actors
+      level: debug
+    - name: actions
+      level: debug
+    - name: controllers
+      level: debug
+    - name: filters
+      level: debug
+    - name: models
+      level: debug
+    - name: modules
+      level: debug
+    - name: pki-connectors
+      level: debug
+    - name: racs-conenctors
+      level: debug
 
 ## @section Database parameters
 
 ## Install a MongoDB instance
 ## ref: https://github.com/bitnami/charts/tree/master/bitnami/mongodb
-## @param mongodb.enabled Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter
-## @param mongodb.architecture MongoDB&reg; architecture (`standalone` or `replicaset`)
-##
-## @param mongodb.database Database name to use when using a local MongoDB instance
-## @param mongodb.fullnameOverride Local MongoDB installation name
-## @skip mongodb.initdbScriptsConfigMap
-## @skip mongodb.auth.rootPassword
 mongodb:
+  ## @param mongodb.enabled Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter
+  ##
   enabled: true
+  ## @param mongodb.architecture MongoDB architecture (`standalone` or `replicaset`)
+  ##
   architecture: standalone
-  database: horizon
+  ## @skip mongodb.initdbScriptsConfigMap
+  ##
   initdbScriptsConfigMap: horizon-database-init-scripts
-  fullnameOverride: horizon-mongodb
+  ## MongoDB Authentication parameters
+  ##
   auth:
-    rootPassword: horizonpassword
+    ## @param mongodb.auth.rootPassword MongoDB admin password
+    ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#setting-the-root-password-on-first-run
+    ##
+    rootPassword: ""
+    ## @param mongodb.auth.username MongoDB custom user
+    ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#creating-a-user-and-database-on-first-run
+    ##
+    username: horizon
+    ## @param mongodb.auth.database MongoDB custom database
+    ##
+    database: horizon
+    ## @param mongodb.auth.password MongoDB custom password
+    ##
+    password: secret_password
+  ## Horizon initialization parameters
+  ##
+  horizon:
+    ## @param mongodb.horizon.init Set this to true to initialize the local database for Horizon. This only works when `mongodb.enabled` is set to true.
+    ##
+    init: true
+    ## @param mongodb.horizon.username Administration username used when initializing the database
+    ##
+    username: administrator
+    ## @param mongodb.horizon.passwordHash Password hash used when initializing the database. Default: horizon
+    ##
+    passwordHash: $6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/
+    ## @param mongodb.horizon.upgrade If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
+    ##
+    upgrade: true
+    ## @param mongodb.horizon.upgradeFrom Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.
+    ##
+    upgradeFrom: ""
+    ## @param mongodb.horizon.upgradeTo Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.
+    ##
+    upgradeTo: ""
 
 ## Configuration for an Horizon external database
 ## Refer to the Horizon installation guide to configure the installation correctly
 ##
-## **NOTE** : The MongoDB connection URI *MUST* explicitly state the authentication
-## source. Should you use the default "admin" source, append &authSource=admin to your URI.
 ## @param externalDatabase.uri [object] External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`.
-## @param externalDatabase.initDatabase Set this to true to create an administrator user
-## @param externalDatabase.initUsername Username used when initializing the database
-## @param externalDatabase.initPasswordHash Password hash used when initializing the database. Default: horizon
 externalDatabase:
   ## The uri field can be a reference to a secret.
   ## E.g.
@@ -445,6 +505,3 @@ externalDatabase:
   ##         key: mongoDBUri
   ##
   uri: {}
-  initDatabase: true
-  initUsername: administrator
-  initPasswordHash: $6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/

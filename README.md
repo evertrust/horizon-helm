@@ -89,6 +89,22 @@ If your installation environment requires you to whitelist images that can be pu
 
 Additionally, when configured to do so, the chart will spawn a local MongoDB instance with the `docker.io/bitnami/mongodb` image and check the database connectivity with the `docker.io/groundnuty/k8s-wait-for:v1.3` image.
 
+## Upgrading
+We recommended that you only change values you need to customize in your `values.yml` file to ensure smooth upgrading.
+Always check the upgrading instructions between chart versions.
+
+### Upgrading the database
+When upgrading Horizon, you'll need to run a migration script against the MongoDB database.
+The chart will automatically create a `Job` that runs that upgrade script each time you upgrade your release.
+To disable that upgrade mechanism, set `mongodb.horizon.upgrade` to `false`.
+
+### Specific upgrade instructions
+
+#### Upgrading to 0.3.0
+
+- Loggers are now configured with an array instead of a dictionary. Check the `values.yaml` format and update your override `values.yaml` accordingly.
+- The init dabatabase parameters (`initDatabase`, `initUsername` and `initPassword`) have been renamed and moved to `mongodb.horizon`. 
+
 ## Parameters
 
 ### Global parameters
@@ -108,7 +124,7 @@ Additionally, when configured to do so, the chart will spawn a local MongoDB ins
 | --------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------- |
 | `image.registry`                        | Horizon image registry                                                                    | `registry.evertrust.io` |
 | `image.repository`                      | Horizon image repository                                                                  | `horizon`               |
-| `image.tag`                             | Horizon image tag (immutable tags are recommended)                                        | `2.0.4`                 |
+| `image.tag`                             | Horizon image tag (immutable tags are recommended)                                        | `2.1.0`                 |
 | `image.pullPolicy`                      | Horizon image pull policy                                                                 | `IfNotPresent`          |
 | `image.pullSecrets`                     | Horizon image pull secrets                                                                | `[]`                    |
 | `updateStrategy.type`                   | Horizon deployment strategy type                                                          | `RollingUpdate`         |
@@ -186,38 +202,47 @@ Additionally, when configured to do so, the chart will spawn a local MongoDB ins
 
 ### Horizon application parameters
 
-| Name                  | Description                                                     | Value                                                                             |
-| --------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `appSecret`           | Application secret used for encrypting session data and cookies | `{}`                                                                              |
-| `license.secretName`  | Existing secret name where the Horizon license is stored        | `""`                                                                              |
-| `license.secretKey`   | Existing secret key where the Horizon license is stored         | `""`                                                                              |
-| `vaults`              | Horizon vaults configuration                                    | `[]`                                                                              |
-| `vault.configuration` | Name of the vault used for configuration purposes               | `default`                                                                         |
-| `vault.escrow`        | Name of the vault used for escrowing purposes                   | `default`                                                                         |
-| `vault.transient`     | Name of the vault used for storing transient keys               | `default`                                                                         |
-| `allowedHosts`        | Additional allowed hosts.                                       | `[]`                                                                              |
-| `mailer.host`         | SMTP host                                                       | `""`                                                                              |
-| `mailer.port`         | SMTP host port                                                  | `587`                                                                             |
-| `mailer.tls`          | Enable TLS for this SMTP host                                   | `true`                                                                            |
-| `mailer.ssl`          | Enable SSL for this SMTP host                                   | `false`                                                                           |
-| `mailer.user`         | Authentication username for this SMTP host                      | `""`                                                                              |
-| `mailer.password`     | Authentication password for this SMTP host                      | `{}`                                                                              |
-| `logback.level`       | Global level below wich messages will not be logged             | `DEBUG`                                                                           |
-| `logback.pattern`     | Log messages pattern                                            | `%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}` |
-| `logback.loggers`     | Enabled loggers in the `name: LEVEL` format                     | `{}`                                                                              |
+| Name                  | Description                                                                      | Value                                                                             |
+| --------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `appSecret`           | Application secret used for encrypting session data and cookies                  | `{}`                                                                              |
+| `license.secretName`  | Existing secret name where the Horizon license is stored                         | `""`                                                                              |
+| `license.secretKey`   | Existing secret key where the Horizon license is stored                          | `""`                                                                              |
+| `vaults`              | Horizon vaults configuration                                                     | `[]`                                                                              |
+| `vault.configuration` | Name of the vault used for configuration purposes                                | `default`                                                                         |
+| `vault.escrow`        | Name of the vault used for escrowing purposes                                    | `default`                                                                         |
+| `vault.transient`     | Name of the vault used for storing transient keys                                | `default`                                                                         |
+| `allowedHosts`        | Additional allowed hosts.                                                        | `[]`                                                                              |
+| `events.chainsign`    | Whether Horizon events should be signed and chained using the event seal secret. | `true`                                                                            |
+| `events.secret`       | Secret used to sign and chain events.                                            | `{}`                                                                              |
+| `events.ttl`          | Duration during which events are kept in database.                               | `90 days`                                                                         |
+| `events.discoveryTtl` | Duration during which discovery events are kept in database.                     | `30 days`                                                                         |
+| `mailer.host`         | SMTP host                                                                        | `""`                                                                              |
+| `mailer.port`         | SMTP host port                                                                   | `587`                                                                             |
+| `mailer.tls`          | Enable TLS for this SMTP host                                                    | `true`                                                                            |
+| `mailer.ssl`          | Enable SSL for this SMTP host                                                    | `false`                                                                           |
+| `mailer.user`         | Authentication username for this SMTP host                                       | `""`                                                                              |
+| `mailer.password`     | Authentication password for this SMTP host                                       | `{}`                                                                              |
+| `logback.level`       | Global level below wich messages will not be logged                              | `debug`                                                                           |
+| `logback.pattern`     | Log messages pattern                                                             | `%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}` |
+| `logback.loggers`     | Enabled loggers and their associated log level                                   | `[]`                                                                              |
 
 
 ### Database parameters
 
-| Name                                | Description                                                                                                                                                                           | Value                                                                                                        |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `mongodb.enabled`                   | Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter | `true`                                                                                                       |
-| `mongodb.architecture`              | MongoDB&reg; architecture (`standalone` or `replicaset`)                                                                                                                              | `standalone`                                                                                                 |
-| `mongodb.database`                  | Database name to use when using a local MongoDB instance                                                                                                                              | `horizon`                                                                                                    |
-| `mongodb.fullnameOverride`          | Local MongoDB installation name                                                                                                                                                       | `horizon-mongodb`                                                                                            |
-| `externalDatabase.uri`              | External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`.                                                                                  | `{}`                                                                                                         |
-| `externalDatabase.initDatabase`     | Set this to true to create an administrator user                                                                                                                                      | `true`                                                                                                       |
-| `externalDatabase.initUsername`     | Username used when initializing the database                                                                                                                                          | `administrator`                                                                                              |
-| `externalDatabase.initPasswordHash` | Password hash used when initializing the database. Default: horizon                                                                                                                   | `$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/` |
+| Name                           | Description                                                                                                                                                                           | Value                                                                                                        |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `mongodb.enabled`              | Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter | `true`                                                                                                       |
+| `mongodb.architecture`         | MongoDB architecture (`standalone` or `replicaset`)                                                                                                                                   | `standalone`                                                                                                 |
+| `mongodb.auth.rootPassword`    | MongoDB admin password                                                                                                                                                                | `""`                                                                                                         |
+| `mongodb.auth.username`        | MongoDB custom user                                                                                                                                                                   | `horizon`                                                                                                    |
+| `mongodb.auth.database`        | MongoDB custom database                                                                                                                                                               | `horizon`                                                                                                    |
+| `mongodb.auth.password`        | MongoDB custom password                                                                                                                                                               | `secret_password`                                                                                            |
+| `mongodb.horizon.init`         | Set this to true to initialize the local database for Horizon. This only works when `mongodb.enabled` is set to true.                                                                 | `true`                                                                                                       |
+| `mongodb.horizon.username`     | Administration username used when initializing the database                                                                                                                           | `administrator`                                                                                              |
+| `mongodb.horizon.passwordHash` | Password hash used when initializing the database. Default: horizon                                                                                                                   | `$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/` |
+| `mongodb.horizon.upgrade`      | If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.                                 | `true`                                                                                                       |
+| `mongodb.horizon.upgradeFrom`  | Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.                                                                       | `""`                                                                                                         |
+| `mongodb.horizon.upgradeTo`    | Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.                                                                                                  | `""`                                                                                                         |
+| `externalDatabase.uri`         | External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`.                                                                                  | `{}`                                                                                                         |
 
 

@@ -1,4 +1,4 @@
-{{ if .Values.externalDatabase.initDatabase }}
+{{- if and .Values.mongodb.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,20 +8,28 @@ metadata:
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
   {{- end }}
 data:
+  {{- if .Values.mongodb.horizon.init }}
   # language=js
   createAdminUser.js: |
-    use horizon;
+    use {{ .Values.mongodb.auth.database }};
+    db.security_identity_providers.insertOne({
+        "type": "Local",
+        "name": "Local",
+        "enabled": true,
+        "enabledOnUI": true
+    });
     db.security_local_identities.insert({
-        "identifier": "{{ .Values.externalDatabase.initUsername }}",
-        "hash": "{{ .Values.externalDatabase.initPasswordHash }}",
+        "identifier": "{{ .Values.mongodb.horizon.username }}",
+        "hash": "{{ .Values.mongodb.horizon.passwordHash }}",
         "name": "Horizon Administrator"
     });
     db.security_principals.insert({
-        "identifier": "{{ .Values.externalDatabase.initUsername }}",
+        "identifier": "{{ .Values.mongodb.horizon.username }}",
         "permissions": [
             {"value": "configuration:*"},
             {"value": "lifecycle:*"},
             {"value": "discovery:*"}],
         "roles":[]
     });
-{{ end }}
+    {{- end }}
+{{- end }}

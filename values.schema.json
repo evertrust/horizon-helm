@@ -42,7 +42,7 @@
                 },
                 "tag": {
                     "type": "string",
-                    "default": "2.0.4",
+                    "default": "2.1.0",
                     "description": "Horizon image tag (immutable tags are recommended)"
                 },
                 "pullPolicy": {
@@ -457,6 +457,31 @@
             "default": "[]",
             "description": "Additional allowed hosts."
         },
+        "events": {
+            "type": "object",
+            "properties": {
+                "chainsign": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether Horizon events should be signed and chained using the event seal secret."
+                },
+                "secret": {
+                    "type": "object",
+                    "default": "{}",
+                    "description": "Secret used to sign and chain events."
+                },
+                "ttl": {
+                    "type": "string",
+                    "default": "90 days",
+                    "description": "Duration during which events are kept in database."
+                },
+                "discoveryTtl": {
+                    "type": "string",
+                    "default": "30 days",
+                    "description": "Duration during which discovery events are kept in database."
+                }
+            }
+        },
         "mailer": {
             "type": "object",
             "properties": {
@@ -497,7 +522,7 @@
             "properties": {
                 "level": {
                     "type": "string",
-                    "default": "DEBUG",
+                    "default": "debug",
                     "description": "Global level below wich messages will not be logged"
                 },
                 "pattern": {
@@ -506,9 +531,9 @@
                     "description": "Log messages pattern"
                 },
                 "loggers": {
-                    "type": "object",
-                    "default": "{}",
-                    "description": "Enabled loggers in the `name: LEVEL` format"
+                    "type": "array",
+                    "default": "[]",
+                    "description": "Enabled loggers and their associated log level"
                 }
             }
         },
@@ -523,17 +548,67 @@
                 "architecture": {
                     "type": "string",
                     "default": "standalone",
-                    "description": "MongoDB&reg; architecture (`standalone` or `replicaset`)"
+                    "description": "MongoDB architecture (`standalone` or `replicaset`)"
                 },
-                "database": {
-                    "type": "string",
-                    "default": "horizon",
-                    "description": "Database name to use when using a local MongoDB instance"
+                "auth": {
+                    "type": "object",
+                    "properties": {
+                        "rootPassword": {
+                            "type": "string",
+                            "default": "\"\"",
+                            "description": "MongoDB admin password"
+                        },
+                        "username": {
+                            "type": "string",
+                            "default": "horizon",
+                            "description": "MongoDB custom user"
+                        },
+                        "database": {
+                            "type": "string",
+                            "default": "horizon",
+                            "description": "MongoDB custom database"
+                        },
+                        "password": {
+                            "type": "string",
+                            "default": "secret_password",
+                            "description": "MongoDB custom password"
+                        }
+                    }
                 },
-                "fullnameOverride": {
-                    "type": "string",
-                    "default": "horizon-mongodb",
-                    "description": "Local MongoDB installation name"
+                "horizon": {
+                    "type": "object",
+                    "properties": {
+                        "init": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "Set this to true to initialize the local database for Horizon. This only works when `mongodb.enabled` is set to true."
+                        },
+                        "username": {
+                            "type": "string",
+                            "default": "administrator",
+                            "description": "Administration username used when initializing the database"
+                        },
+                        "passwordHash": {
+                            "type": "string",
+                            "default": "$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/",
+                            "description": "Password hash used when initializing the database. Default: horizon"
+                        },
+                        "upgrade": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false."
+                        },
+                        "upgradeFrom": {
+                            "type": "string",
+                            "default": "\"\"",
+                            "description": "Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database."
+                        },
+                        "upgradeTo": {
+                            "type": "string",
+                            "default": "\"\"",
+                            "description": "Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion."
+                        }
+                    }
                 }
             }
         },
@@ -544,21 +619,6 @@
                     "type": "object",
                     "default": "{}",
                     "description": "External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`."
-                },
-                "initDatabase": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Set this to true to create an administrator user"
-                },
-                "initUsername": {
-                    "type": "string",
-                    "default": "administrator",
-                    "description": "Username used when initializing the database"
-                },
-                "initPasswordHash": {
-                    "type": "string",
-                    "default": "$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/",
-                    "description": "Password hash used when initializing the database. Default: horizon"
                 }
             }
         }

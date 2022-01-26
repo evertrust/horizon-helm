@@ -1,0 +1,25 @@
+{{- if and .Release.IsUpgrade .Values.mongodb.horizon.upgrade }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-upgrade-%s" (include "common.names.fullname" $) (randAlphaNum 6 | lower) }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: horizon-upgrade
+          image: horizon-upgrade:0.1.0
+          args: [
+              "-y",
+              "-m", "$(MONGODB_URI)",
+              {{- if .Values.mongodb.horizon.upgradeFrom }}
+              "-s", "{{ .Values.mongodb.horizon.upgradeFrom }}",
+              {{- end }}
+              "-t", "{{ coalesce .Values.mongodb.horizon.upgradeTo .Chart.AppVersion }}"
+          ]
+          env:
+            - name: MONGODB_URI
+              {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}
+      restartPolicy: Never
+  backoffLimit: 0
+{{- end }}
