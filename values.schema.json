@@ -583,6 +583,21 @@
                             "default": true,
                             "description": "Set this to true to initialize the local database for Horizon"
                         },
+                        "upgrade": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "If true, an upgrade job will be run when upgrading the release, modifying your database schema."
+                        },
+                        "upgradeFrom": {
+                            "type": "string",
+                            "default": "\"\"",
+                            "description": "Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database."
+                        },
+                        "upgradeTo": {
+                            "type": "string",
+                            "default": "\"\"",
+                            "description": "Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion."
+                        },
                         "username": {
                             "type": "string",
                             "default": "administrator",

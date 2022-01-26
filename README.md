@@ -89,6 +89,22 @@ If your installation environment requires you to whitelist images that can be pu
 
 Additionally, when configured to do so, the chart will spawn a local MongoDB instance with the `docker.io/bitnami/mongodb` image and check the database connectivity with the `docker.io/groundnuty/k8s-wait-for:v1.3` image.
 
+## Upgrading
+We recommended that you only change values you need to customize in your `values.yml` file to ensure smooth upgrading.
+Always check the upgrading instructions between chart versions.
+
+### Upgrading the database
+When upgrading Horizon, you'll need to run a migration script against the MongoDB database.
+The chart will automatically create a `Job` that runs that upgrade script each time you upgrade your release.
+To disable that upgrade mechanism, set `mongodb.horizon.upgrade` to `false`.
+
+### Specific upgrade instructions
+
+#### Upgrading to 0.3.0
+
+- Loggers are now configured with an array instead of a dictionary. Check the `values.yaml` format and update your override `values.yaml` accordingly.
+- The init dabatabase parameters (`initDatabase`, `initUsername` and `initPassword`) have been renamed and moved to `mongodb.horizon`. 
+
 ## Parameters
 
 ### Global parameters
@@ -222,6 +238,9 @@ Additionally, when configured to do so, the chart will spawn a local MongoDB ins
 | `mongodb.auth.database`        | MongoDB custom database                                                                                                                                                               | `horizon`                                                                                                    |
 | `mongodb.auth.password`        | MongoDB custom password                                                                                                                                                               | `secret_password`                                                                                            |
 | `mongodb.horizon.init`         | Set this to true to initialize the local database for Horizon                                                                                                                         | `true`                                                                                                       |
+| `mongodb.horizon.upgrade`      | If true, an upgrade job will be run when upgrading the release, modifying your database schema.                                                                                       | `true`                                                                                                       |
+| `mongodb.horizon.upgradeFrom`  | Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.                                                                       | `""`                                                                                                         |
+| `mongodb.horizon.upgradeTo`    | Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.                                                                                                  | `""`                                                                                                         |
 | `mongodb.horizon.username`     | Administration username used when initializing the database                                                                                                                           | `administrator`                                                                                              |
 | `mongodb.horizon.passwordHash` | Password hash used when initializing the database. Default: horizon                                                                                                                   | `$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/` |
 | `externalDatabase.uri`         | External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`.                                                                                  | `{}`                                                                                                         |

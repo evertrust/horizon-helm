@@ -475,6 +475,15 @@ mongodb:
     ## @param mongodb.horizon.init Set this to true to initialize the local database for Horizon
     ##
     init: true
+    ## @param mongodb.horizon.upgrade If true, an upgrade job will be run when upgrading the release, modifying your database schema.
+    ##
+    upgrade: true
+    ## @param mongodb.horizon.upgradeFrom Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.
+    ##
+    upgradeFrom: ""
+    ## @param mongodb.horizon.upgradeTo Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.
+    ##
+    upgradeTo: ""
     ## @param mongodb.horizon.username Administration username used when initializing the database
     ##
     username: administrator

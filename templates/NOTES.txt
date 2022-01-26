@@ -1,4 +1,4 @@
-Thank you for installing {{ .Chart.Name }} {{ .Chart.AppVersion }}.
+Thank you for {{ ternary "installing" "upgrading" .Release.IsInstall }} {{ .Chart.Name }} {{ .Chart.AppVersion }}.
 
 Your release is named {{ .Release.Name }}.
 
@@ -11,4 +11,9 @@ To learn more about the release, try:
 
 An ingress has been deployed and Horizon will be shortly available
 at {{ (empty .Values.ingress.tls) | ternary "https" "http" }}://{{ (first .Values.ingress.hosts).host }}
+{{ end }}
+
+{{- if and .Release.IsUpgrade .Values.mongodb.horizon.upgrade }}
+
+An upgrade job has been created. Check that it ran successfully before proceeding.
 {{ end }}
