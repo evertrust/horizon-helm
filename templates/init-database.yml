@@ -1,4 +1,4 @@
-{{ if and .Values.mongodb.enabled .Values.mongodb.horizon.init }}
+{{- if and .Values.mongodb.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,6 +8,7 @@ metadata:
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
   {{- end }}
 data:
+  {{- if .Values.mongodb.horizon.init }}
   # language=js
   createAdminUser.js: |
     use {{ .Values.mongodb.auth.database }};
@@ -30,4 +31,5 @@ data:
             {"value": "discovery:*"}],
         "roles":[]
     });
-    {{ end }}
+    {{- end }}
+{{- end }}

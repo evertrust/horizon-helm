@@ -472,10 +472,16 @@ mongodb:
   ## Horizon initialization parameters
   ##
   horizon:
-    ## @param mongodb.horizon.init Set this to true to initialize the local database for Horizon
+    ## @param mongodb.horizon.init Set this to true to initialize the local database for Horizon. This only works when `mongodb.enabled` is set to true.
     ##
     init: true
-    ## @param mongodb.horizon.upgrade If true, an upgrade job will be run when upgrading the release, modifying your database schema.
+    ## @param mongodb.horizon.username Administration username used when initializing the database
+    ##
+    username: administrator
+    ## @param mongodb.horizon.passwordHash Password hash used when initializing the database. Default: horizon
+    ##
+    passwordHash: $6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/
+    ## @param mongodb.horizon.upgrade If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
     ##
     upgrade: true
     ## @param mongodb.horizon.upgradeFrom Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.
@@ -484,18 +490,10 @@ mongodb:
     ## @param mongodb.horizon.upgradeTo Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.
     ##
     upgradeTo: ""
-    ## @param mongodb.horizon.username Administration username used when initializing the database
-    ##
-    username: administrator
-    ## @param mongodb.horizon.passwordHash Password hash used when initializing the database. Default: horizon
-    ##
-    passwordHash: $6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/
 
 ## Configuration for an Horizon external database
 ## Refer to the Horizon installation guide to configure the installation correctly
 ##
-## **NOTE** : The MongoDB connection URI *MUST* explicitly state the authentication
-## source. Should you use the default "admin" source, append &authSource=admin to your URI.
 ## @param externalDatabase.uri [object] External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`.
 externalDatabase:
   ## The uri field can be a reference to a secret.
