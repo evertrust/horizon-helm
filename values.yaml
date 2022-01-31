@@ -159,7 +159,7 @@ containerSecurityContext:
   enabled: true
   runAsUser: 1001
   runAsNonRoot: true
-## Configure extra options for Horizon containers' liveness and readiness probes
+## Configure extra options for Horizon containers probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
 ## @param livenessProbe.enabled Enable livenessProbe
 ## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
@@ -170,11 +170,21 @@ containerSecurityContext:
 ##
 livenessProbe:
   enabled: true
-  initialDelaySeconds: 90
+  initialDelaySeconds: 0
   periodSeconds: 10
   timeoutSeconds: 5
   successThreshold: 1
-  failureThreshold: 6
+  failureThreshold: 3
+## A startup probe allows us to define a shorter period to improve Horizon time-to-liveliness time while preserving the Horizon pod from a restart loop when it is slow to start.
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes
+## @param startupProbe.enabled Enable startupProbe. Since Horizon is slow to start, this is highly recommended.
+## @param startupProbe.periodSeconds Period seconds for startupProbe
+## @param startupProbe.failureThreshold Failure threshold for startupProbe
+##
+startupProbe:
+  enabled: true
+  failureThreshold: 60
+  periodSeconds: 3
 ## @param readinessProbe.enabled Enable readinessProbe
 ## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
 ## @param readinessProbe.periodSeconds Period seconds for readinessProbe
@@ -184,17 +194,11 @@ livenessProbe:
 ##
 readinessProbe:
   enabled: true
-  initialDelaySeconds: 60
+  initialDelaySeconds: 0
   periodSeconds: 5
   timeoutSeconds: 3
   successThreshold: 1
   failureThreshold: 3
-## @param customLivenessProbe Custom livenessProbe that overrides the default one
-##
-customLivenessProbe: {}
-## @param customReadinessProbe Custom readinessProbe that overrides the default one
-#
-customReadinessProbe: {}
 
 ## Horizon Autoscaling configuration
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
