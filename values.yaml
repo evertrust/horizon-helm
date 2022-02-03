@@ -159,7 +159,7 @@ containerSecurityContext:
   enabled: true
   runAsUser: 1001
   runAsNonRoot: true
-## Configure extra options for Horizon containers' liveness and readiness probes
+## Configure extra options for Horizon containers probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
 ## @param livenessProbe.enabled Enable livenessProbe
 ## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
@@ -170,11 +170,21 @@ containerSecurityContext:
 ##
 livenessProbe:
   enabled: true
-  initialDelaySeconds: 90
+  initialDelaySeconds: 0
   periodSeconds: 10
   timeoutSeconds: 5
   successThreshold: 1
-  failureThreshold: 6
+  failureThreshold: 3
+## A startup probe allows us to define a shorter period to improve Horizon time-to-liveliness time while preserving the Horizon pod from a restart loop when it is slow to start.
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes
+## @param startupProbe.enabled Enable startupProbe. Since Horizon is slow to start, this is highly recommended.
+## @param startupProbe.periodSeconds Period seconds for startupProbe
+## @param startupProbe.failureThreshold Failure threshold for startupProbe
+##
+startupProbe:
+  enabled: true
+  failureThreshold: 60
+  periodSeconds: 3
 ## @param readinessProbe.enabled Enable readinessProbe
 ## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
 ## @param readinessProbe.periodSeconds Period seconds for readinessProbe
@@ -184,17 +194,11 @@ livenessProbe:
 ##
 readinessProbe:
   enabled: true
-  initialDelaySeconds: 60
+  initialDelaySeconds: 0
   periodSeconds: 5
   timeoutSeconds: 3
   successThreshold: 1
   failureThreshold: 3
-## @param customLivenessProbe Custom livenessProbe that overrides the default one
-##
-customLivenessProbe: {}
-## @param customReadinessProbe Custom readinessProbe that overrides the default one
-#
-customReadinessProbe: {}
 
 ## Horizon Autoscaling configuration
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
@@ -357,6 +361,17 @@ vault:
 allowedHosts:
   - localhost:9000
 
+## Depending on your Kubernetes environment, Ingress IPs may be unpredictable. In that case, you should trust whitelist every IP in your local addressing space.
+## @param trustedProxies [array] Trusted proxies.
+## E.g.
+## trustedProxies:
+##   - 0.0.0.0/0
+##   - ::/0
+##
+trustedProxies:
+  - 0.0.0.0/0
+  - ::/0
+
 ## Configuration for Horizon events
 ## @param events.chainsign Whether Horizon events should be signed and chained using the event seal secret.
 ## @param events.secret [object] Secret used to sign and chain events.
@@ -481,15 +496,29 @@ mongodb:
     ## @param mongodb.horizon.passwordHash Password hash used when initializing the database. Default: horizon
     ##
     passwordHash: $6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/
-    ## @param mongodb.horizon.upgrade If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
-    ##
-    upgrade: true
-    ## @param mongodb.horizon.upgradeFrom Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.
-    ##
-    upgradeFrom: ""
-    ## @param mongodb.horizon.upgradeTo Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.
-    ##
-    upgradeTo: ""
+
+upgrade:
+  ## @param upgrade.enabled If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
+  ##
+  enabled: true
+  ## @param upgrade.image.registry Horizon image registry
+  ## @param upgrade.image.repository Horizon image repository
+  ## @param upgrade.image.tag Horizon image tag (immutable tags are recommended)
+  ## @param upgrade.image.pullPolicy Horizon image pull policy
+  ## @param upgrade.image.pullSecrets Horizon image pull secrets
+  ##
+  image:
+    registry: registry.evertrust.io
+    repository: horizon-upgrade
+    tag: 0.1.0
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  ## @param upgrade.from Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.
+  ##
+  from: ""
+  ## @param upgrade.to Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.
+  ##
+  to: ""
 
 ## Configuration for an Horizon external database
 ## Refer to the Horizon installation guide to configure the installation correctly

@@ -1,4 +1,4 @@
-{{- if and .Release.IsUpgrade .Values.mongodb.horizon.upgrade }}
+{{- if and .Release.IsUpgrade .Values.upgrade.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -8,14 +8,16 @@ spec:
     spec:
       containers:
         - name: horizon-upgrade
-          image: horizon-upgrade:0.1.0
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" $) }}
+          imagePullPolicy: {{ .Values.upgrade.image.pullPolicy | default "IfNotPresent" | quote }}
+          {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 5 }}
           args: [
               "-y",
               "-m", "$(MONGODB_URI)",
-              {{- if .Values.mongodb.horizon.upgradeFrom }}
-              "-s", "{{ .Values.mongodb.horizon.upgradeFrom }}",
+              {{- if .Values.upgrade.from }}
+              "-s", "{{ .Values.upgrade.from }}",
               {{- end }}
-              "-t", "{{ coalesce .Values.mongodb.horizon.upgradeTo .Chart.AppVersion }}"
+              "-t", "{{ coalesce .Values.upgrade.to .Chart.AppVersion }}"
           ]
           env:
             - name: MONGODB_URI

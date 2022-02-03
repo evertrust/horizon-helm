@@ -41,6 +41,9 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- printf "%s-%s" .Release.Name "mongodb" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{/*
+Prints either a local or external MongoDB URI.
+*/}}
 {{- define "horizon.mongodbUri" }}
 {{- /* If the mongodb subchart is enabled, we force Horizon to use it. */}}
 {{- if .context.Values.mongodb.enabled }}
@@ -58,19 +61,37 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end }}
 {{- end }}
 
+{{/*
+Prints the appSecret reference.
+*/}}
 {{- define "horizon.appSecret" }}
 {{- include "horizon.rendersecret" (dict "value" .context.Values.appSecret "key" "appSecret" "context" .context) }}
 {{- end }}
 
+{{/*
+Prints the event seal secret reference.
+*/}}
 {{- define "horizon.eventSealSecret" }}
 {{- include "horizon.rendersecret" (dict "value" .context.Values.events.secret "key" "eventSealSecret" "context" .context) }}
 {{- end }}
 
+{{/*
+Prints all Horizon allowed hosts.
+*/}}
 {{- define "horizon.allowedHosts" }}
     {{- range .Values.ingress.hosts -}}
         {{- printf "\"%s\"," .host -}}
     {{- end -}}
     {{- range .Values.allowedHosts -}}
+        {{- printf "\"%s\"," . -}}
+    {{- end -}}
+{{- end }}
+
+{{/*
+Prints all Horizon trusted proxies.
+*/}}
+{{- define "horizon.trustedProxies" }}
+    {{- range .Values.trustedProxies -}}
         {{- printf "\"%s\"," . -}}
     {{- end -}}
 {{- end }}

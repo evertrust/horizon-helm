@@ -76,7 +76,7 @@ appSecret:
       key: <secret key>
 ```
 
-> :warning: *Always store auto-generated secrets in a safe place after they're generated. If you ever uninstall your Helm chart, the deletion of the SSV secret will lead to the impossibility of recovering most of your data.
+> **Warning**: Always store auto-generated secrets in a safe place after they're generated. If you ever uninstall your Helm chart, the deletion of the SSV secret will lead to the impossibility of recovering most of your data.
 
 ### Database
 When installing the chart, you face multiple options regarding your database :
@@ -85,7 +85,7 @@ When installing the chart, you face multiple options regarding your database :
 - If you want to use an existing MongoDB instance, provide the `externalDatabase.uri` value. The URI should be treated as a secret as it must include credentials.
 
 ### Running behind a Docker registry proxy
-If your installation environment requires you to whitelist images that can be pulled by the Kubernetes cluster, you must whitelist the `registry.evertrust.io/horizon` image.
+If your installation environment requires you to whitelist images that can be pulled by the Kubernetes cluster, you must whitelist the `registry.evertrust.io/horizon` and `registry.evertrust.io/horizon-upgrade` images.
 
 Additionally, when configured to do so, the chart will spawn a local MongoDB instance with the `docker.io/bitnami/mongodb` image and check the database connectivity with the `docker.io/groundnuty/k8s-wait-for:v1.3` image.
 
@@ -96,9 +96,11 @@ Always check the upgrading instructions between chart versions.
 ### Upgrading the database
 When upgrading Horizon, you'll need to run a migration script against the MongoDB database.
 The chart will automatically create a `Job` that runs that upgrade script each time you upgrade your release.
-To disable that upgrade mechanism, set `mongodb.horizon.upgrade` to `false`.
+To disable that upgrade mechanism, set `upgrade.enabled` to `false`.
 
-### Specific upgrade instructions
+> **Note**: if the upgrade job fails to run, check the job's pod logs. When upgrading from an old version of Horizon, you may need to explicitely specify the version you're upgrading from using the `upgrade.from` key. 
+> 
+### Specific chart upgrade instructions
 
 #### Upgrading to 0.3.0
 
@@ -153,19 +155,20 @@ To disable that upgrade mechanism, set `mongodb.horizon.upgrade` to `false`.
 | `containerSecurityContext.runAsUser`    | Set Horizon container's Security Context runAsUser                                        | `1001`                  |
 | `containerSecurityContext.runAsNonRoot` | Set Horizon container's Security Context runAsNonRoot                                     | `true`                  |
 | `livenessProbe.enabled`                 | Enable livenessProbe                                                                      | `true`                  |
-| `livenessProbe.initialDelaySeconds`     | Initial delay seconds for livenessProbe                                                   | `90`                    |
+| `livenessProbe.initialDelaySeconds`     | Initial delay seconds for livenessProbe                                                   | `0`                     |
 | `livenessProbe.periodSeconds`           | Period seconds for livenessProbe                                                          | `10`                    |
 | `livenessProbe.timeoutSeconds`          | Timeout seconds for livenessProbe                                                         | `5`                     |
-| `livenessProbe.failureThreshold`        | Failure threshold for livenessProbe                                                       | `6`                     |
+| `livenessProbe.failureThreshold`        | Failure threshold for livenessProbe                                                       | `3`                     |
 | `livenessProbe.successThreshold`        | Success threshold for livenessProbe                                                       | `1`                     |
+| `startupProbe.enabled`                  | Enable startupProbe. Since Horizon is slow to start, this is highly recommended.          | `true`                  |
+| `startupProbe.periodSeconds`            | Period seconds for startupProbe                                                           | `3`                     |
+| `startupProbe.failureThreshold`         | Failure threshold for startupProbe                                                        | `60`                    |
 | `readinessProbe.enabled`                | Enable readinessProbe                                                                     | `true`                  |
-| `readinessProbe.initialDelaySeconds`    | Initial delay seconds for readinessProbe                                                  | `60`                    |
+| `readinessProbe.initialDelaySeconds`    | Initial delay seconds for readinessProbe                                                  | `0`                     |
 | `readinessProbe.periodSeconds`          | Period seconds for readinessProbe                                                         | `5`                     |
 | `readinessProbe.timeoutSeconds`         | Timeout seconds for readinessProbe                                                        | `3`                     |
 | `readinessProbe.failureThreshold`       | Failure threshold for readinessProbe                                                      | `3`                     |
 | `readinessProbe.successThreshold`       | Success threshold for readinessProbe                                                      | `1`                     |
-| `customLivenessProbe`                   | Custom livenessProbe that overrides the default one                                       | `{}`                    |
-| `customReadinessProbe`                  | Custom readinessProbe that overrides the default one                                      | `{}`                    |
 | `horizontalAutoscaler.enabled`          | Enable Horizontal POD autoscaling for Horizon                                             | `false`                 |
 | `horizontalAutoscaler.minReplicas`      | Minimum number of Horizon replicas                                                        | `1`                     |
 | `horizontalAutoscaler.maxReplicas`      | Maximum number of Horizon replicas                                                        | `3`                     |
@@ -212,6 +215,7 @@ To disable that upgrade mechanism, set `mongodb.horizon.upgrade` to `false`.
 | `vault.escrow`        | Name of the vault used for escrowing purposes                                    | `default`                                                                         |
 | `vault.transient`     | Name of the vault used for storing transient keys                                | `default`                                                                         |
 | `allowedHosts`        | Additional allowed hosts.                                                        | `[]`                                                                              |
+| `trustedProxies`      | Trusted proxies.                                                                 | `[]`                                                                              |
 | `events.chainsign`    | Whether Horizon events should be signed and chained using the event seal secret. | `true`                                                                            |
 | `events.secret`       | Secret used to sign and chain events.                                            | `{}`                                                                              |
 | `events.ttl`          | Duration during which events are kept in database.                               | `90 days`                                                                         |
@@ -240,9 +244,14 @@ To disable that upgrade mechanism, set `mongodb.horizon.upgrade` to `false`.
 | `mongodb.horizon.init`         | Set this to true to initialize the local database for Horizon. This only works when `mongodb.enabled` is set to true.                                                                 | `true`                                                                                                       |
 | `mongodb.horizon.username`     | Administration username used when initializing the database                                                                                                                           | `administrator`                                                                                              |
 | `mongodb.horizon.passwordHash` | Password hash used when initializing the database. Default: horizon                                                                                                                   | `$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/` |
-| `mongodb.horizon.upgrade`      | If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.                                 | `true`                                                                                                       |
-| `mongodb.horizon.upgradeFrom`  | Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.                                                                       | `""`                                                                                                         |
-| `mongodb.horizon.upgradeTo`    | Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.                                                                                                  | `""`                                                                                                         |
+| `upgrade.enabled`              | If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.                                 | `true`                                                                                                       |
+| `upgrade.image.registry`       | Horizon image registry                                                                                                                                                                | `registry.evertrust.io`                                                                                      |
+| `upgrade.image.repository`     | Horizon image repository                                                                                                                                                              | `horizon-upgrade`                                                                                            |
+| `upgrade.image.tag`            | Horizon image tag (immutable tags are recommended)                                                                                                                                    | `0.1.0`                                                                                                      |
+| `upgrade.image.pullPolicy`     | Horizon image pull policy                                                                                                                                                             | `IfNotPresent`                                                                                               |
+| `upgrade.image.pullSecrets`    | Horizon image pull secrets                                                                                                                                                            | `[]`                                                                                                         |
+| `upgrade.from`                 | Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.                                                                       | `""`                                                                                                         |
+| `upgrade.to`                   | Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.                                                                                                  | `""`                                                                                                         |
 | `externalDatabase.uri`         | External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`.                                                                                  | `{}`                                                                                                         |
 
 
