@@ -217,7 +217,7 @@
                 },
                 "initialDelaySeconds": {
                     "type": "number",
-                    "default": 90,
+                    "default": 0,
                     "description": "Initial delay seconds for livenessProbe"
                 },
                 "periodSeconds": {
@@ -232,13 +232,33 @@
                 },
                 "failureThreshold": {
                     "type": "number",
-                    "default": 6,
+                    "default": 3,
                     "description": "Failure threshold for livenessProbe"
                 },
                 "successThreshold": {
                     "type": "number",
                     "default": 1,
                     "description": "Success threshold for livenessProbe"
+                }
+            }
+        },
+        "startupProbe": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable startupProbe. Since Horizon is slow to start, this is highly recommended."
+                },
+                "periodSeconds": {
+                    "type": "number",
+                    "default": 3,
+                    "description": "Period seconds for startupProbe"
+                },
+                "failureThreshold": {
+                    "type": "number",
+                    "default": 60,
+                    "description": "Failure threshold for startupProbe"
                 }
             }
         },
@@ -252,7 +272,7 @@
                 },
                 "initialDelaySeconds": {
                     "type": "number",
-                    "default": 60,
+                    "default": 0,
                     "description": "Initial delay seconds for readinessProbe"
                 },
                 "periodSeconds": {
@@ -276,16 +296,6 @@
                     "description": "Success threshold for readinessProbe"
                 }
             }
-        },
-        "customLivenessProbe": {
-            "type": "object",
-            "default": "{}",
-            "description": "Custom livenessProbe that overrides the default one"
-        },
-        "customReadinessProbe": {
-            "type": "object",
-            "default": "{}",
-            "description": "Custom readinessProbe that overrides the default one"
         },
         "horizontalAutoscaler": {
             "type": "object",
@@ -457,6 +467,11 @@
             "default": "[]",
             "description": "Additional allowed hosts."
         },
+        "trustedProxies": {
+            "type": "array",
+            "default": "[]",
+            "description": "Trusted proxies."
+        },
         "events": {
             "type": "object",
             "properties": {
@@ -592,23 +607,58 @@
                             "type": "string",
                             "default": "$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/",
                             "description": "Password hash used when initializing the database. Default: horizon"
-                        },
-                        "upgrade": {
-                            "type": "boolean",
-                            "default": true,
-                            "description": "If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false."
-                        },
-                        "upgradeFrom": {
-                            "type": "string",
-                            "default": "\"\"",
-                            "description": "Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database."
-                        },
-                        "upgradeTo": {
-                            "type": "string",
-                            "default": "\"\"",
-                            "description": "Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion."
                         }
                     }
+                }
+            }
+        },
+        "upgrade": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false."
+                },
+                "image": {
+                    "type": "object",
+                    "properties": {
+                        "registry": {
+                            "type": "string",
+                            "default": "registry.evertrust.io",
+                            "description": "Horizon image registry"
+                        },
+                        "repository": {
+                            "type": "string",
+                            "default": "horizon-upgrade",
+                            "description": "Horizon image repository"
+                        },
+                        "tag": {
+                            "type": "string",
+                            "default": "0.1.0",
+                            "description": "Horizon image tag (immutable tags are recommended)"
+                        },
+                        "pullPolicy": {
+                            "type": "string",
+                            "default": "IfNotPresent",
+                            "description": "Horizon image pull policy"
+                        },
+                        "pullSecrets": {
+                            "type": "array",
+                            "default": "[]",
+                            "description": "Horizon image pull secrets"
+                        }
+                    }
+                },
+                "from": {
+                    "type": "string",
+                    "default": "\"\"",
+                    "description": "Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database."
+                },
+                "to": {
+                    "type": "string",
+                    "default": "\"\"",
+                    "description": "Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion."
                 }
             }
         },
