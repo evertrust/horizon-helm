@@ -12,7 +12,7 @@ helm repo add evertrust https://repo.evertrust.io/repository/charts
 
 You can then use the Chart using the prefix you chose :
 ```shell
-helm install evertrust/horizon
+helm install horizon evertrust/horizon
 ```
 ## Usage
 
@@ -84,11 +84,6 @@ When installing the chart, you face multiple options regarding your database :
 - By default, a local MongoDB standalone instance will be spawned in your cluster, using the [`bitnami/mongodb`](https://github.com/bitnami/charts/tree/master/bitnami/mongodb) chart. No additional configuration is required but it is not production ready.
 - If you want to use an existing MongoDB instance, provide the `externalDatabase.uri` value. The URI should be treated as a secret as it must include credentials.
 
-### Running behind a Docker registry proxy
-If your installation environment requires you to whitelist images that can be pulled by the Kubernetes cluster, you must whitelist the `registry.evertrust.io/horizon` and `registry.evertrust.io/horizon-upgrade` images.
-
-Additionally, when configured to do so, the chart will spawn a local MongoDB instance with the `docker.io/bitnami/mongodb` image and check the database connectivity with the `docker.io/groundnuty/k8s-wait-for:v1.3` image.
-
 ## Upgrading
 We recommended that you only change values you need to customize in your `values.yml` file to ensure smooth upgrading.
 Always check the upgrading instructions between chart versions.
@@ -106,6 +101,17 @@ To disable that upgrade mechanism, set `upgrade.enabled` to `false`.
 
 - Loggers are now configured with an array instead of a dictionary. Check the `values.yaml` format and update your override `values.yaml` accordingly.
 - The init dabatabase parameters (`initDatabase`, `initUsername` and `initPassword`) have been renamed and moved to `mongodb.horizon`. 
+
+## Advanced
+
+### Leases
+To ensure clustering issues get resolved as fast as possible, Horizon can use a CRD (Custom Resource Definition) named `Lease` (`akka.io/v1/leases`). We strongly recommend that you use this mechanism, however it implies that you have the necessary permissions to install CRDs onto your server. In case you don't, the feature can be disabled by passing the `--skip-crds` flag to the Helm command when installing the chart, and setting the `leases.enabled` key to `false`.
+If you want to manually install the CRD, you can check the [leases.yml](crds/leases.yml) file.
+
+### Running behind a Docker registry proxy
+If your installation environment requires you to whitelist images that can be pulled by the Kubernetes cluster, you must whitelist the `registry.evertrust.io/horizon` and `registry.evertrust.io/horizon-upgrade` images.
+
+Additionally, when configured to do so, the chart will spawn a local MongoDB instance with the `docker.io/bitnami/mongodb` image and check the database connectivity with the `docker.io/groundnuty/k8s-wait-for:v1.3` image.
 
 ## Parameters
 

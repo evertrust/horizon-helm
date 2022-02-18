@@ -453,6 +453,10 @@ logback:
     - name: racs-conenctors
       level: debug
 
+## @param leases.enabled Whether leases should be used when launching multiple replicas of Horizon pods. This requires the leases.akka.io CRD to be installed.
+leases:
+  enabled: true
+
 ## @section Database parameters
 
 ## Install a MongoDB instance
