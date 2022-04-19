@@ -450,7 +450,7 @@ logback:
       level: debug
     - name: pki-connectors
       level: debug
-    - name: racs-conenctors
+    - name: racs-connectors
       level: debug
 
 ## @param leases.enabled Whether leases should be used when launching multiple replicas of Horizon pods. This requires the leases.akka.io CRD to be installed.
