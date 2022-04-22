@@ -1,7 +1,7 @@
 all: gen-schema package
 
 gen-schema:
-	readme-generator -r README.md -v values.yaml -m values.schema.json
+	readme-generator -r README.md -v values.yaml -sw values.schema.json
 
 package:
 	helm dependencies build
