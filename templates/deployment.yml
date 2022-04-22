@@ -126,6 +126,9 @@ spec:
               containerPort: 8558
             - name: artery
               containerPort: 25520
+        {{- if .Values.sidecars }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.sidecars "context" $) | nindent 8 }}
+        {{- end }}
       dnsPolicy: ClusterFirst
       {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.image) "context" $) | nindent 6 }}
       volumes:
