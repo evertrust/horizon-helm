@@ -90,10 +90,9 @@ Always check the upgrading instructions between chart versions.
 
 ### Upgrading the database
 When upgrading Horizon, you'll need to run a migration script against the MongoDB database.
-The chart will automatically create a `Job` that runs that upgrade script each time you upgrade your release.
-To disable that upgrade mechanism, set `upgrade.enabled` to `false`.
+The chart will automatically create a `Job` that runs that upgrade script each time you upgrade your release if  `upgrade.enabled` is set to `true`.
 
-> **Note**: if the upgrade job fails to run, check the job's pod logs. When upgrading from an old version of Horizon, you may need to explicitely specify the version you're upgrading from using the `upgrade.from` key. 
+> **Note**: if the upgrade job fails to run, check the job's pod logs. When upgrading from an old version of Horizon, you may need to explicitly specify the version you're upgrading from using the `upgrade.from` key. 
 > 
 ### Specific chart upgrade instructions
 
@@ -110,8 +109,6 @@ If you want to manually install the CRD, you can check the [leases.yml](crds/lea
 
 ### Running behind a Docker registry proxy
 If your installation environment requires you to whitelist images that can be pulled by the Kubernetes cluster, you must whitelist the `registry.evertrust.io/horizon` and `registry.evertrust.io/horizon-upgrade` images.
-
-Additionally, when configured to do so, the chart will spawn a local MongoDB instance with the `docker.io/bitnami/mongodb` image and check the database connectivity with the `docker.io/groundnuty/k8s-wait-for:v1.3` image.
 
 ### Injecting extra configuration
 Extra Horizon configuration can be injected to the bundled `application.conf` file to modify low-level behavior of Horizon. This should be used carefully as it may cause things to break. To do so, just mount a folder in the Horizon container at `/horizon/etc/conf.d/` containing a `custom.conf` file.
@@ -275,7 +272,7 @@ Extra configurations are included at the end of the config file, overriding any 
 | `mongodb.horizon.init`         | Set this to true to initialize the local database for Horizon. This only works when `mongodb.enabled` is set to true.                                                                 | `true`                                                                                                       |
 | `mongodb.horizon.username`     | Administration username used when initializing the database                                                                                                                           | `administrator`                                                                                              |
 | `mongodb.horizon.passwordHash` | Password hash used when initializing the database. Default: horizon                                                                                                                   | `$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/` |
-| `upgrade.enabled`              | If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.                                 | `true`                                                                                                       |
+| `upgrade.enabled`              | If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.                                 | `false`                                                                                                      |
 | `upgrade.image.registry`       | Horizon image registry                                                                                                                                                                | `registry.evertrust.io`                                                                                      |
 | `upgrade.image.repository`     | Horizon image repository                                                                                                                                                              | `horizon-upgrade`                                                                                            |
 | `upgrade.image.tag`            | Horizon image tag (immutable tags are recommended)                                                                                                                                    | `0.1.0`                                                                                                      |
