@@ -32,6 +32,7 @@ spec:
             backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" $) "servicePort" "http" "context" $)  | nindent 14 }}
   {{- end }}
   {{- end }}
-  tls:
-  {{- toYaml .Values.ingress.tls | nindent 2 }}
+  {{- if .Values.ingress.tls }}
+  tls: {{- toYaml .Values.ingress.tls | nindent 2 }}
+  {{- end }}
   {{ end }}

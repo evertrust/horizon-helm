@@ -4,56 +4,56 @@
     "properties": {
         "kubeVersion": {
             "type": "string",
-            "default": "\"\"",
-            "description": "Force target Kubernetes version (using Helm capabilities if not set)"
+            "description": "Force target Kubernetes version (using Helm capabilities if not set)",
+            "default": ""
         },
         "nameOverride": {
             "type": "string",
-            "default": "\"\"",
-            "description": "String to partially override horizon.fullname"
+            "description": "String to partially override horizon.fullname",
+            "default": ""
         },
         "fullnameOverride": {
             "type": "string",
-            "default": "\"\"",
-            "description": "String to fully override horizon.fullname"
+            "description": "String to fully override horizon.fullname",
+            "default": ""
         },
         "commonLabels": {
             "type": "object",
-            "default": "{}",
-            "description": "Labels to add to all deployed objects"
+            "description": "Labels to add to all deployed objects",
+            "default": {}
         },
         "commonAnnotations": {
             "type": "object",
-            "default": "{}",
-            "description": "Annotations to add to all deployed objects"
+            "description": "Annotations to add to all deployed objects",
+            "default": {}
         },
         "image": {
             "type": "object",
             "properties": {
                 "registry": {
                     "type": "string",
-                    "default": "registry.evertrust.io",
-                    "description": "Horizon image registry"
+                    "description": "Horizon image registry",
+                    "default": "registry.evertrust.io"
                 },
                 "repository": {
                     "type": "string",
-                    "default": "horizon",
-                    "description": "Horizon image repository"
+                    "description": "Horizon image repository",
+                    "default": "horizon"
                 },
                 "tag": {
                     "type": "string",
-                    "default": "2.1.0",
-                    "description": "Horizon image tag (immutable tags are recommended)"
+                    "description": "Horizon image tag (immutable tags are recommended)",
+                    "default": "2.1.1"
                 },
                 "pullPolicy": {
                     "type": "string",
-                    "default": "IfNotPresent",
-                    "description": "Horizon image pull policy"
+                    "description": "Horizon image pull policy",
+                    "default": "IfNotPresent"
                 },
                 "pullSecrets": {
                     "type": "array",
-                    "default": "[]",
-                    "description": "Horizon image pull secrets"
+                    "description": "Horizon image pull secrets",
+                    "default": []
                 }
             }
         },
@@ -62,113 +62,128 @@
             "properties": {
                 "type": {
                     "type": "string",
-                    "default": "RollingUpdate",
-                    "description": "Horizon deployment strategy type"
+                    "description": "Horizon deployment strategy type",
+                    "default": "RollingUpdate"
                 },
                 "rollingUpdate": {
                     "type": "object",
-                    "default": "{}",
-                    "description": "Rolling update spec"
+                    "properties": {
+                        "maxSurge": {
+                            "type": "number",
+                            "description": "",
+                            "default": 1
+                        },
+                        "maxUnavailable": {
+                            "type": "number",
+                            "description": "",
+                            "default": 0
+                        }
+                    }
                 }
             }
         },
         "priorityClassName": {
             "type": "string",
-            "default": "\"\"",
-            "description": "Horizon pod priority class name"
+            "description": "Horizon pod priority class name",
+            "default": ""
         },
         "hostAliases": {
             "type": "array",
-            "default": "[]",
-            "description": "Horizon pod host aliases"
+            "description": "Horizon pod host aliases",
+            "default": []
         },
         "extraVolumes": {
             "type": "array",
-            "default": "[]",
-            "description": "Optionally specify extra list of additional volumes for Horizon pods"
+            "description": "Optionally specify extra list of additional volumes for Horizon pods",
+            "default": []
         },
         "extraVolumeMounts": {
             "type": "array",
-            "default": "[]",
-            "description": "Optionally specify extra list of additional volumeMounts for Horizon container(s)"
+            "description": "Optionally specify extra list of additional volumeMounts for Horizon container(s)",
+            "default": []
         },
         "sidecars": {
             "type": "array",
-            "default": "[]",
-            "description": "Add additional sidecar containers to the Horizon pod"
+            "description": "Add additional sidecar containers to the Horizon pod",
+            "default": []
         },
         "lifecycleHooks": {
             "type": "object",
-            "default": "{}",
-            "description": "Add lifecycle hooks to the Horizon deployment"
+            "description": "Add lifecycle hooks to the Horizon deployment",
+            "default": {}
         },
         "podLabels": {
             "type": "object",
-            "default": "{}",
-            "description": "Extra labels for Horizon pods"
+            "description": "Extra labels for Horizon pods",
+            "default": {}
         },
         "podAnnotations": {
             "type": "object",
-            "default": "{}",
-            "description": "Annotations for Horizon pods"
+            "description": "Annotations for Horizon pods",
+            "default": {}
         },
         "podAffinityPreset": {
             "type": "string",
-            "default": "\"\"",
-            "description": "Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`"
+            "description": "Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`",
+            "default": ""
         },
         "podAntiAffinityPreset": {
             "type": "string",
-            "default": "soft",
-            "description": "Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`"
+            "description": "Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`",
+            "default": "soft"
         },
         "nodeAffinityPreset": {
             "type": "object",
             "properties": {
                 "type": {
                     "type": "string",
-                    "default": "\"\"",
-                    "description": "Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`"
+                    "description": "Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`",
+                    "default": ""
                 },
                 "key": {
                     "type": "string",
-                    "default": "\"\"",
-                    "description": "Node label key to match. Ignored if `affinity` is set"
+                    "description": "Node label key to match. Ignored if `affinity` is set",
+                    "default": ""
                 },
                 "values": {
                     "type": "array",
-                    "default": "[]",
-                    "description": "Node label values to match. Ignored if `affinity` is set"
+                    "description": "Node label values to match. Ignored if `affinity` is set",
+                    "default": []
                 }
             }
         },
         "affinity": {
             "type": "object",
-            "default": "{}",
-            "description": "Affinity for pod assignment"
+            "description": "Affinity for pod assignment",
+            "default": {}
         },
         "nodeSelector": {
             "type": "object",
-            "default": "{}",
-            "description": "Node labels for pod assignment"
+            "description": "Node labels for pod assignment",
+            "default": {}
         },
         "tolerations": {
             "type": "array",
-            "default": "[]",
-            "description": "Tolerations for pod assignment"
+            "description": "Tolerations for pod assignment",
+            "default": []
         },
         "resources": {
             "type": "object",
             "properties": {
-                "limits": {
-                    "type": "object",
-                    "default": "{}",
-                    "description": "The resources limits for the Horizon container"
-                },
                 "requests": {
                     "type": "object",
-                    "default": "{}",
-                    "description": "The requested resources for the Horizon container"
+                    "properties": {
+                        "memory": {
+                            "type": "string",
+                            "description": "",
+                            "default": "512Mi"
+                        },
+                        "cpu": {
+                            "type": "string",
+                            "description": "",
+                            "default": "300m"
+                        }
+                    }
                 }
             }
         },
@@ -177,13 +192,13 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "default": true,
-                    "description": "Enabled Horizon pods' Security Context"
+                    "description": "Enabled Horizon pods' Security Context",
+                    "default": true
                 },
                 "fsGroup": {
                     "type": "number",
-                    "default": 1001,
-                    "description": "Set Horizon pod's Security Context fsGroup"
+                    "description": "Set Horizon pod's Security Context fsGroup",
+                    "default": 1001
                 }
             }
         },
@@ -192,18 +207,18 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "default": true,
-                    "description": "Enabled Horizon containers' Security Context"
+                    "description": "Enabled Horizon containers' Security Context",
+                    "default": true
                 },
                 "runAsUser": {
                     "type": "number",
-                    "default": 1001,
-                    "description": "Set Horizon container's Security Context runAsUser"
+                    "description": "Set Horizon container's Security Context runAsUser",
+                    "default": 1001
                 },
                 "runAsNonRoot": {
                     "type": "boolean",
-                    "default": true,
-                    "description": "Set Horizon container's Security Context runAsNonRoot"
+                    "description": "Set Horizon container's Security Context runAsNonRoot",
+                    "default": true
                 }
             }
         },
@@ -212,33 +227,33 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "default": true,
-                    "description": "Enable livenessProbe"
+                    "description": "Enable livenessProbe",
+                    "default": true
                 },
                 "initialDelaySeconds": {
                     "type": "number",
-                    "default": 0,
-                    "description": "Initial delay seconds for livenessProbe"
+                    "description": "Initial delay seconds for livenessProbe",
+                    "default": 0
                 },
                 "periodSeconds": {
                     "type": "number",
-                    "default": 10,
-                    "description": "Period seconds for livenessProbe"
+                    "description": "Period seconds for livenessProbe",
+                    "default": 10
                 },
                 "timeoutSeconds": {
                     "type": "number",
-                    "default": 5,
-                    "description": "Timeout seconds for livenessProbe"
+                    "description": "Timeout seconds for livenessProbe",
+                    "default": 5
                 },
                 "failureThreshold": {
                     "type": "number",
-                    "default": 3,
-                    "description": "Failure threshold for livenessProbe"
+                    "description": "Failure threshold for livenessProbe",
+                    "default": 3
                 },
                 "successThreshold": {
                     "type": "number",
-                    "default": 1,
-                    "description": "Success threshold for livenessProbe"
+                    "description": "Success threshold for livenessProbe",
+                    "default": 1
                 }
             }
         },
@@ -247,18 +262,18 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "default": true,
-                    "description": "Enable startupProbe. Since Horizon is slow to start, this is highly recommended."
+                    "description": "Enable startupProbe. Since Horizon is slow to start, this is highly recommended.",
+                    "default": true
                 },
                 "periodSeconds": {
                     "type": "number",
-                    "default": 3,
-                    "description": "Period seconds for startupProbe"
+                    "description": "Period seconds for startupProbe",
+                    "default": 3
                 },
                 "failureThreshold": {
                     "type": "number",
-                    "default": 60,
-                    "description": "Failure threshold for startupProbe"
+                    "description": "Failure threshold for startupProbe",
+                    "default": 60
                 }
             }
         },
@@ -267,33 +282,33 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "default": true,
-                    "description": "Enable readinessProbe"
+                    "description": "Enable readinessProbe",
+                    "default": true
                 },
                 "initialDelaySeconds": {
                     "type": "number",
-                    "default": 0,
-                    "description": "Initial delay seconds for readinessProbe"
+                    "description": "Initial delay seconds for readinessProbe",
+                    "default": 0
                 },
                 "periodSeconds": {
                     "type": "number",
-                    "default": 5,
-                    "description": "Period seconds for readinessProbe"
+                    "description": "Period seconds for readinessProbe",
+                    "default": 5
                 },
                 "timeoutSeconds": {
                     "type": "number",
-                    "default": 3,
-                    "description": "Timeout seconds for readinessProbe"
+                    "description": "Timeout seconds for readinessProbe",
+                    "default": 3
                 },
                 "failureThreshold": {
                     "type": "number",
-                    "default": 3,
-                    "description": "Failure threshold for readinessProbe"
+                    "description": "Failure threshold for readinessProbe",
+                    "default": 3
                 },
                 "successThreshold": {
                     "type": "number",
-                    "default": 1,
-                    "description": "Success threshold for readinessProbe"
+                    "description": "Success threshold for readinessProbe",
+                    "default": 1
                 }
             }
         },
@@ -302,28 +317,28 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "default": false,
-                    "description": "Enable Horizontal POD autoscaling for Horizon"
+                    "description": "Enable Horizontal POD autoscaling for Horizon",
+                    "default": false
                 },
                 "minReplicas": {
                     "type": "number",
-                    "default": 1,
-                    "description": "Minimum number of Horizon replicas"
+                    "description": "Minimum number of Horizon replicas",
+                    "default": 1
                 },
                 "maxReplicas": {
                     "type": "number",
-                    "default": 3,
-                    "description": "Maximum number of Horizon replicas"
+                    "description": "Maximum number of Horizon replicas",
+                    "default": 3
                 },
                 "targetCPU": {
                     "type": "number",
-                    "default": 50,
-                    "description": "Target CPU utilization percentage"
+                    "description": "Target CPU utilization percentage",
+                    "default": 50
                 },
                 "targetMemory": {
                     "type": "number",
-                    "default": 50,
-                    "description": "Target Memory utilization percentage"
+                    "description": "Target Memory utilization percentage",
+                    "default": 50
                 }
             }
         },
@@ -332,58 +347,58 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "default": false,
-                    "description": "Created a PodDisruptionBudget"
+                    "description": "Created a PodDisruptionBudget",
+                    "default": false
                 },
                 "minAvailable": {
                     "type": "number",
-                    "default": 1,
-                    "description": "Min number of pods that must still be available after the eviction"
+                    "description": "Min number of pods that must still be available after the eviction",
+                    "default": 1
                 },
                 "maxUnavailable": {
                     "type": "number",
-                    "default": 0,
-                    "description": "Max number of pods that can be unavailable after the eviction"
+                    "description": "Max number of pods that can be unavailable after the eviction",
+                    "default": 0
                 }
             }
         },
         "environment": {
             "type": "array",
-            "default": "[]",
-            "description": "Extra env vars passed to the Horizon pods"
+            "description": "Extra env vars passed to the Horizon pods",
+            "default": []
         },
         "service": {
             "type": "object",
             "properties": {
                 "type": {
                     "type": "string",
-                    "default": "ClusterIP",
-                    "description": "Kubernetes service type"
+                    "description": "Kubernetes service type",
+                    "default": "ClusterIP"
                 },
                 "clusterIP": {
                     "type": "string",
-                    "default": "\"\"",
-                    "description": "Horizon service clusterIP IP"
+                    "description": "Horizon service clusterIP IP",
+                    "default": ""
                 },
                 "loadBalancerIP": {
                     "type": "string",
-                    "default": "\"\"",
-                    "description": "loadBalancerIP for the Horizon Service (optional, cloud specific)"
+                    "description": "loadBalancerIP for the Horizon Service (optional, cloud specific)",
+                    "default": ""
                 },
                 "loadBalancerSourceRanges": {
                     "type": "array",
-                    "default": "[]",
-                    "description": "Address that are allowed when service is LoadBalancer"
+                    "description": "Address that are allowed when service is LoadBalancer",
+                    "default": []
                 },
                 "externalTrafficPolicy": {
                     "type": "string",
-                    "default": "Cluster",
-                    "description": "Enable client source IP preservation"
+                    "description": "Enable client source IP preservation",
+                    "default": "Cluster"
                 },
                 "annotations": {
                     "type": "object",
-                    "default": "{}",
-                    "description": "Annotations for Horizon service"
+                    "description": "Annotations for Horizon service",
+                    "default": {}
                 }
             }
         },
@@ -392,108 +407,119 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "default": false,
-                    "description": "Set to true to enable ingress record generation"
+                    "description": "Set to true to enable ingress record generation",
+                    "default": false
                 },
                 "ingressClassName": {
                     "type": "string",
-                    "default": "\"\"",
-                    "description": "IngressClass that will be be used to implement the Ingress (Kubernetes 1.18+)"
+                    "description": "IngressClass that will be be used to implement the Ingress (Kubernetes 1.18+)",
+                    "default": ""
                 },
                 "annotations": {
                     "type": "object",
-                    "default": "{}",
-                    "description": "Additional annotations for the Ingress resource. To enable certificate autogeneration, place here your cert-manager annotations."
+                    "description": "Additional annotations for the Ingress resource. To enable certificate autogeneration, place here your cert-manager annotations.",
+                    "default": {}
                 },
                 "hosts": {
                     "type": "array",
-                    "default": "[]",
-                    "description": "Routing configuration for the ingress"
+                    "description": "Routing configuration for the ingress",
+                    "default": []
                 },
                 "tls": {
                     "type": "array",
-                    "default": "[]",
-                    "description": "Enable TLS configuration for the ingress"
+                    "description": "Enable TLS configuration for the ingress",
+                    "default": []
                 }
             }
-        },
-        "appSecret": {
-            "type": "object",
-            "default": "{}",
-            "description": "Application secret used for encrypting session data and cookies"
         },
         "license": {
             "type": "object",
             "properties": {
                 "secretName": {
                     "type": "string",
-                    "default": "\"\"",
-                    "description": "Existing secret name where the Horizon license is stored"
+                    "description": "Existing secret name where the Horizon license is stored",
+                    "default": ""
                 },
                 "secretKey": {
                     "type": "string",
-                    "default": "\"\"",
-                    "description": "Existing secret key where the Horizon license is stored"
+                    "description": "Existing secret key where the Horizon license is stored",
+                    "default": ""
                 }
             }
         },
         "vaults": {
             "type": "array",
-            "default": "[]",
-            "description": "Horizon vaults configuration"
+            "description": "",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "vault_type": {
+                        "type": "string",
+                        "description": ""
+                    },
+                    "master_password": {
+                        "type": "object",
+                        "description": ""
+                    }
+                }
+            }
         },
         "vault": {
             "type": "object",
             "properties": {
                 "configuration": {
                     "type": "string",
-                    "default": "default",
-                    "description": "Name of the vault used for configuration purposes"
+                    "description": "Name of the vault used for configuration purposes",
+                    "default": "default"
                 },
                 "escrow": {
                     "type": "string",
-                    "default": "default",
-                    "description": "Name of the vault used for escrowing purposes"
+                    "description": "Name of the vault used for escrowing purposes",
+                    "default": "default"
                 },
                 "transient": {
                     "type": "string",
-                    "default": "default",
-                    "description": "Name of the vault used for storing transient keys"
+                    "description": "Name of the vault used for storing transient keys",
+                    "default": "default"
                 }
             }
         },
         "allowedHosts": {
             "type": "array",
-            "default": "[]",
-            "description": "Additional allowed hosts."
+            "description": "Additional allowed hosts.",
+            "default": [
+                "localhost:9000"
+            ]
         },
         "trustedProxies": {
             "type": "array",
-            "default": "[]",
-            "description": "Trusted proxies."
+            "description": "Trusted proxies.",
+            "default": [
+                "0.0.0.0/0",
+                "::/0"
+            ]
         },
         "events": {
             "type": "object",
             "properties": {
                 "chainsign": {
                     "type": "boolean",
-                    "default": true,
-                    "description": "Whether Horizon events should be signed and chained using the event seal secret."
-                },
-                "secret": {
-                    "type": "object",
-                    "default": "{}",
-                    "description": "Secret used to sign and chain events."
+                    "description": "Whether Horizon events should be signed and chained using the event seal secret.",
+                    "default": true
                 },
                 "ttl": {
                     "type": "string",
-                    "default": "90 days",
-                    "description": "Duration during which events are kept in database."
+                    "description": "Duration during which events are kept in database.",
+                    "default": "90 days"
                 },
                 "discoveryTtl": {
                     "type": "string",
-                    "default": "30 days",
-                    "description": "Duration during which discovery events are kept in database."
+                    "description": "Duration during which discovery events are kept in database.",
+                    "default": "30 days"
                 }
             }
         },
@@ -502,53 +528,70 @@
             "properties": {
                 "host": {
                     "type": "string",
-                    "default": "\"\"",
-                    "description": "SMTP host"
+                    "description": "SMTP host",
+                    "default": ""
                 },
                 "port": {
                     "type": "number",
-                    "default": 587,
-                    "description": "SMTP host port"
+                    "description": "SMTP host port",
+                    "default": 587
                 },
                 "tls": {
                     "type": "boolean",
-                    "default": true,
-                    "description": "Enable TLS for this SMTP host"
+                    "description": "Enable TLS for this SMTP host",
+                    "default": true
                 },
                 "ssl": {
                     "type": "boolean",
-                    "default": false,
-                    "description": "Enable SSL for this SMTP host"
+                    "description": "Enable SSL for this SMTP host",
+                    "default": false
                 },
                 "user": {
                     "type": "string",
-                    "default": "\"\"",
-                    "description": "Authentication username for this SMTP host"
-                },
-                "password": {
-                    "type": "object",
-                    "default": "{}",
-                    "description": "Authentication password for this SMTP host"
+                    "description": "Authentication username for this SMTP host",
+                    "default": ""
                 }
             }
         },
         "logback": {
             "type": "object",
             "properties": {
+                "loggers": {
+                    "type": "array",
+                    "description": "",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": ""
+                            },
+                            "level": {
+                                "type": "string",
+                                "description": ""
+                            }
+                        }
+                    }
+                },
                 "level": {
                     "type": "string",
-                    "default": "debug",
-                    "description": "Global level below wich messages will not be logged"
+                    "description": "Global level below wich messages will not be logged",
+                    "default": "debug"
                 },
                 "pattern": {
                     "type": "string",
-                    "default": "%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}",
-                    "description": "Log messages pattern"
-                },
-                "loggers": {
-                    "type": "array",
-                    "default": "[]",
-                    "description": "Enabled loggers and their associated log level"
+                    "description": "Log messages pattern",
+                    "default": "%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}"
+                }
+            }
+        },
+        "leases": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether leases should be used when launching multiple replicas of Horizon pods. This requires the leases.akka.io CRD to be installed.",
+                    "default": true
                 }
             }
         },
@@ -557,36 +600,41 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "default": true,
-                    "description": "Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter"
+                    "description": "Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter",
+                    "default": true
                 },
                 "architecture": {
                     "type": "string",
-                    "default": "standalone",
-                    "description": "MongoDB architecture (`standalone` or `replicaset`)"
+                    "description": "MongoDB architecture (`standalone` or `replicaset`)",
+                    "default": "standalone"
+                },
+                "initdbScriptsConfigMap": {
+                    "type": "string",
+                    "description": "",
+                    "default": "horizon-database-init-scripts"
                 },
                 "auth": {
                     "type": "object",
                     "properties": {
                         "rootPassword": {
                             "type": "string",
-                            "default": "\"\"",
-                            "description": "MongoDB admin password"
+                            "description": "MongoDB admin password",
+                            "default": ""
                         },
                         "username": {
                             "type": "string",
-                            "default": "horizon",
-                            "description": "MongoDB custom user"
+                            "description": "MongoDB custom user",
+                            "default": "horizon"
                         },
                         "database": {
                             "type": "string",
-                            "default": "horizon",
-                            "description": "MongoDB custom database"
+                            "description": "MongoDB custom database",
+                            "default": "horizon"
                         },
                         "password": {
                             "type": "string",
-                            "default": "secret_password",
-                            "description": "MongoDB custom password"
+                            "description": "MongoDB custom password",
+                            "default": "secret_password"
                         }
                     }
                 },
@@ -595,18 +643,18 @@
                     "properties": {
                         "init": {
                             "type": "boolean",
-                            "default": true,
-                            "description": "Set this to true to initialize the local database for Horizon. This only works when `mongodb.enabled` is set to true."
+                            "description": "Set this to true to initialize the local database for Horizon. This only works when `mongodb.enabled` is set to true.",
+                            "default": true
                         },
                         "username": {
                             "type": "string",
-                            "default": "administrator",
-                            "description": "Administration username used when initializing the database"
+                            "description": "Administration username used when initializing the database",
+                            "default": "administrator"
                         },
                         "passwordHash": {
                             "type": "string",
-                            "default": "$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/",
-                            "description": "Password hash used when initializing the database. Default: horizon"
+                            "description": "Password hash used when initializing the database. Default: horizon",
+                            "default": "$6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/"
                         }
                     }
                 }
@@ -617,58 +665,48 @@
             "properties": {
                 "enabled": {
                     "type": "boolean",
-                    "default": true,
-                    "description": "If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false."
+                    "description": "If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.",
+                    "default": false
                 },
                 "image": {
                     "type": "object",
                     "properties": {
                         "registry": {
                             "type": "string",
-                            "default": "registry.evertrust.io",
-                            "description": "Horizon image registry"
+                            "description": "Horizon image registry",
+                            "default": "registry.evertrust.io"
                         },
                         "repository": {
                             "type": "string",
-                            "default": "horizon-upgrade",
-                            "description": "Horizon image repository"
+                            "description": "Horizon image repository",
+                            "default": "horizon-upgrade"
                         },
                         "tag": {
                             "type": "string",
-                            "default": "0.1.0",
-                            "description": "Horizon image tag (immutable tags are recommended)"
+                            "description": "Horizon image tag (immutable tags are recommended)",
+                            "default": "0.1.0"
                         },
                         "pullPolicy": {
                             "type": "string",
-                            "default": "IfNotPresent",
-                            "description": "Horizon image pull policy"
+                            "description": "Horizon image pull policy",
+                            "default": "IfNotPresent"
                         },
                         "pullSecrets": {
                             "type": "array",
-                            "default": "[]",
-                            "description": "Horizon image pull secrets"
+                            "description": "Horizon image pull secrets",
+                            "default": []
                         }
                     }
                 },
                 "from": {
                     "type": "string",
-                    "default": "\"\"",
-                    "description": "Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database."
+                    "description": "Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.",
+                    "default": ""
                 },
                 "to": {
                     "type": "string",
-                    "default": "\"\"",
-                    "description": "Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion."
-                }
-            }
-        },
-        "externalDatabase": {
-            "type": "object",
-            "properties": {
-                "uri": {
-                    "type": "object",
-                    "default": "{}",
-                    "description": "External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`."
+                    "description": "Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.",
+                    "default": ""
                 }
             }
         }

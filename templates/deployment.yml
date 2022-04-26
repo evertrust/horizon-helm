@@ -47,15 +47,6 @@ spec:
       {{- if .Values.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
-      {{- if .Values.mongodb.enabled }}
-      initContainers:
-        - name: wait-for-mongodb
-          image: groundnuty/k8s-wait-for:v1.3
-          imagePullPolicy: IfNotPresent
-          args:
-            - "service"
-            - {{ template "horizon.mongodb.fullname" . }}
-      {{- end }}
       containers:
         - name: horizon
           image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" $) }}
@@ -128,6 +119,9 @@ spec:
               mountPath: /horizon/etc
             - name: {{ .Release.Name }}-license
               mountPath: /horizon/license
+            {{- if .Values.extraVolumeMounts }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
+            {{- end }}
           ports:
             - name: http
               containerPort: 9000
@@ -135,6 +129,9 @@ spec:
               containerPort: 8558
             - name: artery
               containerPort: 25520
+        {{- if .Values.sidecars }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.sidecars "context" $) | nindent 8 }}
+        {{- end }}
       dnsPolicy: ClusterFirst
       {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.image) "context" $) | nindent 6 }}
       volumes:
@@ -147,3 +144,6 @@ spec:
             items:
               - key: {{ required "You must specify a license secret" .Values.license.secretKey }}
                 path: horizon.lic
+        {{- if .Values.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
+        {{- end }}
