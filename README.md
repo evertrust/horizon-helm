@@ -113,6 +113,30 @@ If your installation environment requires you to whitelist images that can be pu
 
 Additionally, when configured to do so, the chart will spawn a local MongoDB instance with the `docker.io/bitnami/mongodb` image and check the database connectivity with the `docker.io/groundnuty/k8s-wait-for:v1.3` image.
 
+### Injecting extra configuration
+Extra Horizon configuration can be injected to the bundled `application.conf` file to modify low-level behavior of Horizon. This should be used carefully as it may cause things to break. To do so, just mount a folder in the Horizon container at `/horizon/etc/conf.d/` containing a `custom.conf` file.
+
+This can be done with the following edits to your `values.yaml` file :
+```yaml
+extraVolumes:
+  - name: additional-config
+    configMap:
+      name: additional-config
+
+extraVolumeMounts:
+  - name: additional-config
+    mountPath: /horizon/etc/conf.d
+```
+Where the `additional-config` configmap contains a single key with your custom configuration :
+```yaml
+apiVersion: v1
+kind: ConfigMap
+data:
+  custom.conf: |-
+    play.server.http.port = 9999
+```
+Extra configurations are included at the end of the config file, overriding any previously set config value.
+
 ## Parameters
 
 ### Global parameters

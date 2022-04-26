@@ -63,9 +63,18 @@ priorityClassName: ""
 ##
 hostAliases: []
 ## @param extraVolumes Optionally specify extra list of additional volumes for Horizon pods
+## e.g:
+## extraVolumes:
+##   - name: extra-volume-name
+##     configMap:
+##       name: example-configmap
 ##
 extraVolumes: []
 ## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for Horizon container(s)
+## e.g:
+## extraVolumeMounts:
+##   - name: extra-volume-name
+##     mountPath: /mnt/extra-volume
 ##
 extraVolumeMounts: []
 ## @param sidecars Add additional sidecar containers to the Horizon pod

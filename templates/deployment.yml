@@ -119,6 +119,9 @@ spec:
               mountPath: /horizon/etc
             - name: {{ .Release.Name }}-license
               mountPath: /horizon/license
+            {{- if .Values.extraVolumeMounts }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
+            {{- end }}
           ports:
             - name: http
               containerPort: 9000
@@ -141,3 +144,6 @@ spec:
             items:
               - key: {{ required "You must specify a license secret" .Values.license.secretKey }}
                 path: horizon.lic
+        {{- if .Values.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
+        {{- end }}
