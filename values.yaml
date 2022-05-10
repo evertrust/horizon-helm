@@ -34,7 +34,7 @@ commonAnnotations: {}
 image:
   registry: registry.evertrust.io
   repository: horizon
-  tag: 2.1.1
+  tag: 2.2.0
   pullPolicy: IfNotPresent
   pullSecrets: []
 
@@ -523,7 +523,7 @@ upgrade:
   image:
     registry: registry.evertrust.io
     repository: horizon-upgrade
-    tag: 0.1.0
+    tag: 0.1.1
     pullPolicy: IfNotPresent
     pullSecrets: []
   ## @param upgrade.from Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.
