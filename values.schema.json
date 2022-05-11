@@ -43,7 +43,7 @@
                 "tag": {
                     "type": "string",
                     "description": "Horizon image tag (immutable tags are recommended)",
-                    "default": "2.1.1"
+                    "default": "2.2.0"
                 },
                 "pullPolicy": {
                     "type": "string",
@@ -595,6 +595,11 @@
                 }
             }
         },
+        "clientCertificateHeader": {
+            "type": "string",
+            "description": "Indicates to Horizon in which header the client certificate will be passed, escaped and pem-encoded.",
+            "default": "Ssl-Client-Cert"
+        },
         "mongodb": {
             "type": "object",
             "properties": {
@@ -684,7 +689,7 @@
                         "tag": {
                             "type": "string",
                             "description": "Horizon image tag (immutable tags are recommended)",
-                            "default": "0.1.0"
+                            "default": "0.1.1"
                         },
                         "pullPolicy": {
                             "type": "string",
