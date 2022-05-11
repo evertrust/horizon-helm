@@ -466,6 +466,9 @@ logback:
 leases:
   enabled: true
 
+## @param clientCertificateHeader Indicates to Horizon in which header the client certificate will be passed, escaped and pem-encoded.
+clientCertificateHeader: "Ssl-Client-Cert"
+
 ## @section Database parameters
 
 ## Install a MongoDB instance
