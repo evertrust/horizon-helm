@@ -43,7 +43,7 @@
                 "tag": {
                     "type": "string",
                     "description": "Horizon image tag (immutable tags are recommended)",
-                    "default": "2.2.0"
+                    "default": "2.2.1"
                 },
                 "pullPolicy": {
                     "type": "string",
