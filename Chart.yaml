@@ -9,9 +9,9 @@ sources:
   - https://gitlab.com/evertrust/horizon-helm
 dependencies:
   - name: common
-    version: 1.10.3
+    version: 1.10.4
     repository: https://charts.bitnami.com/bitnami
   - name: mongodb
-    version: 10.30.6
+    version: 10.30.12
     repository: https://charts.bitnami.com/bitnami
     condition: mongodb.enabled
