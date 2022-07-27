@@ -153,7 +153,7 @@ Extra configurations are included at the end of the config file, overriding any 
 | --------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------- |
 | `image.registry`                        | Horizon image registry                                                                    | `registry.evertrust.io` |
 | `image.repository`                      | Horizon image repository                                                                  | `horizon`               |
-| `image.tag`                             | Horizon image tag (immutable tags are recommended)                                        | `2.2.0`                 |
+| `image.tag`                             | Horizon image tag (immutable tags are recommended)                                        | `2.2.1`                 |
 | `image.pullPolicy`                      | Horizon image pull policy                                                                 | `IfNotPresent`          |
 | `image.pullSecrets`                     | Horizon image pull secrets                                                                | `[]`                    |
 | `updateStrategy.type`                   | Horizon deployment strategy type                                                          | `RollingUpdate`         |
