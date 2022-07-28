@@ -689,7 +689,7 @@
                         "tag": {
                             "type": "string",
                             "description": "Horizon image tag (immutable tags are recommended)",
-                            "default": "0.1.1"
+                            "default": "2.1.1"
                         },
                         "pullPolicy": {
                             "type": "string",
