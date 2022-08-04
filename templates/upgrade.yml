@@ -19,6 +19,7 @@ spec:
               {{- end }}
               "-t", "{{ coalesce .Values.upgrade.to .Chart.AppVersion }}"
           ]
+          resources: {{- toYaml .Values.upgrade.resources | nindent 12 }}
           env:
             - name: MONGODB_URI
               {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}

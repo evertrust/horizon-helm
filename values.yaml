@@ -579,6 +579,16 @@ upgrade:
     tag: 2.1.1
     pullPolicy: IfNotPresent
     pullSecrets: []
+  ## horizon-upgrade container resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param upgrade.resources.limits [object] The resources limits for the Horizon container
+  ## @param upgrade.resources.requests [object] The requested resources for the Horizon container
+  ##
+  resources:
+    limits:
+      memory: 512Mi
+      cpu: 500m
+    requests: {}
   ## @param upgrade.from Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.
   ##
   from: ""
