@@ -13,7 +13,6 @@ An ingress has been deployed and Horizon will be shortly available
 at {{ .Values.ingress.tls | ternary "https" "http" }}://{{ .Values.ingress.hostname }}
 {{ end }}
 
-{{- if and .Release.IsUpgrade .Values.upgrade.enabled }}
-
+{{- if eq (include "horizon.shouldRunUpgrade" .) "true" }}
 An upgrade job has been created. Check that it ran successfully before proceeding.
 {{ end }}
