@@ -10,7 +10,7 @@ To learn more about the release, try:
 {{- if .Values.ingress.enabled }}
 
 An ingress has been deployed and Horizon will be shortly available
-at {{ (empty .Values.ingress.tls) | ternary "https" "http" }}://{{ (first .Values.ingress.hosts).host }}
+at {{ .Values.ingress.tls | ternary "https" "http" }}://{{ .Values.ingress.hostname }}
 {{ end }}
 
 {{- if and .Release.IsUpgrade .Values.upgrade.enabled }}

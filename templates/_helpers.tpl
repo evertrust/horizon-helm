@@ -95,3 +95,37 @@ Prints all Horizon trusted proxies.
         {{- printf "\"%s\"," . -}}
     {{- end -}}
 {{- end }}
+
+{{/*
+Prints all Horizon trusted proxies.
+*/}}
+{{- define "horizon.traefikCrd" }}
+    {{- printf "%s-%s-%s@kubernetescrd" .context.Release.Namespace (include "common.names.fullname" .context) .name }}
+{{- end }}
+
+{{/*
+Prints ingress configuration annotations
+*/}}
+{{- define "horizon.ingressConfigurationAnnotations" }}
+{{- if eq .context.Values.ingress.type "nginx" }}
+nginx.ingress.kubernetes.io/app-root: /ui#/ra
+nginx.ingress.kubernetes.io/server-snippet: |
+  large_client_header_buffers 4 64k;
+{{- if .context.Values.ingress.clientCertificateAuth }}
+  ssl_verify_client optional_no_ca;
+{{- end }}
+nginx.ingress.kubernetes.io/configuration-snippet: |
+{{- if .context.Values.ingress.clientCertificateAuth }}
+  proxy_set_header X-Forwarded-Tls-Client-Cert $ssl_client_escaped_cert;
+{{- end }}
+{{- end }}
+{{- if and (eq .context.Values.ingress.type "traefik") }}
+traefik.ingress.kubernetes.io/router.tls: "true"
+{{- if .context.Values.ingress.clientCertificateAuth }}
+traefik.ingress.kubernetes.io/router.tls.options: {{ template "horizon.traefikCrd" (dict "context" .context "name" "client-auth" )}}
+traefik.ingress.kubernetes.io/router.middlewares: {{ template "horizon.traefikCrd" (dict "context" .context "name" "client-auth" )}}, {{ template "horizon.traefikCrd" (dict "context" .context "name" "app-root" )}}, {{ template "horizon.traefikCrd" (dict "context" .context "name" "https-redirect" )}}
+{{- else }}
+traefik.ingress.kubernetes.io/router.middlewares: {{ template "horizon.traefikCrd" (dict "context" .context "name" "app-root" )}}, {{ template "horizon.traefikCrd" (dict "context" .context "name" "https-redirect" )}}
+{{- end }}
+{{- end }}
+{{- end }}
