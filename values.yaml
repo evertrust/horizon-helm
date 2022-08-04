@@ -563,6 +563,7 @@ mongodb:
     ##
     passwordHash: $6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/
 
+## @section Upgrade parameters
 upgrade:
   ## @param upgrade.enabled If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
   ##
@@ -576,9 +577,19 @@ upgrade:
   image:
     registry: registry.evertrust.io
     repository: horizon-upgrade
-    tag: 2.1.1
+    tag: 2.2.1
     pullPolicy: IfNotPresent
     pullSecrets: []
+  ## horizon-upgrade container resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param upgrade.resources.limits [object] The resources limits for the Horizon container
+  ## @param upgrade.resources.requests [object] The requested resources for the Horizon container
+  ##
+  resources:
+    limits:
+      memory: 512Mi
+      cpu: 500m
+    requests: {}
   ## @param upgrade.from Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.
   ##
   from: ""
