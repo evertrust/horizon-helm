@@ -1,4 +1,4 @@
-{{- if and .Release.IsUpgrade .Values.upgrade.enabled }}
+{{- if eq (include "horizon.shouldRunUpgrade" .) "true" }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -14,9 +14,7 @@ spec:
           args: [
               "-y",
               "-m", "$(MONGODB_URI)",
-              {{- if .Values.upgrade.from }}
-              "-s", "{{ .Values.upgrade.from }}",
-              {{- end }}
+              "-s", "{{ coalesce .Values.upgrade.from (include "horizon.installedVersion" .) }}",
               "-t", "{{ coalesce .Values.upgrade.to .Chart.AppVersion }}"
           ]
           resources: {{- toYaml .Values.upgrade.resources | nindent 12 }}

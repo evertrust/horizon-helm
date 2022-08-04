@@ -1,4 +1,15 @@
 {{/*
+Kubernetes standard labels
+*/}}
+{{- define "horizon.labels.standard" -}}
+app.kubernetes.io/name: {{ include "common.names.name" . }}
+helm.sh/chart: {{ include "common.names.chart" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/version: {{ .Chart.AppVersion }}
+{{- end -}}
+
+{{/*
 Generates a secret key/value or infers the value from an existing secret.
 Usage:
 {{- include "horizon.generatesecret" (dict "namespace" $namespace "name" $secretName "key" $secretKey "default" $defaultValue) }}
@@ -127,5 +138,34 @@ traefik.ingress.kubernetes.io/router.middlewares: {{ template "horizon.traefikCr
 {{- else }}
 traefik.ingress.kubernetes.io/router.middlewares: {{ template "horizon.traefikCrd" (dict "context" .context "name" "app-root" )}}, {{ template "horizon.traefikCrd" (dict "context" .context "name" "https-redirect" )}}
 {{- end }}
+{{- end }}
+{{- end }}
+
+
+{{/*
+Prints the actual installed version on the cluster
+*/}}
+{{- define "horizon.installedVersion" }}
+{{- $deployment := (lookup (include "common.capabilities.deployment.apiVersion" .) "Deployment" .Release.Namespace (include "common.names.fullname" .)) }}
+{{- if and $deployment $deployment.metadata $deployment.metadata.labels }}
+    {{- index $deployment.metadata.labels "app.kubernetes.io/version" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Prints true if an upgrade job should run, false if not.
+*/}}
+{{- define "horizon.shouldRunUpgrade" }}
+{{- if not .Release.IsUpgrade }}
+    {{- print "false" }}
+{{- else if not .Values.upgrade.enabled }}
+    {{- print "false" }}
+{{- else }}
+    {{- $version := (include "horizon.installedVersion" .) }}
+    {{- if and $version (not (eq $version .Chart.AppVersion))}}
+        {{- print "true" }}
+    {{- else }}
+        {{- print "false" }}
+    {{- end }}
 {{- end }}
 {{- end }}
