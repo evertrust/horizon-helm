@@ -84,6 +84,27 @@ When installing the chart, you face multiple options regarding your database :
 - By default, a local MongoDB standalone instance will be spawned in your cluster, using the [`bitnami/mongodb`](https://github.com/bitnami/charts/tree/master/bitnami/mongodb) chart. No additional configuration is required but it is not production ready.
 - If you want to use an existing MongoDB instance, provide the `externalDatabase.uri` value. The URI should be treated as a secret as it must include credentials.
 
+### Ingress
+To create an ingress upon installation, simply set the following keys in your values.yaml override file :
+```yaml
+ingress:
+  enabled: true
+  hostname: horizon.lab
+  tls: true
+```
+We support autoconfiguration for major ingress controllers : Kubernetes Ingress NGINX and Traefik. Autoconfiguration is the recommended way of configuring your ingress as it will handle configuration quirks for you. To enable autoconfiguration, set the `type` key to your ingress controller in the ingress definition. Accepted values are `nginx` and `traefik`.
+```yaml
+ingress:
+  enabled: true
+  type: "" # nginx or traefik
+  clientCertificateAuth: true
+  hostname: horizon.lab
+  tls: true
+```
+`clientCertificateAuth` can be used to control whether to ask for a client certificates when users access Horizon.
+
+If you wish to manually configure your ingress or use another ingress controller, head to the [Manual ingress configuration](#manual-ingress-configuration) section.
+
 ## Upgrading
 We recommended that you only change values you need to customize in your `values.yml` file to ensure smooth upgrading.
 Always check the upgrading instructions between chart versions.
@@ -93,7 +114,7 @@ When upgrading Horizon, you'll need to run a migration script against the MongoD
 The chart will automatically create a `Job` that runs that upgrade script each time you upgrade your release if  `upgrade.enabled` is set to `true`.
 
 > **Note**: if the upgrade job fails to run, check the job's pod logs. When upgrading from an old version of Horizon, you may need to explicitly specify the version you're upgrading from using the `upgrade.from` key. 
-> 
+
 ### Specific chart upgrade instructions
 
 #### Upgrading to 0.3.0
@@ -101,14 +122,18 @@ The chart will automatically create a `Job` that runs that upgrade script each t
 - Loggers are now configured with an array instead of a dictionary. Check the `values.yaml` format and update your override `values.yaml` accordingly.
 - The init dabatabase parameters (`initDatabase`, `initUsername` and `initPassword`) have been renamed and moved to `mongodb.horizon`. 
 
+#### Upgrading to 0.5.0
+- The ingress definition has changed. The `rules` and `tls` keys have been removed in favor of a more user-friendly `hostname` that will autconfigure the ingress rules, and a boolean `tls` key that will enable TLS on that ingress. Check the [Ingress](#ingress) section.
+
 ## Advanced
+
+### Running behind a Docker registry proxy
+If your installation environment requires you to whitelist images that can be pulled by the Kubernetes cluster, you must whitelist the `registry.evertrust.io/horizon` and `registry.evertrust.io/horizon-upgrade` images.
 
 ### Leases
 To ensure clustering issues get resolved as fast as possible, Horizon can use a CRD (Custom Resource Definition) named `Lease` (`akka.io/v1/leases`). We strongly recommend that you use this mechanism, however it implies that you have the necessary permissions to install CRDs onto your server. In case you don't, the feature can be disabled by passing the `--skip-crds` flag to the Helm command when installing the chart, and setting the `leases.enabled` key to `false`.
 If you want to manually install the CRD, you can check the [leases.yml](crds/leases.yml) file.
 
-### Running behind a Docker registry proxy
-If your installation environment requires you to whitelist images that can be pulled by the Kubernetes cluster, you must whitelist the `registry.evertrust.io/horizon` and `registry.evertrust.io/horizon-upgrade` images.
 
 ### Injecting extra configuration
 Extra Horizon configuration can be injected to the bundled `application.conf` file to modify low-level behavior of Horizon. This should be used carefully as it may cause things to break. To do so, just mount a folder in the Horizon container at `/horizon/etc/conf.d/` containing a `custom.conf` file.
@@ -133,6 +158,11 @@ data:
     play.server.http.port = 9999
 ```
 Extra configurations are included at the end of the config file, overriding any previously set config value.
+
+### Manual ingress configuration
+If you do not wish or cannot use autoconfiguration, you should ensure your ingress controller is correctly configured to enable all Horizon features.
+- When requiring client certificates for authentication, the web server should not perform checks to validate that the certificate is signed by a trusted CA. Instead, the certificate should be sent to Horizon through a request header, base64-encoded. The header name used can be controlled using the `clientCertificateHeader`.
+- Some endpoints should not be server over HTTPS, in particular those used for SCEP enrollment. You may want to create an HTTP-only ingress for serving paths prefixed by `/scep` and `/certsrv`, and prevent those from redirecting to HTTPS.
 
 ## Parameters
 
@@ -209,25 +239,33 @@ Extra configurations are included at the end of the config file, overriding any 
 
 ### Horizon Service configuration
 
-| Name                               | Description                                                       | Value       |
-| ---------------------------------- | ----------------------------------------------------------------- | ----------- |
-| `service.type`                     | Kubernetes service type                                           | `ClusterIP` |
-| `service.clusterIP`                | Horizon service clusterIP IP                                      | `""`        |
-| `service.loadBalancerIP`           | loadBalancerIP for the Horizon Service (optional, cloud specific) | `""`        |
-| `service.loadBalancerSourceRanges` | Address that are allowed when service is LoadBalancer             | `[]`        |
-| `service.externalTrafficPolicy`    | Enable client source IP preservation                              | `Cluster`   |
-| `service.annotations`              | Annotations for Horizon service                                   | `{}`        |
+| Name                               | Description                                           | Value       |
+| ---------------------------------- | ----------------------------------------------------- | ----------- |
+| `service.type`                     | Kubernetes service type                               | `ClusterIP` |
+| `service.clusterIP`                | Horizon service clusterIP IP                          | `""`        |
+| `service.loadBalancerIP`           | for the Horizon Service (optional, cloud specific)    | `""`        |
+| `service.loadBalancerSourceRanges` | Address that are allowed when service is LoadBalancer | `[]`        |
+| `service.externalTrafficPolicy`    | Enable client source IP preservation                  | `Cluster`   |
+| `service.annotations`              | Annotations for Horizon service                       | `{}`        |
 
 
 ### Horizon Ingress configuration
 
-| Name                       | Description                                                                                                                      | Value   |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| `ingress.enabled`          | Set to true to enable ingress record generation                                                                                  | `false` |
-| `ingress.ingressClassName` | IngressClass that will be be used to implement the Ingress (Kubernetes 1.18+)                                                    | `""`    |
-| `ingress.annotations`      | Additional annotations for the Ingress resource. To enable certificate autogeneration, place here your cert-manager annotations. | `{}`    |
-| `ingress.hosts`            | Routing configuration for the ingress                                                                                            | `[]`    |
-| `ingress.tls`              | Enable TLS configuration for the ingress                                                                                         | `[]`    |
+| Name                            | Description                                                                                                                                                                                                                                                | Value           |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `ingress.enabled`               | Set to true to enable ingress record generation                                                                                                                                                                                                            | `false`         |
+| `ingress.type`                  | Automatically configure your ingress for an ingress controller. Accepted values are nginx, traefik. This will override the clientCertificateHeader if set, and generate annotations, resources, and ingresses resources to ensure Horizon works correctly. | `""`            |
+| `ingress.clientCertificateAuth` | When ingress.type is set, determines whether the ingress controller should request client certificates.                                                                                                                                                    | `false`         |
+| `ingress.ingressClassName`      | IngressClass that will be used to implement the Ingress (Kubernetes 1.18+)                                                                                                                                                                                 | `""`            |
+| `ingress.hostname`              | Default host for the ingress resource                                                                                                                                                                                                                      | `horizon.local` |
+| `ingress.path`                  | Default path for the ingress record                                                                                                                                                                                                                        | `/`             |
+| `ingress.pathType`              | Ingress path type                                                                                                                                                                                                                                          | `Prefix`        |
+| `ingress.annotations`           | Additional annotations for the Ingress resource. To enable certificate autogeneration, place here your cert-manager annotations.                                                                                                                           | `{}`            |
+| `ingress.tls`                   | Enable TLS configuration for the hostname defined at ingress.hostname parameter                                                                                                                                                                            | `false`         |
+| `ingress.extraHosts`            | The list of additional hostnames to be covered with this ingress record.                                                                                                                                                                                   | `[]`            |
+| `ingress.extraPaths`            | An array with additional arbitrary paths that may need to be added to the ingress under the main host                                                                                                                                                      | `[]`            |
+| `ingress.extraTls`              | The tls configuration for additional hostnames to be covered with this ingress record.                                                                                                                                                                     | `[]`            |
+| `ingress.extraRules`            | Additional rules to be covered with this ingress record                                                                                                                                                                                                    | `[]`            |
 
 
 ### Horizon application parameters
