@@ -729,7 +729,7 @@
                         "tag": {
                             "type": "string",
                             "description": "Horizon image tag (immutable tags are recommended)",
-                            "default": "2.1.1"
+                            "default": "2.2.1"
                         },
                         "pullPolicy": {
                             "type": "string",
@@ -740,6 +740,26 @@
                             "type": "array",
                             "description": "Horizon image pull secrets",
                             "default": []
+                        }
+                    }
+                },
+                "resources": {
+                    "type": "object",
+                    "properties": {
+                        "limits": {
+                            "type": "object",
+                            "properties": {
+                                "memory": {
+                                    "type": "string",
+                                    "description": "",
+                                    "default": "512Mi"
+                                },
+                                "cpu": {
+                                    "type": "string",
+                                    "description": "",
+                                    "default": "500m"
+                                }
+                            }
                         }
                     }
                 },
