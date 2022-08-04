@@ -1,4 +1,15 @@
 {{/*
+Kubernetes standard labels
+*/}}
+{{- define "horizon.labels.standard" -}}
+app.kubernetes.io/name: {{ include "common.names.name" . }}
+helm.sh/chart: {{ include "common.names.chart" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/version: {{ .Chart.AppVersion }}
+{{- end -}}
+
+{{/*
 Generates a secret key/value or infers the value from an existing secret.
 Usage:
 {{- include "horizon.generatesecret" (dict "namespace" $namespace "name" $secretName "key" $secretKey "default" $defaultValue) }}
