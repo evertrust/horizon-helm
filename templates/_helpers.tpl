@@ -140,3 +140,32 @@ traefik.ingress.kubernetes.io/router.middlewares: {{ template "horizon.traefikCr
 {{- end }}
 {{- end }}
 {{- end }}
+
+
+{{/*
+Prints the actual installed version on the cluster
+*/}}
+{{- define "horizon.installedVersion" }}
+{{- $deployment := (lookup (include "common.capabilities.deployment.apiVersion" .) "Deployment" .Release.Namespace (include "common.names.fullname" .)) }}
+{{- if and $deployment $deployment.metadata $deployment.metadata.labels }}
+    {{- index $deployment.metadata.labels "app.kubernetes.io/version" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Prints true if an upgrade job should run, false if not.
+*/}}
+{{- define "horizon.shouldRunUpgrade" }}
+{{- if not .Release.IsUpgrade }}
+    {{- print "false" }}
+{{- else if not .Values.upgrade.enabled }}
+    {{- print "false" }}
+{{- else }}
+    {{- $version := (include "horizon.installedVersion" .) }}
+    {{- if and $version (not (eq $version .Chart.AppVersion))}}
+        {{- print "true" }}
+    {{- else }}
+        {{- print "false" }}
+    {{- end }}
+{{- end }}
+{{- end }}
