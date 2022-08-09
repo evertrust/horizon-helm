@@ -111,13 +111,6 @@ Prints all Horizon trusted proxies.
 {{- end }}
 
 {{/*
-Prints all Horizon trusted proxies.
-*/}}
-{{- define "horizon.traefikCrd" }}
-    {{- printf "%s-%s-%s@kubernetescrd" .context.Release.Namespace (include "common.names.fullname" .context) .name }}
-{{- end }}
-
-{{/*
 Prints ingress configuration annotations
 */}}
 {{- define "horizon.ingressConfigurationAnnotations" }}
@@ -135,11 +128,14 @@ nginx.ingress.kubernetes.io/configuration-snippet: |
 {{- end }}
 {{- if and (eq .context.Values.ingress.type "traefik") }}
 traefik.ingress.kubernetes.io/router.tls: "true"
+{{ $middlewares := list "app-root" "https-redirect" }}
 {{- if .context.Values.ingress.clientCertificateAuth }}
-traefik.ingress.kubernetes.io/router.tls.options: {{ template "horizon.traefikCrd" (dict "context" .context "name" "client-auth" )}}
-traefik.ingress.kubernetes.io/router.middlewares: {{ template "horizon.traefikCrd" (dict "context" .context "name" "client-auth" )}}, {{ template "horizon.traefikCrd" (dict "context" .context "name" "app-root" )}}, {{ template "horizon.traefikCrd" (dict "context" .context "name" "https-redirect" )}}
-{{- else }}
-traefik.ingress.kubernetes.io/router.middlewares: {{ template "horizon.traefikCrd" (dict "context" .context "name" "app-root" )}}, {{ template "horizon.traefikCrd" (dict "context" .context "name" "https-redirect" )}}
+{{- $middlewares = append $middlewares "client-auth" }}
+{{- $middlewares = append $middlewares "client-parsing" }}
+traefik.ingress.kubernetes.io/router.tls.options: {{ printf "%s-%s-%s@kubernetescrd" .context.Release.Namespace (include "common.names.fullname" .context) "client-auth" }}
+{{- end }}
+traefik.ingress.kubernetes.io/router.middlewares: {{ range $i, $middleware := $middlewares }}
+{{- if $i }}, {{ end }}{{ printf "%s-%s-%s@kubernetescrd" $.context.Release.Namespace (include "common.names.fullname" $.context) $middleware }}
 {{- end }}
 {{- end }}
 {{- end }}
