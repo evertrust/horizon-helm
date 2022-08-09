@@ -41,7 +41,7 @@ metadata:
 spec:
   headers:
     customRequestHeaders:
-      SSL_CLIENT_PARSING: traefik
+      X-Ssl-Cert-Parsing: traefik
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware

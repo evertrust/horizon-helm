@@ -123,7 +123,8 @@ nginx.ingress.kubernetes.io/server-snippet: |
 {{- end }}
 nginx.ingress.kubernetes.io/configuration-snippet: |
 {{- if .context.Values.ingress.clientCertificateAuth }}
-  proxy_set_header X-Forwarded-Tls-Client-Cert $ssl_client_escaped_cert;
+  proxy_set_header X-Ssl-Cert-Parsing "nginx";
+  proxy_set_header SSL_CLIENT_CERT $ssl_client_escaped_cert;
 {{- end }}
 {{- end }}
 {{- if and (eq .context.Values.ingress.type "traefik") }}
