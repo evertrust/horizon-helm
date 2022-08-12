@@ -34,7 +34,7 @@ commonAnnotations: {}
 image:
   registry: registry.evertrust.io
   repository: horizon
-  tag: 2.2.1
+  tag: 2.2.2
   pullPolicy: IfNotPresent
   pullSecrets: []
 
@@ -516,8 +516,8 @@ logback:
 leases:
   enabled: true
 
-## @param clientCertificateHeader Indicates to Horizon in which header the client certificate will be passed, escaped and pem-encoded.
-clientCertificateHeader: "Ssl-Client-Cert"
+## @param clientCertificateHeader Indicates to Horizon in which header the client certificate will be passed. If not set, Horizon will try to guess the best parsing technique, depending on the ingress.type you specified.
+clientCertificateHeader: ""
 
 ## @section Database parameters
 
@@ -577,7 +577,7 @@ upgrade:
   image:
     registry: registry.evertrust.io
     repository: horizon-upgrade
-    tag: 2.2.1
+    tag: 2.2.2
     pullPolicy: IfNotPresent
     pullSecrets: []
   ## horizon-upgrade container resource requests and limits
