@@ -173,6 +173,7 @@ If you do not wish or cannot use autoconfiguration, you should ensure your ingre
 | `kubeVersion`       | Force target Kubernetes version (using Helm capabilities if not set) | `""`  |
 | `nameOverride`      | String to partially override horizon.fullname                        | `""`  |
 | `fullnameOverride`  | String to fully override horizon.fullname                            | `""`  |
+| `imageRegistry`     | String to override the image registry for all containers             | `""`  |
 | `commonLabels`      | Labels to add to all deployed objects                                | `{}`  |
 | `commonAnnotations` | Annotations to add to all deployed objects                           | `{}`  |
 

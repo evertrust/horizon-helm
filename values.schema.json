@@ -17,6 +17,11 @@
             "description": "String to fully override horizon.fullname",
             "default": ""
         },
+        "imageRegistry": {
+            "type": "string",
+            "description": "String to override the image registry for all containers",
+            "default": ""
+        },
         "commonLabels": {
             "type": "object",
             "description": "Labels to add to all deployed objects",

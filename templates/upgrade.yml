@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: horizon-upgrade
-          image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" $) }}
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values) }}
           imagePullPolicy: {{ .Values.upgrade.image.pullPolicy | default "IfNotPresent" | quote }}
           {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 5 }}
           args: [
