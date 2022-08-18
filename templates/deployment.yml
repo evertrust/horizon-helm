@@ -138,7 +138,7 @@ spec:
       volumes:
         - name: {{ .Release.Name }}-etc
           configMap:
-            name: {{ .Release.Name }}-config
+            name: {{ printf "%s-config" (include "common.names.fullname" $) }}
         - name: {{ .Release.Name }}-license
           secret:
             secretName: {{ required "You must specify a license secret" .Values.license.secretName }}
