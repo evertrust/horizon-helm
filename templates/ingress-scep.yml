@@ -1,4 +1,4 @@
-{{- if .Values.ingress.type }}
+{{- if and .Values.ingress.type .Values.ingress.scepCompatibilityMode }}
 apiVersion: {{ include "common.capabilities.ingress.apiVersion" . }}
 kind: Ingress
 metadata:
