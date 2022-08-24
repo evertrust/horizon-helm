@@ -425,6 +425,11 @@
                     "description": "When ingress.type is set, determines whether the ingress controller should request client certificates.",
                     "default": false
                 },
+                "scepCompatibilityMode": {
+                    "type": "boolean",
+                    "description": "Adds a secondary ingress for SCEP support over HTTP",
+                    "default": false
+                },
                 "ingressClassName": {
                     "type": "string",
                     "description": "IngressClass that will be used to implement the Ingress (Kubernetes 1.18+)",
