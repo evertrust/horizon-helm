@@ -290,6 +290,8 @@ ingress:
   type: ""
   ## @param ingress.clientCertificateAuth When ingress.type is set, determines whether the ingress controller should request client certificates.
   clientCertificateAuth: false
+  ## @param ingress.scepCompatibilityMode Adds a secondary ingress for SCEP support over HTTP
+  scepCompatibilityMode: false
   ## @param ingress.ingressClassName IngressClass that will be used to implement the Ingress (Kubernetes 1.18+)
   ingressClassName: ""
   ## @param ingress.hostname Default host for the ingress resource
