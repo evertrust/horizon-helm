@@ -44,7 +44,8 @@ image:
 ## @param updateStrategy.type Horizon deployment strategy type
 ## @param updateStrategy.rollingUpdate [object] Rolling update spec
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
-## NOTE: Set it to `Recreate` if you use a PV that cannot be mounted on multiple pods
+## NOTE: Due to schema modifications, we do not support RollingUpdates.
+## Use them at your own risk
 ## e.g:
 ## updateStrategy:
 ##  type: RollingUpdate
@@ -53,10 +54,7 @@ image:
 ##    maxUnavailable: 25%
 ##
 updateStrategy:
-  type: RollingUpdate
-  rollingUpdate:
-    maxSurge: 1
-    maxUnavailable: 0
+  type: Recreate
 
 ## @param priorityClassName Horizon pod priority class name
 ##
