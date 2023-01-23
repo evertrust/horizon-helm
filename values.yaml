@@ -530,6 +530,10 @@ mongodb:
   ## @param mongodb.enabled Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter
   ##
   enabled: true
+  ## @param mongodb.image.tag MongoDB image tag (immutable tags are recommended)
+  ##
+  image:
+    tag: 5.0.14-debian-11-r21
   ## @param mongodb.architecture MongoDB architecture (`standalone` or `replicaset`)
   ##
   architecture: standalone
