@@ -73,6 +73,12 @@ metadata:
   {{- end }}
 spec:
   clientAuth:
+    {{- if empty .Values.ingress.clientCertificateCASecrets }}
     clientAuthType: RequestClientCert
+    {{- else }}
+    clientAuthType: VerifyClientCertIfGiven
+    secretNames:
+      {{ toYaml .Values.ingress.clientCertificateCASecrets }}
+    {{- end }}
 {{- end }}
 {{- end }}
