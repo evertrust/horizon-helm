@@ -78,7 +78,7 @@ spec:
     {{- else }}
     clientAuthType: VerifyClientCertIfGiven
     secretNames:
-      {{ toYaml .Values.ingress.clientCertificateCASecrets }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.ingress.clientCertificateCASecrets "context" $ ) | nindent 6 }}
     {{- end }}
 {{- end }}
 {{- end }}
