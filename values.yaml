@@ -548,9 +548,6 @@ mongodb:
   ## @param mongodb.architecture MongoDB architecture (`standalone` or `replicaset`)
   ##
   architecture: standalone
-  ## @skip mongodb.initdbScriptsConfigMap
-  ##
-  initdbScriptsConfigMap: horizon-database-init-scripts
   ## MongoDB Authentication parameters
   ##
   auth:
@@ -568,19 +565,6 @@ mongodb:
     ## @param mongodb.auth.password MongoDB custom password
     ##
     password: secret_password
-  ## Horizon initialization parameters
-  ##
-  horizon:
-    ## @param mongodb.horizon.init Set this to true to initialize the local database for Horizon. This only works when `mongodb.enabled` is set to true.
-    ##
-    init: true
-    ## @param mongodb.horizon.username Administration username used when initializing the database
-    ##
-    username: administrator
-    ## @param mongodb.horizon.passwordHash Password hash used when initializing the database. Default: horizon
-    ##
-    passwordHash: $6$8JDCzmb9XDpOwtGQ$7.kRdgIjPYR/AxPbzKsdkBH3ouCgFbqyH9csjcr5qIoIXK/f2L6bQYQRhi9sdQM4eBm8sGUdEkg.TVOQ1MRsA/
-
 ## @section Upgrade parameters
 upgrade:
   ## @param upgrade.enabled If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
