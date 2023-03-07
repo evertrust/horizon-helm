@@ -477,7 +477,7 @@ logFormat: console
 ## @param tls.secretName Existing secret name where a PKCS12 certificate is stored
 ## @param tls.secretKey Existing secret key where the PKCS12 certificate is stored
 tls:
-  enabled: true
+  enabled: false
   secretName: ""
   secretKey: ""
 
