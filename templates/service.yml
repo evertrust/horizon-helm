@@ -33,7 +33,11 @@ spec:
     - name: http
       protocol: TCP
       port: 9000
-      targetPort: 9000
+      targetPort: http
+    - name: https
+      protocol: TCP
+      port: 9443
+      targetPort: https
     - name: kamon
       protocol: TCP
       port: 9095

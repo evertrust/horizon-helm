@@ -393,9 +393,8 @@ license:
   secretName: ""
   secretKey: ""
 
-## Define the vaults that can be used by Horizon.
-## By default, we want to use a simple symmetric vault and fetch
-## the secret from the pod's environment.
+## For backwards-compatibility reasons, this array should contain
+## only one element.
 ## For more information, refer to the Horizon installation guide.
 ## @param vaults [array] Horizon vaults configuration
 vaults:
@@ -410,17 +409,6 @@ vaults:
     ##         key: defaultMasterPassword
     ##
     master_password: {}
-
-## Configure the vaults that will be used by Horizon for storing sensitive data .
-## Each vault name should be defined under the `vaults` key above.
-## For more information, refer to the Horizon installation guide.
-## @param vault.configuration Name of the vault used for configuration purposes
-## @param vault.escrow Name of the vault used for escrowing purposes
-## @param vault.transient Name of the vault used for storing transient keys
-vault:
-  configuration: default
-  escrow: default
-  transient: default
 
 ## Additional allowed hosts that are whitelisted to access the Horizon UI.
 ## Configured ingresses will automatically be added to the list, this should
@@ -463,6 +451,17 @@ events:
   secret: {}
   ttl: 90 days
   discoveryTtl: 30 days
+
+## @param logFormat Format in which logs will be outputted. Can be set either to "console" or "json" for structured logging.
+logFormat: console
+
+## @param tls.enabled Whether to use the HTTPS port by default on ingresses and other services
+## @param tls.secretName Existing secret name where a PKCS12 certificate is stored
+## @param tls.secretKey Existing secret key where the PKCS12 certificate is stored
+tls:
+  enabled: true
+  secretName: ""
+  secretKey: ""
 
 ## Configuration for the Horizon mailer.
 ## You should configure this if you want your Horizon instance to be able
