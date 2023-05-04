@@ -1,7 +1,3 @@
-image:
-  name: alpine/helm:3.7.2
-  entrypoint: ["/bin/sh", "-c"]
-
 stages:
   - init
   - package
@@ -9,6 +5,9 @@ stages:
 
 dependencies:
   stage: init
+  image:
+    name: alpine/helm:3.7.2
+    entrypoint: ["/bin/sh", "-c"]
   script:
     - helm repo add bitnami https://charts.bitnami.com/bitnami
     - helm dependencies build
@@ -21,6 +20,9 @@ dependencies:
 
 package:
   stage: package
+  image:
+    name: alpine/helm:3.7.2
+    entrypoint: ["/bin/sh", "-c"]
   script:
     - helm package .
   only:
@@ -32,8 +34,10 @@ package:
 
 upload:
   stage: upload
+  image:
+    name: curlimages/curl:8.00.1
+    entrypoint: ["/bin/sh", "-c"]
   script:
-    - apk add curl
     - PACKAGE="$(find . -type f -name 'horizon-*.tgz' -maxdepth 1 | head -n 1)"
     - curl -F file=@$PACKAGE --user "$NEXUS_USERNAME:$NEXUS_PASSWORD" https://repo.evertrust.io/service/rest/v1/components?repository=charts
   only:
