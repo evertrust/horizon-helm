@@ -274,6 +274,24 @@ disruptionBudget:
 ## @param environment [array] Extra env vars passed to the Horizon pods
 environment: []
 
+## Pod's DNS Configuration
+## https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
+## This value is useful if you need to resolve your custom domain for ACME challenges
+## Example:
+##  nameservers:
+##    - 1.2.3.4
+##  searches:
+##    - ns1.svc.cluster-domain.example
+##    - my.dns.search.suffix
+##  options:
+##    - name: ndots
+##      value: "2"
+dnsConfig: {}
+
+# Pod's DNS Policy
+# https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+dnsPolicy: ""
+
 ## @section Horizon Service configuration
 ##
 service:
