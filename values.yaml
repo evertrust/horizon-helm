@@ -312,14 +312,19 @@ ingress:
   ##
   enabled: false
   ## @param ingress.type Automatically configure your ingress for an ingress controller. Accepted values are nginx, traefik. This will override the clientCertificateHeader if set, and generate annotations, resources, and ingresses resources to ensure Horizon works correctly.
+  ##
   type: ""
   ## @param ingress.clientCertificateAuth When ingress.type is set, determines whether the ingress controller should request client certificates.
+  ##
   clientCertificateAuth: false
   ## @param ingress.clientCertificateCASecrets If set, the ingress controller will only request client certificates signed by these CAs. Each secret should contain a `ca.crt` key containing the PEM-encoded AC certificate.
+  ##
   clientCertificateCASecrets: []
   ## @param ingress.scepCompatibilityMode Adds a secondary ingress for SCEP support over HTTP
+  ##
   scepCompatibilityMode: false
   ## @param ingress.ingressClassName IngressClass that will be used to implement the Ingress (Kubernetes 1.18+)
+  ##
   ingressClassName: ""
   ## @param ingress.hostname Default host for the ingress resource
   ##
@@ -561,7 +566,7 @@ mongodb:
   ## @param mongodb.image.tag MongoDB image tag (immutable tags are recommended)
   ##
   image:
-    tag: 5.0.14-debian-11-r21
+    tag: 5.0.17-debian-11-r2
   ## @param mongodb.architecture MongoDB architecture (`standalone` or `replicaset`)
   ##
   architecture: standalone
