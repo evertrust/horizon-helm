@@ -125,8 +125,10 @@ spec:
             {{- if .Values.mailer.password }}
             - name: SMTP_PASSWORD {{- include "common.tplvalues.render" (dict "value" .Values.mailer.password "context" $) | nindent 14 }}
             {{- end }}
+            {{- if .Values.clientCertificateHeader }}
             - name: HTTP_CERTIFICATE_HEADER
-              value: {{ .Values.clientCertificateHeader }}
+              value: {{ .Values.clientCertificateHeader | quote }}
+            {{- end }}
             - name: EVENT_CHAINSIGN
               value: {{ .Values.events.chainsign | quote }}
             - name: EVENT_TTL
