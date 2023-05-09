@@ -139,8 +139,10 @@ spec:
             - name: EVENT_SEAL_SECRET
             {{- include "horizon.eventSealSecret" (dict "context" .) | nindent 14 }}
             {{- end }}
-            - name: HOSTS_ALLOWED.0
-              value: .
+            {{- range $key, $value := (include "horizon.allowedHosts" $ | fromJsonArray) }}
+            - name: HOSTS_ALLOWED.{{ $key }}
+              value: {{ $value }}
+            {{- end }}
             {{- with (first .Values.vaults) }}
             - name: VAULT_TYPE
               value: {{ .vault_type }}

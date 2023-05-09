@@ -90,15 +90,15 @@ Prints the event seal secret reference.
 Prints all Horizon allowed hosts.
 */}}
 {{- define "horizon.allowedHosts" }}
-    {{- if .Values.ingress.enabled -}}
-        {{- printf "\"%s\"," .Values.ingress.hostname -}}
-    {{- end -}}
-    {{- range .Values.ingress.extraHosts -}}
-        {{- printf "\"%s\"," .name -}}
-    {{- end -}}
-    {{- range .Values.allowedHosts -}}
-        {{- printf "\"%s\"," . -}}
-    {{- end -}}
+{{- $allowedHosts := list }}
+{{- if .Values.ingress.enabled -}}
+  {{- $allowedHosts = append $allowedHosts .Values.ingress.hostname }}
+  {{- range .Values.ingress.extraHosts }}
+  {{- $allowedHosts = append $allowedHosts .name }}
+  {{- end }}
+{{- end }}
+{{- $allowedHosts = concat $allowedHosts .Values.allowedHosts }}
+{{- toJson $allowedHosts}}
 {{- end }}
 
 {{/*
