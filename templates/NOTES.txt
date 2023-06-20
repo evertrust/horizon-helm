@@ -7,6 +7,17 @@ To learn more about the release, try:
   $ helm status {{ .Release.Name }}
   $ helm get all {{ .Release.Name }}
 
+{{- if .Release.IsInstall }}
+An administrator account has been generated for you:
+
+  Username: administrator
+  Password: <stored on filesystem>
+
+To get the admin password value, run:
+
+  kubectl exec $(kubectl get pods -n {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "common.names.name" . }}" --sort-by={.status.podIP} -o jsonpath="{.items[0].metadata.name}") -n {{ .Release.Namespace }} -- /bin/sh -c "cat /tmp/tmp.*/adminPassword"
+{{ end }}
+
 {{- if .Values.ingress.enabled }}
 
 An ingress has been deployed and Horizon will be shortly available
