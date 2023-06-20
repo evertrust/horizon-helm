@@ -39,7 +39,7 @@ upload:
     entrypoint: ["/bin/sh", "-c"]
   script:
     - PACKAGE="$(find . -type f -name 'horizon-*.tgz' -maxdepth 1 | head -n 1)"
-    - curl -F file=@$PACKAGE --user "$NEXUS_USERNAME:$NEXUS_PASSWORD" https://repo.evertrust.io/service/rest/v1/components?repository=charts
+    - curl -F file=@$PACKAGE --user "$NEXUS_USERNAME:$NEXUS_PASSWORD" --fail https://repo.evertrust.io/service/rest/v1/components?repository=charts
   only:
     variables:
       - $CI_COMMIT_TAG
