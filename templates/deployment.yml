@@ -108,6 +108,8 @@ spec:
                   key: {{ required "You must specify a license secret" .Values.license.secretKey }}
             - name: LOGGING_APPENDER
               value: {{ .Values.logFormat }}
+            - name: LOGGING_LOGGERS
+              value: {{ include "horizon.loggingLoggers" . | quote }}
             - name: MONGODB_URI
             {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}
             - name: APPLICATION_SECRET

@@ -111,6 +111,17 @@ Prints all Horizon trusted proxies.
 {{- end }}
 
 {{/*
+Prints Horizon loggers.
+*/}}
+{{- define "horizon.loggingLoggers" }}
+    {{- $loggers := list }}
+    {{- range .Values.logback.loggers -}}
+        {{- $loggers = append $loggers (printf "%s=%s" .name .level) -}}
+    {{- end -}}
+    {{- join " " $loggers -}}
+{{- end }}
+
+{{/*
 Prints ingress configuration annotations
 */}}
 {{- define "horizon.ingressConfigurationAnnotations" }}
