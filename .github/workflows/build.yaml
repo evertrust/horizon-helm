@@ -16,9 +16,10 @@ jobs:
 
       - name: Build chart
         run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
           helm dependencies build
           helm package .
-      
+
       - name: Upload to Sonatype repo
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
