@@ -271,8 +271,8 @@ disruptionBudget:
 ## to use the Kubernetes secrets implementation.
 ##
 ## ref: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
-## @param environment [array] Extra env vars passed to the Horizon pods
-environment: []
+## @param environment [object] Extra env vars passed to the Horizon pods
+environment: {}
 
 ## Pod's DNS Configuration
 ## https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
