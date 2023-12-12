@@ -131,6 +131,10 @@ spec:
             - name: HTTP_CERTIFICATE_HEADER
               value: {{ .Values.clientCertificateHeader | quote }}
             {{- end }}
+            {{- if .Values.clientCertificateDefaultParsingType }}
+            - name: CERTIFICATE_DEFAULT_PARSING_TYPE
+              value: {{ .Values.clientCertificateDefaultParsingType | quote }}
+            {{- end }}
             - name: EVENT_CHAINSIGN
               value: {{ .Values.events.chainsign | quote }}
             - name: EVENT_TTL
