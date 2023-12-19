@@ -108,6 +108,14 @@ spec:
                   key: {{ required "You must specify a license secret" .Values.license.secretKey }}
             - name: LOGGING_APPENDER
               value: {{ .Values.logFormat }}
+            {{- if .Values.logback.pattern }}
+            - name: LOGGING_PATTERN
+              value: {{ .Values.logback.pattern | quote }}
+            {{- end }}
+            {{- if .Values.logback.level }}
+            - name: LOGGING_LEVEL
+              value: {{ .Values.logback.level | quote }}
+            {{- end }}
             - name: LOGGING_LOGGERS
               value: {{ include "horizon.loggingLoggers" . | quote }}
             - name: MONGODB_URI

@@ -535,36 +535,34 @@ mailer:
 ## experience when debugging the application.
 ##
 ## ref: https://www.playframework.com/documentation/2.8.x/ScalaLogging
-## @param logback.level Global level below wich messages will not be logged
+## @param logback.level Global logging level for all loggers
 ## @param logback.pattern Log messages pattern
-## @param logback.loggers [array] Enabled loggers and their associated log level
+## @param logback.loggers [array] Logging level overrides for specific loggers
 logback:
-  level: debug
-  pattern: "%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%level] - %message%n%xException{full}"
+  level: info
+  pattern: "%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%traceID] - [%level] - %message%n%xException{full}"
   loggers:
+    # In Kubernetes, we usually don't care to log functional events to stdout.
+    - name: events
+      level: warn
+    ## You might want to uncomment the following loggers to gather more info about your Horizon instance.
     ## E.g.
-    ## - name: reactivemongo
-    ##   level: warn
-    - name: play
-      level: warn
-    - name: reactivemongo
-      level: warn
-    - name: actors
-      level: debug
-    - name: actions
-      level: debug
-    - name: controllers
-      level: debug
-    - name: filters
-      level: debug
-    - name: models
-      level: debug
-    - name: modules
-      level: debug
-    - name: pki-connectors
-      level: debug
-    - name: racs-connectors
-      level: debug
+    ## - name: actors
+    ##   level: debug
+    ## - name: actions
+    ##   level: debug
+    ## - name: controllers
+    ##   level: debug
+    ## - name: filters
+    ##   level: debug
+    ## - name: models
+    ##   level: debug
+    ## - name: modules
+    ##   level: debug
+    ## - name: pki-connectors
+    ##   level: debug
+    ## - name: racs-connectors
+    ##   level: debug
 
 ## @param leases.enabled Whether leases should be used when launching multiple replicas of Horizon pods. This requires the leases.akka.io CRD to be installed.
 leases:
