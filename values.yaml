@@ -407,6 +407,12 @@ ingress:
   ##
   extraRules: []
 
+## @section Prometheus monitor configuration
+## @param monitoring.enabled Enable the creation of a ServiceMonitor object for Horizon if the cluster has the monitoring.coreos.com/v1 capability.
+monitoring:
+
+  enabled: true
+
 ## @section Horizon application parameters
 
 ## Configure the Play secret for the Horizon instance.
