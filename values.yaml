@@ -318,6 +318,9 @@ service:
   ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
   ##
   externalTrafficPolicy: Cluster
+  ## @param service.extraPorts Extra port to expose on Horizon service
+  ##
+  extraPorts: []
   ## @param service.annotations Annotations for Horizon service
   ##
   annotations: {}
