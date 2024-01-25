@@ -96,6 +96,11 @@ Prints all Horizon allowed hosts.
   {{- range .Values.ingress.extraHosts }}
   {{- $allowedHosts = append $allowedHosts .name }}
   {{- end }}
+  {{- range .Values.ingress.extraRules }}
+  {{- if .host }}
+  {{- $allowedHosts = append $allowedHosts .host }}
+  {{- end }}
+  {{- end }}
 {{- end }}
 {{- $allowedHosts = concat $allowedHosts .Values.allowedHosts }}
 {{- toJson $allowedHosts}}
