@@ -45,14 +45,14 @@ spec:
             {{- if eq "true" (include "common.ingress.supportsPathType" $) }}
             pathType: {{ default "ImplementationSpecific" .pathType }}
             {{- end }}
-            backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" $) "servicePort" "http" "context" $) | nindent 14 }}
+            backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" $) "servicePort" (ternary "https" "http" $.Values.tls.enabled) "context" $) | nindent 14 }}
     {{- end }}
     {{- if .Values.ingress.extraRules }}
     {{- include "common.tplvalues.render" (dict "value" .Values.ingress.extraRules "context" $) | nindent 4 }}
     {{- end }}
-  {{- if or .Values.ingress.tls .Values.ingress.extraTls }}
+  {{- if or (and .Values.ingress.hostname .Values.ingress.tls) .Values.ingress.extraTls }}
   tls:
-    {{- if .Values.ingress.tls }}
+    {{- if (and .Values.ingress.hostname .Values.ingress.tls) }}
     - hosts:
         - {{ .Values.ingress.hostname }}
       secretName: {{ printf "%s-tls" .Values.ingress.hostname }}
