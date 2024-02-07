@@ -131,17 +131,13 @@ spec:
             - name: SMTP_TLS
               value: {{ .Values.mailer.tls | quote }}
             - name: SMTP_USER
-              value: {{ .Values.mailer.user }}
+              value: {{ .Values.mailer.user | quote }}
             {{- if .Values.mailer.password }}
             - name: SMTP_PASSWORD {{- include "common.tplvalues.render" (dict "value" .Values.mailer.password "context" $) | nindent 14 }}
             {{- end }}
-            {{- if .Values.clientCertificateHeader }}
+            {{- if eq (include "horizon.shouldEnableClientCertificateAuth" .) "true" }}
             - name: HTTP_CERTIFICATE_HEADER
-              value: {{ .Values.clientCertificateHeader | quote }}
-            {{- end }}
-            {{- if .Values.clientCertificateDefaultParsingType }}
-            - name: CERTIFICATE_DEFAULT_PARSING_TYPE
-              value: {{ .Values.clientCertificateDefaultParsingType | quote }}
+              value: {{ include "horizon.clientCertificateHeader" (dict "context" $) | quote }}
             {{- end }}
             - name: EVENT_CHAINSIGN
               value: {{ .Values.events.chainsign | quote }}

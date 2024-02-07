@@ -127,6 +127,42 @@ Prints Horizon loggers.
 {{- end }}
 
 {{/*
+Prints true if an client certificate auth should be enable, false if not
+*/}}
+{{- define "horizon.shouldEnableClientCertificateAuth" }}
+{{- if .Values.clientCertificateDefaultParsingType }}
+  {{- fail "clientCertificateDefaultParsingType is deprecated, use ingress.clientCertificateAuth instead" }}
+{{- end }}
+{{- if and .Values.clientCertificateHeader .Values.ingress.clientCertificateAuth }}
+    {{- fail "clientCertificateHeader and ingress.clientCertificateAuth are mutually exclusive" }}
+{{- end }}
+{{- if or .Values.clientCertificateHeader .Values.ingress.clientCertificateAuth }}
+    {{- print "true" }}
+{{- else }}
+    {{- print "false" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Prints the client certificate header that should be used by Horizon.
+*/}}
+{{- define "horizon.clientCertificateHeader" }}
+{{- if .context.Values.clientCertificateHeader }}
+{{- printf "%s" .context.Values.clientCertificateHeader }}
+{{- else }}
+{{- if and .context.Values.ingress.type .context.Values.ingress.clientCertificateAuth }}
+  {{- if eq .context.Values.ingress.type "nginx" }}
+    {{- print "ssl-client-cert" }}
+  {{- else if eq .context.Values.ingress.type "traefik" }}
+    {{- print "X-Forwarded-Tls-Client-Cert" }}
+  {{- else if eq .context.Values.ingress.type "haproxy" }}
+    {{- print "X-SSL-Client-DER" }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
 Prints ingress configuration annotations
 */}}
 {{- define "horizon.ingressConfigurationAnnotations" }}
@@ -139,8 +175,7 @@ nginx.ingress.kubernetes.io/server-snippet: |
 {{- end }}
 nginx.ingress.kubernetes.io/configuration-snippet: |
 {{- if .context.Values.ingress.clientCertificateAuth }}
-  proxy_set_header X-Ssl-Cert-Parsing "nginx";
-  proxy_set_header SSL_CLIENT_CERT $ssl_client_escaped_cert;
+  proxy_set_header ssl-client-cert $ssl_client_escaped_cert;
 {{- end }}
 {{- end }}
 {{- if and (eq .context.Values.ingress.type "traefik") }}

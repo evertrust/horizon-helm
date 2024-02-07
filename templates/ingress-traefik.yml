@@ -29,23 +29,6 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: {{ include "common.names.fullname" . }}-client-parsing
-  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
-    {{- if .Values.commonLabels }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.commonAnnotations }}
-  annotations:
-      {{- include "common.tplvalues.render" (dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-    {{- end }}
-spec:
-  headers:
-    customRequestHeaders:
-      X-Ssl-Cert-Parsing: traefik
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
   name: {{ include "common.names.fullname" . }}-client-auth
   labels: {{- include "horizon.labels.standard" . | nindent 4 }}
   {{- if .Values.commonLabels }}
