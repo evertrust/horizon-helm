@@ -122,23 +122,23 @@ spec:
             {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}
             - name: APPLICATION_SECRET
             {{- include "horizon.appSecret" (dict "context" .) | nindent 14 }}
-            {{- if not (eq .Values.mailer.host "") }}
+            {{- if not (eq (.Values.mailer.host | quote) "") }}
             - name: SMTP_HOST
               value: {{ .Values.mailer.host }}
             {{- end }}
-            {{- if not (eq .Values.mailer.port "") }}
+            {{- if not (eq (.Values.mailer.port | quote) "") }}
             - name: SMTP_PORT
               value: {{ .Values.mailer.port | quote }}
             {{- end }}
-            {{- if not (eq .Values.mailer.ssl "") }}
+            {{- if not (eq (.Values.mailer.ssl | quote) "") }}
             - name: SMTP_SSL
               value: {{ .Values.mailer.ssl | quote }}
             {{- end }}
-            {{- if not (eq .Values.mailer.tls "") }}
+            {{- if not (eq (.Values.mailer.tls | quote) "") }}
             - name: SMTP_TLS
               value: {{ .Values.mailer.tls | quote }}
             {{- end }}
-            {{- if not (eq .Values.mailer.user "") }}
+            {{- if not (eq (.Values.mailer.user | quote) "") }}
             - name: SMTP_USER
               value: {{ .Values.mailer.user | quote }}
             {{- end }}
