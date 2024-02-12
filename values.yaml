@@ -526,9 +526,9 @@ tls:
 ## @param mailer.password [object] Authentication password for this SMTP host
 mailer:
   host: ""
-  port: 587
-  tls: true
-  ssl: false
+  port: ""
+  tls: ""
+  ssl: ""
   user: ""
     ## The password field can be a reference to a secret.
     ## E.g.
