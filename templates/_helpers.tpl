@@ -177,8 +177,7 @@ nginx.ingress.kubernetes.io/configuration-snippet: |
 {{- if .context.Values.ingress.clientCertificateAuth }}
   proxy_set_header ssl-client-cert $ssl_client_escaped_cert;
 {{- end }}
-{{- end }}
-{{- if and (eq .context.Values.ingress.type "traefik") }}
+{{- else if eq .context.Values.ingress.type "traefik" }}
 traefik.ingress.kubernetes.io/router.tls: "true"
 {{ $middlewares := list "app-root" "https-redirect" }}
 {{- if .context.Values.ingress.clientCertificateAuth }}
@@ -189,6 +188,9 @@ traefik.ingress.kubernetes.io/router.tls.options: {{ printf "%s-%s-%s@kubernetes
 traefik.ingress.kubernetes.io/router.middlewares: {{ range $i, $middleware := $middlewares }}
 {{- if $i }}, {{ end }}{{ printf "%s-%s-%s@kubernetescrd" $.context.Release.Namespace (include "common.names.fullname" $.context) $middleware }}
 {{- end }}
+{{ else if eq .context.Values.ingress.type "haproxy" }}
+{{- else }}
+{{- fail "Unsupported ingress type. Accepted values are: nginx, traefik, haproxy" }}
 {{- end }}
 {{- end }}
 
