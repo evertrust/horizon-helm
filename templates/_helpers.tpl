@@ -182,7 +182,6 @@ traefik.ingress.kubernetes.io/router.tls: "true"
 {{ $middlewares := list "app-root" "https-redirect" }}
 {{- if .context.Values.ingress.clientCertificateAuth }}
 {{- $middlewares = append $middlewares "client-auth" }}
-{{- $middlewares = append $middlewares "client-parsing" }}
 traefik.ingress.kubernetes.io/router.tls.options: {{ printf "%s-%s-%s@kubernetescrd" .context.Release.Namespace (include "common.names.fullname" .context) "client-auth" }}
 {{- end }}
 traefik.ingress.kubernetes.io/router.middlewares: {{ range $i, $middleware := $middlewares }}
