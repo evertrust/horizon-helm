@@ -586,6 +586,18 @@ clientCertificateHeader: ""
 ## NOTE: This is not support by Istio
 podsDirectConnect: false
 
+## @param extraConfig Additional configuration for Horizon
+## Injecting arbitrary config could result in unexpected behavior. Proceed with caution.
+## ref: https://docs.evertrust.fr/horizon/admin-guide/-/parameters
+##
+## Eg.
+## extraConfig: |
+##   horizon {
+##     notification.mail.attachment.extension.der = "der"
+##   }
+extraConfig: ""
+
+
 ## @section Database parameters
 
 ## Install a MongoDB instance
