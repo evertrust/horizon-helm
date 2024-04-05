@@ -2,11 +2,12 @@ apiVersion: v2
 name: horizon
 description: EverTrust Horizon Helm chart
 type: application
-version: 0.9.4
-appVersion: "2.5.2"
-home: https://evertrust.fr
+version: 0.9.5
+appVersion: "2.5.3"
+icon: https://evertrust.io/media/logo-horizon-blue.png
+home: https://evertrust.io
 sources:
-  - https://gitlab.com/evertrust/horizon-helm
+  - https://github.com/evertrust/horizon-helm
 dependencies:
   - name: common
     version: 2.14.1
