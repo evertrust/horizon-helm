@@ -635,6 +635,9 @@ upgrade:
   ## @param upgrade.enabled If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
   ##
   enabled: true
+  ## @param upgrade.enabled If true, an upgrade job will be run everytime the Chart is installed or upgraded.
+  ##
+  force: false
   ## @param upgrade.image.registry Horizon image registry
   ## @param upgrade.image.repository Horizon image repository
   ## @param upgrade.image.tag Horizon image tag (immutable tags are recommended)

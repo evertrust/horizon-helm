@@ -208,7 +208,9 @@ Prints the actual installed version on the cluster
 Prints true if an upgrade job should run, false if not.
 */}}
 {{- define "horizon.shouldRunUpgrade" }}
-{{- if not .Release.IsUpgrade }}
+{{- if .Values.upgrade.force }}
+    {{- print "true" }}
+{{- else if not .Release.IsUpgrade }}
     {{- print "false" }}
 {{- else if not .Values.upgrade.enabled }}
     {{- print "false" }}
