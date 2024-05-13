@@ -14,7 +14,7 @@ spec:
           args: [
               "-y",
               "-m", "$(MONGODB_URI)",
-              "-s", "{{ coalesce .Values.upgrade.from (include "horizon.installedVersion" .) }}",
+              "-s", "{{ coalesce .Values.upgrade.from (include "horizon.installedVersion" .) .Chart.AppVersion }}",
               "-t", "{{ coalesce .Values.upgrade.to .Chart.AppVersion }}"
           ]
           resources: {{- toYaml .Values.upgrade.resources | nindent 12 }}
