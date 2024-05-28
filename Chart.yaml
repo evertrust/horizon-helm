@@ -3,7 +3,7 @@ name: horizon
 description: EverTrust Horizon Helm chart
 type: application
 version: 0.9.8
-appVersion: "2.5.5"
+appVersion: "2.5.6"
 icon: https://evertrust.io/media/logo-horizon-blue.png
 home: https://evertrust.io
 sources:
