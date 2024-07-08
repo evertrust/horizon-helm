@@ -1,0 +1,13 @@
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start minikube
+        uses: medyagh/setup-minikube@latest
+      - uses: azure/setup-helm@v4.2.0
+      - name: Install
+        run: kubectl get pods -A
