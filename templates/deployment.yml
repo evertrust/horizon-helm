@@ -93,14 +93,27 @@ spec:
           {{- end }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           env:
-            {{- if .Values.environment }}
-            {{- toYaml .Values.environment | nindent 12 }}
+            {{- $shouldInjectHostname := true }}
+            {{- range .Values.environment }}
+            {{- if eq .name "HOSTNAME" }}
+            {{- $shouldInjectHostname = false }}
             {{- end }}
+            - name: {{ .name }}
+            {{- if .value }}
+              value: {{ .value }}
+            {{- end }}
+            {{- if .valueFrom }}
+              valueFrom: 
+            {{- toYaml .valueFrom | nindent 16 }}
+            {{- end }}
+            {{- end }}
+            {{- if $shouldInjectHostname }}
             - name: HOSTNAME
               valueFrom:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+            {{- end }}
             - name: LICENSE
               valueFrom:
                 secretKeyRef:
