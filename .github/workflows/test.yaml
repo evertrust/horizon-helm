@@ -1,13 +1,60 @@
 on:
   push:
-
+env:
+  LICENSE: ${{ secrets.LICENSE }}
+  REGISTRY_LOGIN: ${{ secrets.REGISTRY_LOGIN }}
+  REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 jobs:
   test:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+
       - name: Start minikube
         uses: medyagh/setup-minikube@latest
+        with:
+          start-args: '--force'
+          driver: 'none'
+
       - uses: azure/setup-helm@v4.2.0
-      - name: Install
-        run: kubectl get pods -A
+
+      - name: Prepare Horizon environment
+        run: |
+          kubectl create namespace horizon
+          helm install --namespace horizon horizon evertrust/horizon
+          helm repo add evertrust https://repo.evertrust.io/repository/charts
+
+      - name: Create secrets
+        run: |
+          cat ${{LICENSE}} > license.lic
+          kubectl create secret generic horizon-license \
+            --from-file=license="license.lic" \
+            --namespace horizon
+
+      - name: Login to registry
+        run: |
+          kubectl create secret docker-registry evertrust-registry \
+            --docker-server=registry.evertrust.io \
+            --docker-username="${{REGISTRY_LOGIN}}" \
+            --docker-password="${{REGISTRY_PASSWORD}}" \
+            --namespace horizon
+
+      - name: Create values file
+        run: |
+          cat <<EOF > override-values.yaml
+          image:
+            pullSecrets:
+              - evertrust-registry
+          
+          license:
+            secretName: horizon-license
+            secretKey: license
+          
+          allowedHosts:
+            - localhost:9443
+          EOF
+
+      - name:  Test Horizon
+        run: |
+          helm install --namespace horizon --values override-values.yaml horizon evertrust/horizon
+          helm test --namespace horizon horizon
