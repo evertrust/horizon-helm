@@ -1,5 +1,8 @@
 on:
+  workflow_dispatch:
   push:
+    tags:
+      - '*'
 env:
   LICENSE: ${{ secrets.LICENSE }}
   REGISTRY_LOGIN: ${{ secrets.REGISTRY_LOGIN }}
