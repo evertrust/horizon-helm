@@ -14,7 +14,7 @@ metadata:
 spec:
   redirectRegex:
     regex: ^https:\/\/([^\/]+)\/?$
-    replacement: https://${1}/ui#/ra/
+    replacement: https://${1}/
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware

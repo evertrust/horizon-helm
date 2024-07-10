@@ -167,7 +167,7 @@ Prints ingress configuration annotations
 */}}
 {{- define "horizon.ingressConfigurationAnnotations" }}
 {{- if eq .context.Values.ingress.type "nginx" }}
-nginx.ingress.kubernetes.io/app-root: /ui#/ra
+nginx.ingress.kubernetes.io/app-root: /
 nginx.ingress.kubernetes.io/server-snippet: |
   large_client_header_buffers 4 64k;
 {{- if .context.Values.ingress.clientCertificateAuth }}
