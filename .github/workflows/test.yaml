@@ -30,7 +30,7 @@ jobs:
 
       - name: Create secrets
         run: |
-          cat ${{LICENSE}} > license.lic
+          cat ${{env.LICENSE}} > license.lic
           kubectl create secret generic horizon-license \
             --from-file=license="license.lic" \
             --namespace horizon
@@ -39,8 +39,8 @@ jobs:
         run: |
           kubectl create secret docker-registry evertrust-registry \
             --docker-server=registry.evertrust.io \
-            --docker-username="${{REGISTRY_LOGIN}}" \
-            --docker-password="${{REGISTRY_PASSWORD}}" \
+            --docker-username="${{env.REGISTRY_LOGIN}}" \
+            --docker-password="${{env.REGISTRY_PASSWORD}}" \
             --namespace horizon
 
       - name: Create values file
