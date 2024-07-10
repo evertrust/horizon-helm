@@ -52,4 +52,6 @@ jobs:
           helm install --namespace horizon --values override-values.yaml horizon .
 
       - name: Test Horizon
-        run: helm test --namespace horizon horizon
+        run: |
+          helm test --namespace horizon horizon
+          kubectl logs -n horizon horizon-test-connection
