@@ -476,6 +476,9 @@ vaults:
 ##
 allowedHosts:
   - localhost:9000
+  - localhost:9443
+  # horizon:9000 required for helm test to work. Disable with caution
+  - horizon:9000
 
 ## Depending on your Kubernetes environment, Ingress IPs may be unpredictable. In that case, you should trust whitelist every IP in your local addressing space.
 ## @param trustedProxies [array] Trusted proxies.

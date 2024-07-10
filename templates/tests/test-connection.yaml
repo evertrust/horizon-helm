@@ -7,11 +7,12 @@ metadata:
     "helm.sh/hook": test
 spec:
   containers:
-    - name: wget
-      image: busybox
-      command: ['wget']
+    - name: curl
+      image: quay.io/curl/curl:latest
+      command: ['curl']
       args: [
-        '--max-redirect 0',
+        '--fail',
+        '--max-time', '5',
         '{{ template "common.names.fullname" . }}:9000/'
       ]
   restartPolicy: Never
