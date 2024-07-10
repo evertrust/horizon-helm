@@ -11,7 +11,7 @@ spec:
       image: busybox
       command: ['wget']
       args: [
-        '--max-redirect 0'
+        '--max-redirect 0',
         '{{ template "common.names.fullname" . }}:9000/'
       ]
   restartPolicy: Never
