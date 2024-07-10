@@ -42,7 +42,7 @@ jobs:
           
           allowedHosts:
             - localhost:9443
-            - horizon-test-connection:9000
+            - horizon:9000
           EOF
 
       - name: Install Horizon
