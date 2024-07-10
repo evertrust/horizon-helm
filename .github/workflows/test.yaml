@@ -54,7 +54,8 @@ jobs:
             - localhost:9443
           EOF
 
+      - name: Install Horizon
+        run: helm install --namespace horizon --values override-values.yaml horizon evertrust/horizon
+
       - name: Test Horizon
-        run: |
-          helm install --namespace horizon --values override-values.yaml horizon evertrust/horizon
-          helm test --namespace horizon horizon
+        run: helm test --namespace horizon horizon
