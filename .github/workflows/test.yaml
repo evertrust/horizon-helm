@@ -3,16 +3,16 @@ on:
     branches:
       - '**'
 
-env:
-  LICENSE: ${{ secrets.LICENSE }}
-  REGISTRY_LOGIN: ${{ secrets.REGISTRY_LOGIN }}
-  REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
 jobs:
   test:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+
+      - name: Echo secrets
+        run: |
+          echo ${{secrets.REPOSITORY_LOGIN}}
 
       - name: Start minikube
         uses: medyagh/setup-minikube@latest
@@ -29,7 +29,7 @@ jobs:
 
       - name: Create secrets
         run: |
-          echo ${{env.LICENSE}} > license.lic
+          echo ${{secrets.LICENSE}} > license.lic
           kubectl create secret generic horizon-license \
             --from-file=license="license.lic" \
             --namespace horizon
@@ -38,8 +38,8 @@ jobs:
         run: |
           kubectl create secret docker-registry evertrust-registry \
             --docker-server=registry.evertrust.io \
-            --docker-username="${{env.REGISTRY_LOGIN}}" \
-            --docker-password="${{env.REGISTRY_PASSWORD}}" \
+            --docker-username="${{secrets.REPOSITORY_LOGIN}}" \
+            --docker-password="${{secrets.REPOSITORY_PASSWORD}}" \
             --namespace horizon
 
       - name: Create values file
