@@ -20,23 +20,13 @@ jobs:
       - uses: azure/setup-helm@v4.2.0
 
       - name: Prepare Horizon environment
-        run: |
-          kubectl create namespace horizon
-          helm repo add evertrust https://repo.evertrust.io/repository/charts
+        run: kubectl create namespace horizon
 
-      - name: Create secrets
+      - name: Create license file
         run: |
           echo ${{secrets.LICENSE}} > license.lic
           kubectl create secret generic horizon-license \
             --from-file=license="license.lic" \
-            --namespace horizon
-
-      - name: Login to registry
-        run: |
-          kubectl create secret docker-registry evertrust-registry \
-            --docker-server=registry.evertrust.io \
-            --docker-username="${{secrets.REPOSITORY_LOGIN}}" \
-            --docker-password="${{secrets.REPOSITORY_PASSWORD}}" \
             --namespace horizon
 
       - name: Create values file
@@ -55,7 +45,7 @@ jobs:
           EOF
 
       - name: Install Horizon
-        run: helm install --namespace horizon --values override-values.yaml horizon evertrust/horizon
+        run: helm install --namespace horizon --values override-values.yaml horizon .
 
       - name: Test Horizon
         run: helm test --namespace horizon horizon
