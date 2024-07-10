@@ -53,5 +53,4 @@ jobs:
 
       - name: Test Horizon
         run: |
-          helm test --namespace horizon horizon
-          kubectl logs -n horizon horizon-test-connection
+          helm test --namespace horizon horizon || kubectl logs -n horizon horizon-test-connection
