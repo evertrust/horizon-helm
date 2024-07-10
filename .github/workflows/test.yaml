@@ -10,9 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Echo secrets
-        run: |
-          echo ${{secrets.REPOSITORY_LOGIN}}
 
       - name: Start minikube
         uses: medyagh/setup-minikube@latest
