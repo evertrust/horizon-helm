@@ -6,21 +6,36 @@ metadata:
   {{- if .Values.commonLabels }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
   {{- end }}
+  {{- if or .Values.commonAnnotations .Values.deploymentAnnotations }}
+  annotations: 
+  {{- if .Values.deploymentAnnotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- end }}
 spec:
-  {{ if .Values.horizontalAutoscaler.enabled }}
+  {{- if .Values.horizontalAutoscaler.enabled }}
   replicas: {{ .Values.horizontalAutoscaler.minReplicas }}
-  {{ end }}
+  {{- end }}
   selector:
     matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
   strategy: {{- include "common.tplvalues.render" (dict "value" .Values.updateStrategy "context" $ ) | nindent 4 }}
   template:
     metadata:
       labels: {{- include "horizon.labels.standard" . | nindent 8 }}
+        {{- if .Values.commonLabels }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 8 }}
+        {{- end }}
         {{- if .Values.podLabels }}
         {{- include "common.tplvalues.render" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
         {{- end }}
       annotations:
         checksum/config: {{ tpl (.Files.Glob "config/*").AsConfig . | sha256sum }}
+        {{- if .Values.commonAnnotations }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 8 }}
+        {{- end }}
         {{- if .Values.podAnnotations }}
         {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
         {{- end }}
