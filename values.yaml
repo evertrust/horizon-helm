@@ -74,6 +74,14 @@ image:
 updateStrategy:
   type: Recreate
 
+## @param deploymentAnnotations Annotations to add to the deployment object
+##
+deploymentAnnotations: {}
+
+## @param deploymentAnnotations Annotations to add to the deployment object
+##
+deploymentLabels: {}
+
 ## @param priorityClassName Horizon pod priority class name
 ##
 priorityClassName: ""
