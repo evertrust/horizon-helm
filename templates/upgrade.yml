@@ -17,7 +17,7 @@ spec:
         - name: horizon-upgrade
           image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.upgrade.image.pullPolicy | default "IfNotPresent" | quote }}
-          {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 5 }}
+          {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 10 }}
           args: [
               "-y",
               "-m", "$(MONGODB_URI)",
