@@ -114,6 +114,11 @@ spec:
                   apiVersion: v1
                   fieldPath: status.podIP
             {{- end }}
+            # Inject the actor system name from the Helm release name
+            - name: AKKA_ACTOR_SYSTEM
+              valueFrom:
+                fieldRef:
+                  fieldPath : metadata.labels['app.kubernetes.io/instance']
             - name: LICENSE
               valueFrom:
                 secretKeyRef:
