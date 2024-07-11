@@ -3,6 +3,13 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ template "common.names.fullname" . }}-lease-updater
+  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
 rules:
   - apiGroups: [ "akka.io" ]
     resources: [ "leases" ]
@@ -12,6 +19,13 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ template "common.names.fullname" . }}-lease-updater
+  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
 subjects:
   - kind: ServiceAccount
     name: default
@@ -26,6 +40,13 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ template "common.names.fullname" . }}-pod-reader
+  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
 rules:
   - apiGroups: [ "" ]
     resources: [ "pods" ]
@@ -35,6 +56,13 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ template "common.names.fullname" . }}-pod-reader
+  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
 subjects:
   - kind: ServiceAccount
     name: default
