@@ -62,6 +62,9 @@ jobs:
         run: |
           sed -z -i 's/license:\n  secretName: ""\n  secretKey: ""/license:\n  secretName: horizon-license\n  secretKey: secretKey/' values.yaml
           sed -i 's/pullSecrets: \[\]/pullSecrets: \[ evertrust-registry \]/' values.yaml
+
+      - run: cat values.yaml
+
       - name: Kubescape scan
         uses: kubescape/github-action@v3.0.5
         continue-on-error: true
