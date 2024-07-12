@@ -5,7 +5,7 @@ on:
 
 
 jobs:
-  test:
+  test-install:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -54,3 +54,41 @@ jobs:
       - name: Test Horizon
         run: |
           helm test --namespace horizon horizon || kubectl logs -n horizon horizon-test-connection
+  scan-chart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install helm
+        uses: azure/setup-helm@v4.2.0
+      - name: Generate YAML to scan
+        run: |
+          cat <<EOF > override-values.yaml
+          image:
+            pullSecrets:
+              - evertrust-registry
+          
+          license:
+            secretName: horizon-license
+            secretKey: license
+          
+          allowedHosts:
+            - localhost:9443
+            - horizon:9000
+          EOF
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm dependency build
+          helm template . --values override-values.yaml > template.yaml;
+
+      - name: Kubescape scan
+        uses: kubescape/github-action@main
+        with:
+          format: sarif
+          outputFile: results
+          files: "template.yaml"
+
+      - name: Upload Kubescape scan results to Github Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
+
+
