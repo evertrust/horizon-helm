@@ -58,35 +58,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install helm
-        uses: azure/setup-helm@v4.2.0
       - name: Generate YAML to scan
         run: |
-          cat <<EOF > override-values.yaml
-          image:
-            pullSecrets:
-              - evertrust-registry
-          
-          license:
-            secretName: horizon-license
-            secretKey: license
-          
-          allowedHosts:
-            - localhost:9443
-            - horizon:9000
-          EOF
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm dependency build
-          helm template . --values override-values.yaml > template.yaml;
-
+          sed -z -i 's/license:\n  secretName: ""\n  secretKey: ""/license:\n  secretName: horizon-license\n  secretKey: secretKey/' values.yaml
+          sed -i 's/pullSecrets: \[\]/pullSecrets: \[ evertrust-registry \]/' values.yaml
       - name: Kubescape scan
-        uses: kubescape/github-action@main
+        uses: kubescape/github-action@v3.0.5
         continue-on-error: true
         with:
           format: sarif
-          outputFile: results
-          severityThreshold: high
-          files: "template.yaml"
+          severityThreshold: low
+          frameworks: allcontrols
+      - name: Print results
+        run: |
+          echo "RESULTS ---------"
+          cat results.sarif
 
       - name: Upload Kubescape scan results to Github Code Scanning
         uses: github/codeql-action/upload-sarif@v3
