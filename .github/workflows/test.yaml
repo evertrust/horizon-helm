@@ -67,7 +67,7 @@ jobs:
         continue-on-error: true
         with:
           format: sarif
-          output: results
+          outputFile: results
           severityThreshold: low
           frameworks: allcontrols
 
