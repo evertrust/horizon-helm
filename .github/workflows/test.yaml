@@ -60,7 +60,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Generate YAML to scan
         run: |
-          sed -z -i 's/license:\n  secretName: ""\n  secretKey: ""/license:\n  secretName: horizon-license\n  secretKey: secretKey/' values.yaml
+          sed -z -i 's/license:\n  secretName: ""\n  secretKey: ""/license:\n  secretName: horizon-license\n  secretKey: license/' values.yaml
           sed -i 's/pullSecrets: \[\]/pullSecrets: \[ evertrust-registry \]/' values.yaml
 
       - run: cat values.yaml
