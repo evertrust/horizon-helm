@@ -85,6 +85,7 @@ jobs:
         with:
           format: sarif
           outputFile: results
+          severityThreshold: medium
           files: "template.yaml"
 
       - name: Upload Kubescape scan results to Github Code Scanning
