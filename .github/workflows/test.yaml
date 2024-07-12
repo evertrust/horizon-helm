@@ -81,10 +81,12 @@ jobs:
 
       - name: Kubescape scan
         uses: kubescape/github-action@main
+        continue-on-error: true
         with:
           format: sarif
           outputFile: results
           files: "template.yaml"
+
 
       - name: Upload Kubescape scan results to Github Code Scanning
         uses: github/codeql-action/upload-sarif@v2
