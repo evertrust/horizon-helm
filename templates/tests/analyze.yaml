@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ template "common.names.fullname" . }}-kubescape-analysis"
+  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: kubescape
+      image: bitnami/kubescape:latest
+      command: ["/bin/sh","-c"] #run a shell to perform several commands
+      args: [
+        "cat <<EOF > override-values.yaml
+         image:
+           pullSecrets:
+             - evertrust-registry
+
+         license:
+           secretName: horizon-license
+           secretKey: license
+
+         allowedHosts:
+           - localhost:9443
+           - horizon:9000
+         EOF;
+         helm template . --values override-values.yaml > template.yaml;
+         kubescape scan template.yaml
+         "
+      ]
+  restartPolicy: Never

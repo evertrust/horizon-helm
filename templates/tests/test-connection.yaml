@@ -4,7 +4,7 @@ metadata:
   name: "{{ template "common.names.fullname" . }}-test-connection"
   labels: {{- include "horizon.labels.standard" . | nindent 4 }}
   annotations:
-    "helm.sh/hook": test
+    "helm.sh/hook": testss
 spec:
   containers:
     - name: curl
