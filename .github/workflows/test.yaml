@@ -2,7 +2,8 @@ on:
   push:
     branches:
       - '**'
-
+env:
+  REGISTRY: registry.evertrust.io
 
 jobs:
   test-install:
@@ -21,6 +22,9 @@ jobs:
 
       - name: Prepare Horizon environment
         run: kubectl create namespace horizon
+
+      - name: Login to repo
+        run: docker login --username ${{ secrets.REPOSITORY_LOGIN }} --password ${{ secrets.REPOSITORY_PASSWORD }} ${{ env.REGISTRY }}
 
       - name: Create license file
         run: |
