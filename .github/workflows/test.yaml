@@ -53,7 +53,7 @@ jobs:
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm dependency build
-          helm install --waiting --namespace horizon --values override-values.yaml horizon . 
+          helm install --wait --namespace horizon --values override-values.yaml horizon . 
 
       - name: Test Horizon
         run: |
