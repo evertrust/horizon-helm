@@ -87,7 +87,7 @@ jobs:
       
 
       - name: Kubescape scan
-        uses: kubescape/github-action@v3.0.3
+        uses: kubescape/github-action@v3.0.5
         continue-on-error: true
         with:
           format: sarif
