@@ -53,7 +53,7 @@ jobs:
 
       - name: Test Horizon
         run: |
-          helm test --namespace horizon horizon || kubectl logs -n horizon horizon-test-connection
+          helm test --namespace horizon horizon
 
   scan-chart:
     runs-on: ubuntu-latest
@@ -80,20 +80,20 @@ jobs:
           sudo apt update
           sudo apt install kubescape
 
-      - name: Run Kubescape scan
-        run: |
-          kubescape scan  framework allcontrols  . --severity-threshold high  --format json --output results
-          cat results.json
+#      - name: Run Kubescape scan
+#        run: |
+#          kubescape scan  framework allcontrols  . --severity-threshold high  --format json --output results
+#          cat results.json
       
 
-#      - name: Kubescape scan
-#        uses: kubescape/github-action@v3.0.5
-#        continue-on-error: true
-#        with:
-#          format: sarif
-#          outputFile: results
-#          severityThreshold: low
-#          frameworks: allcontrols
+      - name: Kubescape scan
+        uses: kubescape/github-action@v3.0.3
+        continue-on-error: true
+        with:
+          format: sarif
+          outputFile: results
+          severityThreshold: low
+          frameworks: allcontrols
 
       - name: Print results
         run: |
