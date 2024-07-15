@@ -53,11 +53,11 @@ jobs:
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm dependency build
-          helm install --timeout 30s --namespace horizon --values override-values.yaml horizon . 
+          helm install --waiting --namespace horizon --values override-values.yaml horizon . 
 
       - name: Test Horizon
         run: |
-          helm test --namespace horizon horizon || kubectl logs -n horizon horizon-test-connection
+          helm test --namespace horizon horizon
 
   scan-chart:
     runs-on: ubuntu-latest
@@ -90,8 +90,6 @@ jobs:
       - name: Edit results.sarif to comply with GH
         run: |
           jq '.runs[0].results |= map(.locations |= map(if .physicalLocation.region.startLine == -1 then .physicalLocation.region.startLine = 1 else . end))' results.sarif > edited.sarif
-          head results.sarif
-          head edited.sarif
 
       - name: Upload Kubescape scan results to Github Code Scanning
         uses: github/codeql-action/upload-sarif@v3
