@@ -65,14 +65,26 @@ jobs:
 
       - run: cat values.yaml
 
-      - name: Kubescape scan
-        uses: kubescape/github-action@v3.0.5
-        continue-on-error: true
-        with:
-          format: sarif
-          outputFile: results
-          severityThreshold: low
-          frameworks: allcontrols
+      - name: Install Kubescape
+        run: |
+          sudo add-apt-repository ppa:kubescape/kubescape
+          sudo apt update
+          sudo apt install kubescape
+
+      - name: Run Kubescape scan
+        run: |
+          kubescape scan  framework allcontrols  . --severity-threshold high  --format sarif --output results
+          cat results.sarif
+      
+
+#      - name: Kubescape scan
+#        uses: kubescape/github-action@v3.0.5
+#        continue-on-error: true
+#        with:
+#          format: sarif
+#          outputFile: results
+#          severityThreshold: low
+#          frameworks: allcontrols
 
       - name: Print results
         run: |
