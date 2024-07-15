@@ -54,10 +54,19 @@ jobs:
       - name: Test Horizon
         run: |
           helm test --namespace horizon horizon || kubectl logs -n horizon horizon-test-connection
+
   scan-chart:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: azure/setup-helm@v4.2.0
+
+      - name: Install dependencies
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm dependency build
+
       - name: Generate YAML to scan
         run: |
           sed -z -i 's/license:\n  secretName: ""\n  secretKey: ""/license:\n  secretName: horizon-license\n  secretKey: license/' values.yaml
@@ -67,14 +76,14 @@ jobs:
 
       - name: Install Kubescape
         run: |
-          sudo add-apt-repository ppa:kubescape/kubescape
+          sudo add-apt-repository -y ppa:kubescape/kubescape
           sudo apt update
           sudo apt install kubescape
 
       - name: Run Kubescape scan
         run: |
-          kubescape scan  framework allcontrols  . --severity-threshold high  --format sarif --output results
-          cat results.sarif
+          kubescape scan  framework allcontrols  . --severity-threshold high  --format json --output results
+          cat results.json
       
 
 #      - name: Kubescape scan
@@ -89,7 +98,7 @@ jobs:
       - name: Print results
         run: |
           ls -l
-          cat results.sarif
+          cat results.json
 
       - name: Upload Kubescape scan results to Github Code Scanning
         uses: github/codeql-action/upload-sarif@v3
