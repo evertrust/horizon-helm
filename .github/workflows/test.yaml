@@ -49,7 +49,7 @@ jobs:
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm dependency build
-          helm install --timeout 30s --namespace horizon --values override-values.yaml horizon . 
+          helm install --wait --timeout 30s --namespace horizon --values override-values.yaml horizon . 
 
       - name: Test Horizon
         run: |
@@ -82,8 +82,8 @@ jobs:
           severityThreshold: high
           frameworks: allcontrols
 
-      - name: Cat Kubescape scan results
-        run: cat results.sarif
+#      - name: Cat Kubescape scan results
+#        run: cat results.sarif
 
       - name: Edit results.sarif to comply with GH
         run: |
