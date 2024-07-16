@@ -56,7 +56,13 @@ jobs:
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm dependency build
-          helm install --wait --namespace horizon --values override-values.yaml horizon . || kubectl logs -l app.kubernetes.io/name=horizon -n horizon
+          helm install --wait --timeout 60s --namespace horizon --values override-values.yaml horizon . || kubectl logs -l app.kubernetes.io/name=horizon -n horizon > service.logs
+
+      - name: Create artifact with logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: service logs
+          path: service.logs
 
       - name: Test Horizon
         run: |
