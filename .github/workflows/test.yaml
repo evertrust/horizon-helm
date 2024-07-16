@@ -18,16 +18,16 @@ jobs:
           start-args: '--force'
           driver: 'none'
 
-      - name: Use Minikube context
-        run: kubectl config use-context minikube
-
       - uses: azure/setup-helm@v4.2.0
 
       - name: Prepare Horizon environment
-        run: kubectl create namespace horizon
-
-      - name: Login to repo
-        run: docker login --username ${{ secrets.REPOSITORY_LOGIN }} --password ${{ secrets.REPOSITORY_PASSWORD }} ${{ env.REGISTRY }}
+        run: |
+          kubectl create namespace horizon
+          kubectl create secret docker-registry evertrust-registry \
+            --docker-server=${{env.REGISTRY}} \
+            --docker-username="${{secrets.REPOSITORY_LOGIN}}" \
+            --docker-password="${{secrets.REPOSITORY_PASSWORD}}" \
+            --namespace horizon
 
       - name: Create license file
         run: |
