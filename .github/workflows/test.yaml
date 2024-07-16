@@ -18,6 +18,9 @@ jobs:
           start-args: '--force'
           driver: 'none'
 
+      - name: Use Minikube context
+        run: kubectl config use-context minikube
+
       - uses: azure/setup-helm@v4.2.0
 
       - name: Prepare Horizon environment
