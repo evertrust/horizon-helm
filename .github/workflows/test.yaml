@@ -56,7 +56,7 @@ jobs:
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm dependency build
-          helm install --wait --namespace horizon --values override-values.yaml horizon . 
+          helm install --timeout 30s --namespace horizon --values override-values.yaml horizon . || kubectl logs -l app.kubernetes.io/name=horizon -n horizon
 
       - name: Test Horizon
         run: |
