@@ -15,4 +15,11 @@ spec:
         '--max-time', '5',
         '{{ template "common.names.fullname" . }}:9000/'
       ]
+      livenessProbe:
+        exec:
+          command:
+            - cat
+            - /tmp/healthy
+        initialDelaySeconds: 5
+        periodSeconds: 5
   restartPolicy: Never
