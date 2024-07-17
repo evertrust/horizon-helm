@@ -63,16 +63,15 @@ jobs:
           EOF
 
       - name: Install Horizon
+        continue-on-error: true
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm dependency build
-          helm install --wait --timeout 60s --namespace horizon --values override-values.yaml horizon . || kubectl logs -l app.kubernetes.io/name=horizon -n horizon > service.logs
+          helm install --wait --timeout 60s --namespace horizon --values override-values.yaml horizon .
 
       - name: Create artifact with logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: service logs
-          path: service.logs
+        run: |
+          minikube logs
 
       - name: Test Horizon
         run: |
