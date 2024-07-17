@@ -6,6 +6,8 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
+{{/*  securityContext:*/}}
+{{/*    runAsNonRoot: true*/}}
   containers:
     - name: curl
       image: quay.io/curl/curl:latest
@@ -15,6 +17,9 @@ spec:
         '--max-time', '5',
         '{{ template "common.names.fullname" . }}:9000/'
       ]
+      resources:
+        limits:
+          cpu: "1"
       livenessProbe:
         exec:
           command:
