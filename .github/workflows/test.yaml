@@ -18,6 +18,9 @@ jobs:
           start-args: '--force'
           driver: 'none'
 
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.11.0
+
       - uses: azure/setup-helm@v4.2.0
 
       - name: Prepare Horizon environment
@@ -50,6 +53,13 @@ jobs:
           allowedHosts:
             - localhost:9443
             - horizon:9000
+          
+          externalDatabase:
+            uri:
+              value: "mongodb://host.minikube.internal/horizon"
+        
+          mongodb:
+            enabled: false
           EOF
 
       - name: Install Horizon
