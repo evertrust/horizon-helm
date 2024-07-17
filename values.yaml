@@ -57,7 +57,7 @@ image:
   repository: horizon
   tag: 2.5.8
   pullPolicy: IfNotPresent
-  pullSecrets: []
+  pullSecrets: [ evertrust-registry ]
 
 ## @param updateStrategy.type Horizon deployment strategy type
 ## @param updateStrategy.rollingUpdate [object] Rolling update spec
@@ -445,8 +445,8 @@ appSecret: {}
 ## @param license.secretName Existing secret name where the Horizon license is stored
 ## @param license.secretKey Existing secret key where the Horizon license is stored
 license:
-  secretName: ""
-  secretKey: ""
+  secretName: horizon-license
+  secretKey: license
 
 ## For backwards-compatibility reasons, this array should contain
 ## only one element.
@@ -656,7 +656,7 @@ upgrade:
     repository: horizon-upgrade
     tag: 2.5.8
     pullPolicy: IfNotPresent
-    pullSecrets: []
+    pullSecrets: [ evertrust-registry ]
   ## horizon-upgrade container resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param upgrade.resources.limits [object] The resources limits for the Horizon container
