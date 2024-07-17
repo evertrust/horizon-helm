@@ -70,8 +70,10 @@ jobs:
           helm install --wait --timeout 60s --namespace horizon --values override-values.yaml horizon .
 
       - name: Create artifact with logs
-        run: |
-          minikube logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: /var/log/containers
 
       - name: Test Horizon
         run: |
