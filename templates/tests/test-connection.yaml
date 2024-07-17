@@ -20,6 +20,7 @@ spec:
       resources:
         limits:
           cpu: "1"
+          memory: "64Mi"
       livenessProbe:
         exec:
           command:
