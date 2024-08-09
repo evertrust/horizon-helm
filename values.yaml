@@ -694,7 +694,7 @@ externalDatabase:
   ##
   uri: {}
 
-## Create a dynamic manifests via values:
+## @param extraObjects [array] Create a dynamic manifests via values:
 extraObjects: []
   ## - apiVersion: "kubernetes-client.io/v1"
   ##   kind: ExternalSecret
