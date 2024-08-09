@@ -426,7 +426,6 @@ ingress:
 ## @section Prometheus monitor configuration
 ## @param monitoring.enabled Enable the creation of a ServiceMonitor object for Horizon if the cluster has the monitoring.coreos.com/v1 capability.
 monitoring:
-
   enabled: true
 
 ## @section Horizon application parameters
@@ -502,7 +501,8 @@ trustedProxies:
 ## @param events.ttl Duration during which events are kept in database.
 ## @param events.discoveryTtl Duration during which discovery events are kept in database.
 events:
-  chainsign: true
+  chainsign:
+    true
     ## The events.secret field can be a reference to a secret.
     ## E.g.
     ##   secret:
@@ -541,7 +541,8 @@ mailer:
   port: ""
   tls: ""
   ssl: ""
-  user: ""
+  user:
+    ""
     ## The password field can be a reference to a secret.
     ## E.g.
     ##   password:
@@ -608,7 +609,6 @@ podsDirectConnect: false
 ##     notification.mail.attachment.extension.der = "der"
 ##   }
 extraConfig: ""
-
 
 ## @section Database parameters
 
@@ -693,3 +693,16 @@ externalDatabase:
   ##         key: mongoDBUri
   ##
   uri: {}
+
+## Create a dynamic manifests via values:
+extraObjects:
+  []
+  ## - apiVersion: "kubernetes-client.io/v1"
+  ##   kind: ExternalSecret
+  ##   metadata:
+  ##     name: horizon-secrets
+  ##   spec:
+  ##     backendType: gcpSecretsManager
+  ##     data:
+  ##       - key: horizon-secret-key
+  ##         name: horizon-secret-name
