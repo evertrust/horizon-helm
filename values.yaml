@@ -693,3 +693,15 @@ externalDatabase:
   ##         key: mongoDBUri
   ##
   uri: {}
+
+## @param extraObjects [array] Create a dynamic manifests via values:
+extraObjects: []
+  ## - apiVersion: "kubernetes-client.io/v1"
+  ##   kind: ExternalSecret
+  ##   metadata:
+  ##     name: horizon-secrets
+  ##   spec:
+  ##     backendType: gcpSecretsManager
+  ##     data:
+  ##       - key: horizon-secret-key
+  ##         name: horizon-secret-name
