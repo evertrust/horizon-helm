@@ -242,7 +242,7 @@ spec:
             - name: metrics
               containerPort: 9095
             - name: management
-              containerPort: 8558
+              containerPort: 7626
             - name: artery
               containerPort: 25520
         {{- if .Values.sidecars }}

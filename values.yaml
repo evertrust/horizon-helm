@@ -426,7 +426,6 @@ ingress:
 ## @section Prometheus monitor configuration
 ## @param monitoring.enabled Enable the creation of a ServiceMonitor object for Horizon if the cluster has the monitoring.coreos.com/v1 capability.
 monitoring:
-
   enabled: true
 
 ## @section Horizon application parameters
@@ -586,7 +585,7 @@ logback:
     ## - name: racs-connectors
     ##   level: debug
 
-## @param leases.enabled Whether leases should be used when launching multiple replicas of Horizon pods. This requires the leases.akka.io CRD to be installed.
+## @param leases.enabled Whether leases should be used when launching multiple replicas of Horizon pods. This requires the leases.pekko.apache.org CRD to be installed.
 leases:
   enabled: true
 
@@ -608,7 +607,6 @@ podsDirectConnect: false
 ##     notification.mail.attachment.extension.der = "der"
 ##   }
 extraConfig: ""
-
 
 ## @section Database parameters
 
