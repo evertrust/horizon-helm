@@ -511,8 +511,8 @@ events:
     ##         key: eventSealSecret
     ##
   secret: {}
-  ttl: 90 days
-  discoveryTtl: 30 days
+  ttl: ""
+  discoveryTtl: ""
 
 ## @param logFormat Format in which logs will be outputted. Can be set either to "console" or "json" for structured logging.
 logFormat: console

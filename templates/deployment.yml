@@ -187,10 +187,14 @@ spec:
             {{- end }}
             - name: EVENT_CHAINSIGN
               value: {{ .Values.events.chainsign | quote }}
+            {{- if .Values.events.ttl }}
             - name: EVENT_TTL
               value: {{ .Values.events.ttl }}
+            {{- end }}
+            {{- if .Values.events.discoveryTtl }}
             - name: EVENT_DISCOVERY_TTL
               value: {{ .Values.events.discoveryTtl }}
+            {{- end }}
             {{- if .Values.events.chainsign }}
             - name: EVENT_SEAL_SECRET
             {{- include "horizon.eventSealSecret" (dict "context" .) | nindent 14 }}
