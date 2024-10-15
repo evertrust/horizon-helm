@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.5](https://github.com/evertrust/horizon-helm/compare/v0.11.4...v0.11.5) (2024-10-15)
+
+
+### Bug Fixes
+
+* bump horizon 2.6.4 ([#13](https://github.com/evertrust/horizon-helm/issues/13)) ([7e7be0f](https://github.com/evertrust/horizon-helm/commit/7e7be0fef8d41f0591583a91273b81619e967d0a))
+
 ## [0.11.4](https://github.com/evertrust/horizon-helm/compare/v0.11.3...v0.11.4) (2024-10-07)
 
 
