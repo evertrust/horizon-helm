@@ -142,6 +142,13 @@ spec:
                 secretKeyRef:
                   name: {{ required "You must specify a license secret" .Values.license.secretName }}
                   key: {{ required "You must specify a license secret" .Values.license.secretKey }}
+            {{- if .Values.initialAdminHashPassword.enabled }}
+            - name: HRZ_ADMIN_PWD_HASH
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.initialAdminHashPassword.secretName }}
+                  key: {{ .Values.initialAdminHashPassword.secretKey }}
+            {{- end }}
             - name: LOGGING_APPENDER
               value: {{ .Values.logFormat }}
             {{- if .Values.logback.pattern }}
