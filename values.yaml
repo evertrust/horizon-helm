@@ -455,6 +455,15 @@ license:
   secretName: ""
   secretKey: ""
 
+## Set up initial admin user.
+## @param initialAdminHashPassword.enabled Whether to enable the initial admin user
+## @param initialAdminHashPassword.secretName Existing secret name where the initial admin password is stored
+## @param initialAdminHashPassword.secretKey Existing secret key where the initial admin password is stored
+initialAdminHashPassword:
+  enabled: false
+  secretName: ""
+  secretKey: ""
+
 ## For backwards-compatibility reasons, this array should contain
 ## only one element.
 ## For more information, refer to the Horizon installation guide.
