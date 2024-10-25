@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.12.0](https://github.com/evertrust/horizon-helm/compare/v0.11.5...v0.12.0) (2024-10-25)
+
+
+### Features
+
+* **intialAdminHashPassword:** support ([#15](https://github.com/evertrust/horizon-helm/issues/15)) ([1765372](https://github.com/evertrust/horizon-helm/commit/17653725c401fa02b43c4b9718977fc658bc73bc))
+
+
+### Bug Fixes
+
+* bump horizon 2.6.5 ([#17](https://github.com/evertrust/horizon-helm/issues/17)) ([2935eb4](https://github.com/evertrust/horizon-helm/commit/2935eb49b945b0568ffa0a9874ddb2abbfc46e32))
+
 ## [0.11.5](https://github.com/evertrust/horizon-helm/compare/v0.11.4...v0.11.5) (2024-10-15)
 
 
