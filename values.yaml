@@ -55,7 +55,7 @@ commonAnnotations: {}
 image:
   registry: registry.evertrust.io
   repository: horizon
-  tag: 2.6.5
+  tag: 2.6.6
   pullPolicy: IfNotPresent
   pullSecrets: []
 
