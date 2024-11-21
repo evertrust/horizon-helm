@@ -712,3 +712,10 @@ extraObjects: []
   ##     data:
   ##       - key: horizon-secret-key
   ##         name: horizon-secret-name
+
+## Enable Prometheus metrics
+metrics:
+  ## @param metrics.enabled Whether to enable Prometheus metrics
+  enabled: false
+  ## @param metrics.port Prometheus metrics port
+  port: 9095
