@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/evertrust/horizon-helm/compare/v0.12.3...v0.13.0) (2024-11-21)
+
+
+### Features
+
+* **metrics:** support metrics configuration ([#24](https://github.com/evertrust/horizon-helm/issues/24)) ([6f269ed](https://github.com/evertrust/horizon-helm/commit/6f269ed67e230a84c19e800692e5db4934dbbbd7))
+
 ## [0.12.3](https://github.com/evertrust/horizon-helm/compare/v0.12.2...v0.12.3) (2024-11-20)
 
 
