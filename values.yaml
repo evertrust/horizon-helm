@@ -686,6 +686,47 @@ upgrade:
   ##
   to: ""
 
+## @section Backup parameters
+backup:
+  ## @param backup.enabled Whether to enable backup
+  enabled: false
+  ## @param backup.suspended Whether to suspend backup scheduling
+  suspended: false
+  ## @param backup.image.registry Backup image registry
+  frequency: "0 * * * *"
+  ## @param backup.schedule Cron expression for the backup job
+  successfulJobsHistoryLimit: 1
+  ##@ param backup.failedJobsHistoryLimit Cron expression for the backup job
+  failedJobsHistoryLimit: 3
+  ## @param backup.backoffLimit Cron expression for the backup job
+  backoffLimit: 3
+  ## @param backup.image.repository toolbox image repository
+  ## @param backup.image.tag toolbox image tag (immutable tags are recommended)
+  ## @param backup.image.pullPolicy toolbox image pull policy
+  ## @param backup.image.pullSecrets toolbox image pull secrets
+  image:
+    registry: registry.evertrust.io
+    repository: toolbox
+    tag: 0.1.0
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  ## backup container resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param backup.resources.limits [object] The resources limits for the backup container
+  ## @param backup.resources.requests [object] The requested resources for the backup container
+  resources:
+    limits:
+      memory: 126Mi
+      cpu: 500m
+    requests: {}
+  ## Configure environment variable injections into the backup pods.
+  ## This is the way you should inject secrets into the app if you wish
+  ## to use the Kubernetes secrets implementation.
+  ##
+  ## ref: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
+  ## @param environment [array] Extra env vars passed to the backup pods
+  environment: []
+
 ## Configuration for an Horizon external database
 ## Refer to the Horizon installation guide to configure the installation correctly
 ##

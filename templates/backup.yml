@@ -1,0 +1,36 @@
+apiVersion: {{ include "common.capabilities.cronjob.apiVersion" . }}
+kind: CronJob
+metadata:
+  name: {{ template "common.names.fullname" . }}
+  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.deploymentLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if or .Values.commonAnnotations .Values.deploymentAnnotations }}
+  annotations: 
+  {{- if .Values.deploymentAnnotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- end }}
+spec:
+  schedule: {{ .Values.backup.schedule }}
+  suspend: {{ .Values.backup.suspend }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: {{ .Values.backup.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.backup.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: {{ .Values.backup.image }}
+            imagePullPolicy: {{ .Values.backup.imagePullPolicy }}
+            env: {{- toYaml .Values.backup.environment | nindent 12 }}
+      backoffLimit: {{ .Values.backup.backoffLimit }}
