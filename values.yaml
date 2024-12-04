@@ -705,9 +705,9 @@ backup:
   ## @param backup.image.pullPolicy toolbox image pull policy
   ## @param backup.image.pullSecrets toolbox image pull secrets
   image:
-    registry: registry.evertrust.io
+    registry: quay.io/evertrust
     repository: toolbox
-    tag: 0.1.0
+    tag: v0.1.0
     pullPolicy: IfNotPresent
     pullSecrets: []
   ## backup container resource requests and limits

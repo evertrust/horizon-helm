@@ -1,3 +1,4 @@
+{{ if .Values.backup.enabled  | default false }}
 apiVersion: {{ include "common.capabilities.cronjob.apiVersion" . }}
 kind: CronJob
 metadata:
@@ -31,6 +32,9 @@ spec:
           containers:
           - name: backup
             image: {{ .Values.backup.image }}
+            command:
+              - backup
             imagePullPolicy: {{ .Values.backup.imagePullPolicy }}
             env: {{- toYaml .Values.backup.environment | nindent 12 }}
       backoffLimit: {{ .Values.backup.backoffLimit }}
+{{ end }}
