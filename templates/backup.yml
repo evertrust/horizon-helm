@@ -36,5 +36,6 @@ spec:
               - backup
             imagePullPolicy: {{ .Values.backup.imagePullPolicy }}
             env: {{- toYaml .Values.backup.environment | nindent 12 }}
+            resources: {{- toYaml .Values.backup.resources | nindent 12 }}
       backoffLimit: {{ .Values.backup.backoffLimit }}
 {{ end }}
