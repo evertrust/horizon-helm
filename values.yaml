@@ -82,14 +82,6 @@ deploymentAnnotations: {}
 ##
 deploymentLabels: {}
 
-## @param cronJobAnnotations CronJob annotations to add to the CronJob object
-##
-cronJobAnnotations: {}
-
-## @param cronJobLabels CronJob labels to add to the CronJob object
-##
-cronJobLabels: {}
-
 ## @param priorityClassName Horizon pod priority class name
 ##
 priorityClassName: ""
@@ -698,6 +690,10 @@ upgrade:
 backup:
   ## @param backup.enabled Whether to enable backup
   enabled: false
+  ## @param backup.annotations Extra annotations to add to the backup job
+  annotations: {}
+  ## @param backup.labels Extra labels to add to the backup job
+  labels: {}
   ## @param backup.suspended Whether to suspend backup scheduling
   suspended: false
   ## @param backup.image.registry Backup image registry
