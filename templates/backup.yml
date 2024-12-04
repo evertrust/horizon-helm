@@ -7,13 +7,13 @@ metadata:
   {{- if .Values.commonLabels }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
   {{- end }}
-  {{- if .Values.deploymentLabels }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentLabels "context" $ ) | nindent 4 }}
+  {{- if .Values.cronJobLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.cronJobLabels "context" $ ) | nindent 4 }}
   {{- end }}
-  {{- if or .Values.commonAnnotations .Values.deploymentAnnotations }}
+  {{- if or .Values.commonAnnotations .Values.cronJobAnnotations }}
   annotations: 
-  {{- if .Values.deploymentAnnotations }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentAnnotations "context" $ ) | nindent 4 }}
+  {{- if .Values.cronJobAnnotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.cronJobAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
   {{- if .Values.commonAnnotations }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
