@@ -101,7 +101,8 @@ extraVolumes: []
 ## e.g:
 ## extraVolumeMounts:
 ##   - name: extra-volume-name
-##     mountPath: /mnt/extra-volume ##
+##     mountPath: /mnt/extra-volume 
+##
 extraVolumeMounts: []
 ## @param sidecars Add additional sidecar containers to the Horizon pod
 ## e.g:
