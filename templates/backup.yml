@@ -1,0 +1,51 @@
+{{- if .Values.backup.enabled  | default false -}}
+---
+apiVersion: {{ include "common.capabilities.cronjob.apiVersion" . }}
+kind: CronJob
+metadata:
+  name: {{ template "common.names.fullname" . }}
+  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.backup.labels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.backup.labels "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if or .Values.commonAnnotations .Values.backup.annotations }}
+  annotations: 
+  {{- if .Values.backup.annotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.backup.annotations "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- end }}
+spec:
+  schedule: {{ .Values.backup.schedule | quote }}
+  suspend: {{ .Values.backup.suspended }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: {{ .Values.backup.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.backup.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: {{ include "common.images.image" (dict "imageRoot" .Values.backup.image "global" .Values.global) }}
+            imagePullPolicy: {{ .Values.backup.imagePullPolicy | default "IfNotPresent" | quote }}
+            command:
+              - backup
+            env:
+              - name: MONGODB_URI
+              {{- include "horizon.mongodbUri" (dict "context" .) | nindent 16 }}
+            {{- with .Values.backup.environment }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.backup.envFrom }}
+            envFrom: 
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            resources: {{- toYaml .Values.backup.resources | nindent 14 }}
+      backoffLimit: {{ .Values.backup.backoffLimit }}
+{{- end -}}
