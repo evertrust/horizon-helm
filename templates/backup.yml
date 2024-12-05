@@ -11,7 +11,7 @@ metadata:
   {{- if .Values.backup.labels }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.backup.labels "context" $ ) | nindent 4 }}
   {{- end }}
-  {{- if or .Values.commonAnnotations .Values.cronJobAnnotations }}
+  {{- if or .Values.commonAnnotations .Values.backup.annotations }}
   annotations: 
   {{- if .Values.backup.annotations }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.backup.annotations "context" $ ) | nindent 4 }}
