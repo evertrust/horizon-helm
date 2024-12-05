@@ -36,8 +36,10 @@ spec:
             imagePullPolicy: {{ .Values.backup.imagePullPolicy | default "IfNotPresent" | quote }}
             command:
               - backup
-            {{- with .Values.backup.environment }}
             env:
+              - name: MONGODB_URI
+              {{- include "horizon.mongodbUri" (dict "context" .) | nindent 16 }}
+            {{- with .Values.backup.environment }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
             {{- with .Values.backup.envFrom }}
