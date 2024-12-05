@@ -101,8 +101,7 @@ extraVolumes: []
 ## e.g:
 ## extraVolumeMounts:
 ##   - name: extra-volume-name
-##     mountPath: /mnt/extra-volume
-##
+##     mountPath: /mnt/extra-volume ##
 extraVolumeMounts: []
 ## @param sidecars Add additional sidecar containers to the Horizon pod
 ## e.g:
@@ -696,8 +695,8 @@ backup:
   labels: {}
   ## @param backup.suspended Whether to suspend backup scheduling
   suspended: false
-  ## @param backup.image.registry Backup image registry
-  frequency: "0 * * * *"
+  ## @param backup.schedule Cron expression for the backup job
+  schedule: "0 * * * *"
   ## @param backup.schedule Cron expression for the backup job
   successfulJobsHistoryLimit: 1
   ##@ param backup.failedJobsHistoryLimit Cron expression for the backup job
@@ -730,6 +729,8 @@ backup:
   ## ref: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
   ## @param environment [array] Extra env vars passed to the backup pods
   environment: []
+  ## @param envFrom [array] Extra env vars passed to the backup pods
+  envFrom: []
 
 ## Configuration for an Horizon external database
 ## Refer to the Horizon installation guide to configure the installation correctly

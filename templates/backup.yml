@@ -1,4 +1,5 @@
-{{ if .Values.backup.enabled  | default false }}
+{{- if .Values.backup.enabled  | default false -}}
+---
 apiVersion: {{ include "common.capabilities.cronjob.apiVersion" . }}
 kind: CronJob
 metadata:
@@ -20,8 +21,8 @@ metadata:
   {{- end }}
   {{- end }}
 spec:
-  schedule: {{ .Values.backup.schedule }}
-  suspend: {{ .Values.backup.suspend }}
+  schedule: {{ .Values.backup.schedule | quote }}
+  suspend: {{ .Values.backup.suspended }}
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: {{ .Values.backup.successfulJobsHistoryLimit }}
   failedJobsHistoryLimit: {{ .Values.backup.failedJobsHistoryLimit }}
@@ -31,11 +32,18 @@ spec:
         spec:
           containers:
           - name: backup
-            image: {{ .Values.backup.image }}
+            image: {{ include "common.images.image" (dict "imageRoot" .Values.backup.image "global" .Values.global) }}
+            imagePullPolicy: {{ .Values.backup.imagePullPolicy | default "IfNotPresent" | quote }}
             command:
               - backup
-            imagePullPolicy: {{ .Values.backup.imagePullPolicy }}
-            env: {{- toYaml .Values.backup.environment | nindent 12 }}
-            resources: {{- toYaml .Values.backup.resources | nindent 12 }}
+            {{- with .Values.backup.environment }}
+            env:
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.backup.envFrom }}
+            envFrom: 
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            resources: {{- toYaml .Values.backup.resources | nindent 14 }}
       backoffLimit: {{ .Values.backup.backoffLimit }}
-{{ end }}
+{{- end -}}
