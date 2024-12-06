@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.1](https://github.com/evertrust/horizon-helm/compare/v0.14.0...v0.14.1) (2024-12-06)
+
+
+### Bug Fixes
+
+* **backup:** set restartPolicy to Never for job ([c28e71f](https://github.com/evertrust/horizon-helm/commit/c28e71f8dcfa8ea88559e343592be45a126ad4cb))
+
 ## [0.14.0](https://github.com/evertrust/horizon-helm/compare/v0.13.0...v0.14.0) (2024-12-06)
 
 
