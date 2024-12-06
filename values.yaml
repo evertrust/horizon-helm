@@ -711,7 +711,7 @@ backup:
   image:
     registry: quay.io/evertrust
     repository: toolbox
-    tag: v0.1.0
+    tag: v0.2.0
     pullPolicy: IfNotPresent
     pullSecrets: []
   ## backup container resource requests and limits
