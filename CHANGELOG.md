@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.4](https://github.com/evertrust/horizon-helm/compare/v0.14.3...v0.14.4) (2024-12-06)
+
+
+### Bug Fixes
+
+* **backup:** use args instead of command for backup ([2bb7d37](https://github.com/evertrust/horizon-helm/commit/2bb7d37d77a8afdf8556b8f15ead035ed076bedc))
+
 ## [0.14.3](https://github.com/evertrust/horizon-helm/compare/v0.14.2...v0.14.3) (2024-12-06)
 
 
