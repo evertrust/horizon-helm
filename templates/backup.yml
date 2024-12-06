@@ -32,7 +32,7 @@ spec:
         spec:
           containers:
           - name: backup
-            image: {{ include "common.images.image" (dict "imageRoot" .Values.backup.image "global" .Values.global) }}
+            image: {{ include "common.images.image" (dict "imageRoot" .Values.backup.image) }}
             imagePullPolicy: {{ .Values.backup.imagePullPolicy | default "IfNotPresent" | quote }}
             command:
               - backup
