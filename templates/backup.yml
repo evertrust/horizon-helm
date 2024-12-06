@@ -34,8 +34,7 @@ spec:
           - name: backup
             image: {{ include "common.images.image" (dict "imageRoot" .Values.backup.image) }}
             imagePullPolicy: {{ .Values.backup.imagePullPolicy | default "IfNotPresent" | quote }}
-            command:
-              - toolbox
+            args:
               - backup
             env:
               - name: MONGODB_URI
