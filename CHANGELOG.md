@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.2](https://github.com/evertrust/horizon-helm/compare/v0.14.1...v0.14.2) (2024-12-06)
+
+
+### Bug Fixes
+
+* **backup:** remove global registry override for backup image ([09fdfa2](https://github.com/evertrust/horizon-helm/commit/09fdfa287550f6735db9f78736f90ba4405e9631))
+
 ## [0.14.1](https://github.com/evertrust/horizon-helm/compare/v0.14.0...v0.14.1) (2024-12-06)
 
 
