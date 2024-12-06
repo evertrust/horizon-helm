@@ -47,5 +47,6 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end }}
             resources: {{- toYaml .Values.backup.resources | nindent 14 }}
+          restartPolicy: Never
       backoffLimit: {{ .Values.backup.backoffLimit }}
 {{- end -}}
