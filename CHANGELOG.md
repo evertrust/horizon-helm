@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.5](https://github.com/evertrust/horizon-helm/compare/v0.14.4...v0.14.5) (2024-12-06)
+
+
+### Bug Fixes
+
+* backup command ([c955a6c](https://github.com/evertrust/horizon-helm/commit/c955a6c95c01901d96c702e2999bcff15ba63fac))
+
 ## [0.14.4](https://github.com/evertrust/horizon-helm/compare/v0.14.3...v0.14.4) (2024-12-06)
 
 
