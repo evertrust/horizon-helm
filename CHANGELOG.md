@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.14.0](https://github.com/evertrust/horizon-helm/compare/v0.13.0...v0.14.0) (2024-12-06)
+
+
+### Features
+
+* **backup:** add backup support ([#26](https://github.com/evertrust/horizon-helm/issues/26)) ([115b1ba](https://github.com/evertrust/horizon-helm/commit/115b1ba6f6e05c97a1079eb5c3eb621ec2c03dc9))
+
+
+### Bug Fixes
+
+* bump toolbox version ([f6992a3](https://github.com/evertrust/horizon-helm/commit/f6992a34f334001f2c2d963b016bc70fca2f52ac))
+
 ## [0.13.0](https://github.com/evertrust/horizon-helm/compare/v0.12.3...v0.13.0) (2024-11-21)
 
 
