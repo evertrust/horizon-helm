@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.3](https://github.com/evertrust/horizon-helm/compare/v0.14.2...v0.14.3) (2024-12-06)
+
+
+### Bug Fixes
+
+* **backup:** add toolbox exec path ([f2e7861](https://github.com/evertrust/horizon-helm/commit/f2e7861acb4a29e879e80ba5c723f2341c76c761))
+
 ## [0.14.2](https://github.com/evertrust/horizon-helm/compare/v0.14.1...v0.14.2) (2024-12-06)
 
 
