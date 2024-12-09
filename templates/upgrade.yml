@@ -17,6 +17,9 @@ spec:
         - name: horizon-upgrade
           image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.upgrade.image.pullPolicy | default "IfNotPresent" | quote }}
+          {{- if .Values.upgrade.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.upgrade.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
           {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 10 }}
           args: [
               "-y",
@@ -33,5 +36,8 @@ spec:
             - name: MONGODB_URI
               {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}
       restartPolicy: Never
+      {{- if .Values.upgrade.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.upgrade.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
   backoffLimit: 0
 {{- end }}

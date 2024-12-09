@@ -678,7 +678,27 @@ upgrade:
     limits:
       memory: 512Mi
       cpu: 500m
-    requests: {}
+    requests:
+      memory: 512Mi
+      cpu: 500m
+  ## Configure Pods Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param upgrade.podSecurityContext.enabled Enabled Horizon pods' Security Context
+  ## @param upgrade.podSecurityContext.fsGroup Set Horizon pod's Security Context fsGroup
+  ##
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  ## Configure Container Security Context (only main container)
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+  ## @param upgrade.containerSecurityContext.enabled Enabled Horizon containers' Security Context
+  ## @param upgrade.containerSecurityContext.runAsUser Set Horizon container's Security Context runAsUser
+  ## @param upgrade.containerSecurityContext.runAsNonRoot Set Horizon container's Security Context runAsNonRoot
+  ##
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
   ## @param upgrade.from Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.
   ##
   from: ""
@@ -714,15 +734,35 @@ backup:
     tag: v0.2.0
     pullPolicy: IfNotPresent
     pullSecrets: []
+  ## Configure Pods Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param backup.podSecurityContext.enabled Enabled Horizon pods' Security Context
+  ## @param backup.podSecurityContext.fsGroup Set Horizon pod's Security Context fsGroup
+  ##
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  ## Configure Container Security Context (only main container)
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+  ## @param backup.containerSecurityContext.enabled Enabled Horizon containers' Security Context
+  ## @param backup.containerSecurityContext.runAsUser Set Horizon container's Security Context runAsUser
+  ## @param backup.containerSecurityContext.runAsNonRoot Set Horizon container's Security Context runAsNonRoot
+  ##
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
   ## backup container resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param backup.resources.limits [object] The resources limits for the backup container
   ## @param backup.resources.requests [object] The requested resources for the backup container
   resources:
     limits:
-      memory: 126Mi
       cpu: 500m
-    requests: {}
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi
   ## Configure environment variable injections into the backup pods.
   ## This is the way you should inject secrets into the app if you wish
   ## to use the Kubernetes secrets implementation.
