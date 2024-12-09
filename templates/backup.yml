@@ -3,7 +3,7 @@
 apiVersion: {{ include "common.capabilities.cronjob.apiVersion" . }}
 kind: CronJob
 metadata:
-  name: {{ template "common.names.fullname" . }}
+  name: {{ printf "%s-backup" (include "common.names.fullname" $) }}
   labels: {{- include "horizon.labels.standard" . | nindent 4 }}
   {{- if .Values.commonLabels }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
