@@ -34,6 +34,9 @@ spec:
           - name: backup
             image: {{ include "common.images.image" (dict "imageRoot" .Values.backup.image) }}
             imagePullPolicy: {{ .Values.backup.imagePullPolicy | default "IfNotPresent" | quote }}
+            {{- if .Values.backup.containerSecurityContext.enabled }}
+            securityContext: {{- omit .Values.backup.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+            {{- end }}
             command:
               - toolbox
               - backup
@@ -49,5 +52,8 @@ spec:
             {{- end }}
             resources: {{- toYaml .Values.backup.resources | nindent 14 }}
           restartPolicy: Never
+          {{- if .Values.backup.podSecurityContext.enabled }}
+          securityContext: {{- omit .Values.backup.podSecurityContext "enabled" | toYaml | nindent 8 }}
+          {{- end }}
       backoffLimit: {{ .Values.backup.backoffLimit }}
 {{- end -}}
