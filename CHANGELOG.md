@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.7](https://github.com/evertrust/horizon-helm/compare/v0.14.6...v0.14.7) (2024-12-09)
+
+
+### Bug Fixes
+
+* cronJob name lenght ([#35](https://github.com/evertrust/horizon-helm/issues/35)) ([a659ada](https://github.com/evertrust/horizon-helm/commit/a659ada609811252fd98505ebea22b2e30200407))
+
 ## [0.14.6](https://github.com/evertrust/horizon-helm/compare/v0.14.5...v0.14.6) (2024-12-09)
 
 
