@@ -681,24 +681,6 @@ upgrade:
     requests:
       memory: 512Mi
       cpu: 500m
-  ## Configure Pods Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  ## @param upgrade.podSecurityContext.enabled Enabled Horizon pods' Security Context
-  ## @param upgrade.podSecurityContext.fsGroup Set Horizon pod's Security Context fsGroup
-  ##
-  podSecurityContext:
-    enabled: true
-    fsGroup: 1001
-  ## Configure Container Security Context (only main container)
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-  ## @param upgrade.containerSecurityContext.enabled Enabled Horizon containers' Security Context
-  ## @param upgrade.containerSecurityContext.runAsUser Set Horizon container's Security Context runAsUser
-  ## @param upgrade.containerSecurityContext.runAsNonRoot Set Horizon container's Security Context runAsNonRoot
-  ##
-  containerSecurityContext:
-    enabled: true
-    runAsUser: 1001
-    runAsNonRoot: true
   ## @param upgrade.from Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.
   ##
   from: ""
