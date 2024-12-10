@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.8](https://github.com/evertrust/horizon-helm/compare/v0.14.7...v0.14.8) (2024-12-10)
+
+
+### Bug Fixes
+
+* security context rollback ([#37](https://github.com/evertrust/horizon-helm/issues/37)) ([c247ac8](https://github.com/evertrust/horizon-helm/commit/c247ac8e2fadd8dea35b878188f8cf2af09a6211))
+
 ## [0.14.7](https://github.com/evertrust/horizon-helm/compare/v0.14.6...v0.14.7) (2024-12-09)
 
 
