@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.9](https://github.com/evertrust/horizon-helm/compare/v0.14.8...v0.14.9) (2024-12-13)
+
+
+### Bug Fixes
+
+* toolbox bump to 0.3.0 ([#39](https://github.com/evertrust/horizon-helm/issues/39)) ([228feaf](https://github.com/evertrust/horizon-helm/commit/228feaf7218f2874b300e55379d0ce0fc74a1362))
+
 ## [0.14.8](https://github.com/evertrust/horizon-helm/compare/v0.14.7...v0.14.8) (2024-12-10)
 
 
