@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.11](https://github.com/evertrust/horizon-helm/compare/v0.14.10...v0.14.11) (2025-01-07)
+
+
+### Bug Fixes
+
+* **upgrade:** script hotfix to r1 ([#49](https://github.com/evertrust/horizon-helm/issues/49)) ([5fe06b8](https://github.com/evertrust/horizon-helm/commit/5fe06b877351d20f303143687f1c5343ea7e38ba))
+
 ## [0.14.10](https://github.com/evertrust/horizon-helm/compare/v0.14.9...v0.14.10) (2024-12-19)
 
 
