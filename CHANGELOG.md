@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.15.0](https://github.com/evertrust/horizon-helm/compare/v0.14.10...v0.15.0) (2025-01-07)
+
+
+### Features
+
+* **healthcheck:** update readiness and liveness probs ([#43](https://github.com/evertrust/horizon-helm/issues/43)) ([c6ac4a6](https://github.com/evertrust/horizon-helm/commit/c6ac4a68a8b02b4b136ea6312d7bb56a35999e41))
+
+
+### Bug Fixes
+
+* **upgrade:** script hotfix to r1 ([#45](https://github.com/evertrust/horizon-helm/issues/45)) ([abd2e26](https://github.com/evertrust/horizon-helm/commit/abd2e26de02377c06a33f843661067a6fb7932d3))
+
 ## [0.14.10](https://github.com/evertrust/horizon-helm/compare/v0.14.9...v0.14.10) (2024-12-19)
 
 
