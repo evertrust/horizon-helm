@@ -234,6 +234,12 @@ spec:
               value: {{ .label }}
             {{- end }}
             {{- end }}
+            {{- if .Values.analytics.enabled }}
+            - name: ANALYTICS
+              value: "true"
+            - name: ANALYTICS_URL
+              value: {{ .Values.analytics.url | quote }}
+            {{- end }}
           volumeMounts:
             - name: config
               mountPath: /opt/horizon/etc
