@@ -797,4 +797,4 @@ analytics:
   ## @param analytics.enabled Whether to enable analytics
   enabled: false
   ## @param analytics.url Analytics database URL
-  url: "jdbc:duckdb:/opt/horizon/var/analytics.db"
+  url: "jdbc:duckdb:/tmp/analytics.db"
