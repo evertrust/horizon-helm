@@ -788,3 +788,13 @@ metrics:
   enabled: false
   ## @param metrics.port Prometheus metrics port
   port: 9095
+
+## Enable analytics engine
+## Refer to the Horizon installation guide to configure the installation correctly
+## ref: https://docs.evertrust.fr/horizon/install-guide/2.7/analytics
+## ref: https://docs.evertrust.fr/horizon/install-guide/2.7/docker#_docker_analytics_environment
+analytics:
+  ## @param analytics.enabled Whether to enable analytics
+  enabled: false
+  ## @param analytics.url Analytics database URL
+  url: "jdbc:duckdb:/tmp/analytics.db"
