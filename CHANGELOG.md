@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.16.0](https://github.com/evertrust/horizon-helm/compare/v0.15.0...v0.16.0) (2025-01-15)
+
+
+### Features
+
+* **analytics:** support analytics ([d575ed0](https://github.com/evertrust/horizon-helm/commit/d575ed08028431c8ed839e86df4e218a4851733e))
+* **leases:** switch to native kubernetes leases ([bca9198](https://github.com/evertrust/horizon-helm/commit/bca9198383c6546effa03e3debcbb0af27590ea6))
+
 ## [0.15.0](https://github.com/evertrust/horizon-helm/compare/v0.14.11...v0.15.0) (2025-01-10)
 
 
