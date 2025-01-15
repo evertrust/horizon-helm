@@ -594,7 +594,7 @@ logback:
     ## - name: racs-connectors
     ##   level: debug
 
-## @param leases.enabled Whether leases should be used when launching multiple replicas of Horizon pods. This requires the leases.pekko.apache.org CRD to be installed.
+## @param leases.enabled Whether leases should be used when launching multiple replicas of Horizon pods.
 leases:
   enabled: true
 
