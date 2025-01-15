@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.0](https://github.com/evertrust/horizon-helm/compare/v0.16.0...v0.17.0) (2025-01-15)
+
+
+### Features
+
+* **metrics:** enable horizon advanced metrics ([#62](https://github.com/evertrust/horizon-helm/issues/62)) ([d4aebf3](https://github.com/evertrust/horizon-helm/commit/d4aebf3687b12eab9ce8ef2f5d99760f60f4c9e1))
+
 ## [0.16.0](https://github.com/evertrust/horizon-helm/compare/v0.15.0...v0.16.0) (2025-01-15)
 
 
