@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.18.0](https://github.com/evertrust/horizon-helm/compare/v0.17.0...v0.18.0) (2025-01-24)
+
+
+### Features
+
+* **rbac:** ability to disable rbac creation ([#66](https://github.com/evertrust/horizon-helm/issues/66)) ([0516f04](https://github.com/evertrust/horizon-helm/commit/0516f0492134ea18c4b5f1bfec87d34274f322ff))
+
+
+### Bug Fixes
+
+* bump horizon 2.7.1 ([#64](https://github.com/evertrust/horizon-helm/issues/64)) ([c6817d2](https://github.com/evertrust/horizon-helm/commit/c6817d2e304ec2b10f8483de0f3949a6c9048ce2))
+
 ## [0.17.0](https://github.com/evertrust/horizon-helm/compare/v0.16.0...v0.17.0) (2025-01-15)
 
 
