@@ -594,6 +594,10 @@ logback:
     ## - name: racs-connectors
     ##   level: debug
 
+## @param rbac.create Whether to create RBAC resources
+rbac:
+  create: true
+
 ## @param leases.enabled Whether leases should be used when launching multiple replicas of Horizon pods.
 leases:
   enabled: true
