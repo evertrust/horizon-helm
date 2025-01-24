@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.1](https://github.com/evertrust/horizon-helm/compare/v0.18.0...v0.18.1) (2025-01-24)
+
+
+### Bug Fixes
+
+* **rbac:** move end template condition to the end of file ([#67](https://github.com/evertrust/horizon-helm/issues/67)) ([ee96d75](https://github.com/evertrust/horizon-helm/commit/ee96d75d50d3ea20f1819ad066c212758893ec1c))
+
 ## [0.18.0](https://github.com/evertrust/horizon-helm/compare/v0.17.0...v0.18.0) (2025-01-24)
 
 
