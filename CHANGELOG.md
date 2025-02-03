@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.0](https://github.com/evertrust/horizon-helm/compare/v0.18.1...v0.19.0) (2025-02-03)
+
+
+### Features
+
+* **ingress:** remove app-root redirect ([#69](https://github.com/evertrust/horizon-helm/issues/69)) ([47fde1b](https://github.com/evertrust/horizon-helm/commit/47fde1be76346770b96faab6d2bdcd70e3e79196))
+
 ## [0.18.1](https://github.com/evertrust/horizon-helm/compare/v0.18.0...v0.18.1) (2025-01-24)
 
 
