@@ -1,20 +1,4 @@
 {{- if and .Values.ingress.type (eq .Values.ingress.type "traefik") (.Capabilities.APIVersions.Has "traefik.containo.us/v1alpha1") }}
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: {{ include "common.names.fullname" . }}-app-root
-  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
-    {{- if .Values.commonLabels }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.commonAnnotations }}
-  annotations:
-      {{- include "common.tplvalues.render" (dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-    {{- end }}
-spec:
-  redirectRegex:
-    regex: ^https:\/\/([^\/]+)\/?$
-    replacement: https://${1}/ui#/ra/
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware

@@ -167,7 +167,6 @@ Prints ingress configuration annotations
 */}}
 {{- define "horizon.ingressConfigurationAnnotations" }}
 {{- if eq .context.Values.ingress.type "nginx" }}
-nginx.ingress.kubernetes.io/app-root: /ui#/ra
 nginx.ingress.kubernetes.io/server-snippet: |
   large_client_header_buffers 4 64k;
 {{- if .context.Values.ingress.clientCertificateAuth }}
@@ -179,7 +178,7 @@ nginx.ingress.kubernetes.io/configuration-snippet: |
 {{- end }}
 {{- else if eq .context.Values.ingress.type "traefik" }}
 traefik.ingress.kubernetes.io/router.tls: "true"
-{{ $middlewares := list "app-root" "https-redirect" }}
+{{ $middlewares := list "https-redirect" }}
 {{- if .context.Values.ingress.clientCertificateAuth }}
 {{- $middlewares = append $middlewares "client-auth" }}
 traefik.ingress.kubernetes.io/router.tls.options: {{ printf "%s-%s-%s@kubernetescrd" .context.Release.Namespace (include "common.names.fullname" .context) "client-auth" }}
