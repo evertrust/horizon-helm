@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.4](https://github.com/evertrust/horizon-helm/compare/v0.19.3...v0.19.4) (2025-03-07)
+
+
+### Bug Fixes
+
+* fix rendering when smtp types are not strings ([#80](https://github.com/evertrust/horizon-helm/issues/80)) ([5955d05](https://github.com/evertrust/horizon-helm/commit/5955d05a7f5490ce7ea3e64a9a14db9dd0aa712c))
+
 ## [0.19.3](https://github.com/evertrust/horizon-helm/compare/v0.19.2...v0.19.3) (2025-03-07)
 
 
