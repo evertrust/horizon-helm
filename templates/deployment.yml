@@ -167,7 +167,7 @@ spec:
             {{- include "horizon.appSecret" (dict "context" .) | nindent 14 }}
             {{- if .Values.mailer.host }}
             - name: SMTP_HOST
-              value: {{ .Values.mailer.host }}
+              value: {{ .Values.mailer.host | quote }}
             {{- end }}
             {{- if .Values.mailer.port }}
             - name: SMTP_PORT
