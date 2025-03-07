@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.3](https://github.com/evertrust/horizon-helm/compare/v0.19.2...v0.19.3) (2025-03-07)
+
+
+### Bug Fixes
+
+* skip injecting smtp env when empty ([#78](https://github.com/evertrust/horizon-helm/issues/78)) ([e177408](https://github.com/evertrust/horizon-helm/commit/e1774082bccdb4c27d0239bf0727f19fd8fb4ef8))
+
 ## [0.19.2](https://github.com/evertrust/horizon-helm/compare/v0.19.1...v0.19.2) (2025-03-05)
 
 
