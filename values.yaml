@@ -82,14 +82,6 @@ deploymentAnnotations: {}
 ##
 deploymentLabels: {}
 
-## @param statefulSetAnnotations Annotations to add to the statefulset object
-##
-statefulSetAnnotations: {}
-
-## @param statefulSetLabels Labels to add to the statefulset object
-##
-statefulSetLabels: {}
-
 ## @param priorityClassName Horizon pod priority class name
 ##
 priorityClassName: ""
