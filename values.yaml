@@ -82,6 +82,14 @@ deploymentAnnotations: {}
 ##
 deploymentLabels: {}
 
+## @param statefulSetAnnotations Annotations to add to the statefulset object
+##
+statefulSetAnnotations: {}
+
+## @param statefulSetLabels Labels to add to the statefulset object
+##
+statefulSetLabels: {}
+
 ## @param priorityClassName Horizon pod priority class name
 ##
 priorityClassName: ""
@@ -800,5 +808,25 @@ metrics:
 analytics:
   ## @param analytics.enabled Whether to enable analytics
   enabled: false
-  ## @param analytics.url Analytics database URL
-  url: "jdbc:duckdb:/tmp/analytics.db"
+
+## Enable Persistance
+## When enabled, horizon will be deployed as a statefulset
+##
+persistance:
+  ## @param persistance.enabled Whether to enable persistance
+  ##
+  enabled: false
+  ## @param persistance.persistentVolumeClaimRetentionPolicy [object] Persistent Volume Claim Retention Policy
+  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
+  ##
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+    whenScaled: Retain
+  volumeClaimTemplates:
+    analytics:
+      annotations: {}
+      storageClass: "standard-rwo"
+      accessModes:
+        - ReadWriteOnce
+      size: "1Gi"
+      mountPath: "/opt/horizon/var"

@@ -1,19 +1,19 @@
-{{- if not .Values.persistance.enabled }}
-apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
-kind: Deployment
+{{- if .Values.persistance.enabled }}
+apiVersion: {{ include "common.capabilities.statefulset.apiVersion" . }}
+kind: StatefulSet
 metadata:
   name: {{ template "common.names.fullname" . }}
   labels: {{- include "horizon.labels.standard" . | nindent 4 }}
   {{- if .Values.commonLabels }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
   {{- end }}
-  {{- if .Values.deploymentLabels }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentLabels "context" $ ) | nindent 4 }}
+  {{- if .Values.statefulSetLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.statefulSetLabels "context" $ ) | nindent 4 }}
   {{- end }}
-  {{- if or .Values.commonAnnotations .Values.deploymentAnnotations }}
+  {{- if or .Values.commonAnnotations .Values.statefulSetAnnotations }}
   annotations: 
-  {{- if .Values.deploymentAnnotations }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentAnnotations "context" $ ) | nindent 4 }}
+  {{- if .Values.statefulSetAnnotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.statefulSetAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
   {{- if .Values.commonAnnotations }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
@@ -26,6 +26,33 @@ spec:
   selector:
     matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
   strategy: {{- include "common.tplvalues.render" (dict "value" .Values.updateStrategy "context" $ ) | nindent 4 }}
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: {{ .Values.persistance.persistentVolumeClaimRetentionPolicy.whenDeleted }}
+    whenScaled: {{ .Values.persistance.persistentVolumeClaimRetentionPolicy.whenScaled }}
+  {{- range $k, $v := .Values.persistance.volumeClaimTemplates }}
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: {{ $k }}
+        {{- if $v.annotations }}
+        annotations:
+          {{- toYaml $v.annotations | nindent 10 }}
+        {{- end }}
+      spec:
+        {{- if $v.storageClass }}
+        {{- if (eq "-" $v.storageClass) }}
+        storageClassName: ""
+        {{- else }}
+        storageClassName: {{ $v.storageClass }}
+        {{- end }}
+        {{- end }}
+        accessModes:
+          {{- toYaml $v.accessModes | nindent 10 }}
+        resources:
+          requests:
+            storage: "{{ $v.size }}"
+  {{- end }}
   template:
     metadata:
       labels: {{- include "horizon.labels.standard" . | nindent 8 }}
@@ -239,12 +266,12 @@ spec:
             - name: ANALYTICS
               value: "true"
             - name: ANALYTICS_URL
-              value: "jdbc:duckdb:/opt/horizon/var/analytics.db"
+              value: {{ printf "jdbc:duckdb:%s/analytics.db" (clean .Values.persistance.volumeClaimTemplates.analytics.mountPath) | quote }}
             {{- end }}
           volumeMounts:
             {{- if .Values.analytics.enabled }}
             - name: analytics
-              mountPath: "/opt/horizon/var"
+              mountPath: {{ .Values.persistance.volumeClaimTemplates.analytics.mountPath }}
             {{- end }}
             - name: config
               mountPath: /opt/horizon/etc
@@ -278,7 +305,7 @@ spec:
       dnsPolicy: {{ .Values.dnsPolicy | quote }}
       {{- end }}
       volumes:
-        {{- if .Values.analytics.enabled }}
+        {{- if and (not .Values.persistance.enabled) .Values.analytics.enabled }}
         - name: analytics
           emptyDir: {}
         {{- end }}
