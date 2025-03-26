@@ -305,10 +305,6 @@ spec:
       dnsPolicy: {{ .Values.dnsPolicy | quote }}
       {{- end }}
       volumes:
-        {{- if and (not .Values.persistance.enabled) .Values.analytics.enabled }}
-        - name: analytics
-          emptyDir: {}
-        {{- end }}
         - name: config
           configMap:
             name: {{ printf "%s-config" (include "common.names.fullname" $) }}
