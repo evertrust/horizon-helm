@@ -272,6 +272,7 @@ spec:
               {{- else }}
               value: "jdbc:duckdb:/opt/horizon/var/analytics.db"
               {{- end }}
+            {{- end }}
           volumeMounts:
             {{- if .Values.analytics.enabled }}
             - name: analytics
