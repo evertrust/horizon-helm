@@ -1,5 +1,5 @@
-apiVersion: {{ if .Values.persistance.enabled }}{{ include "common.capabilities.statefulset.apiVersion" . }}{{- else }}{{ include "common.capabilities.deployment.apiVersion" . }}{{- end }}
-kind: {{ if .Values.persistance.enabled }}StatefulSet{{- else }}Deployment{{- end }}
+apiVersion: {{ if .Values.persistence.enabled }}{{ include "common.capabilities.statefulset.apiVersion" . }}{{- else }}{{ include "common.capabilities.deployment.apiVersion" . }}{{- end }}
+kind: {{ if .Values.persistence.enabled }}StatefulSet{{- else }}Deployment{{- end }}
 metadata:
   name: {{ template "common.names.fullname" . }}
   labels: {{- include "horizon.labels.standard" . | nindent 4 }}
@@ -25,11 +25,11 @@ spec:
   selector:
     matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
   strategy: {{- include "common.tplvalues.render" (dict "value" .Values.updateStrategy "context" $ ) | nindent 4 }}
-  {{- if .Values.persistance.enabled }}
+  {{- if .Values.persistence.enabled }}
   persistentVolumeClaimRetentionPolicy:
-    whenDeleted: {{ .Values.persistance.persistentVolumeClaimRetentionPolicy.whenDeleted }}
-    whenScaled: {{ .Values.persistance.persistentVolumeClaimRetentionPolicy.whenScaled }}
-  {{- range $k, $v := .Values.persistance.volumeClaimTemplates }}
+    whenDeleted: {{ .Values.persistence.persistentVolumeClaimRetentionPolicy.whenDeleted }}
+    whenScaled: {{ .Values.persistence.persistentVolumeClaimRetentionPolicy.whenScaled }}
+  {{- range $k, $v := .Values.persistence.volumeClaimTemplates }}
   volumeClaimTemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -267,8 +267,8 @@ spec:
             - name: ANALYTICS
               value: "true"
             - name: ANALYTICS_URL
-              {{- if .Values.persistance.enabled }}
-              value: {{ printf "jdbc:duckdb:%s/analytics.db" (clean .Values.persistance.volumeClaimTemplates.analytics.mountPath) | quote }}
+              {{- if .Values.persistence.enabled }}
+              value: {{ printf "jdbc:duckdb:%s/analytics.db" (clean .Values.persistence.volumeClaimTemplates.analytics.mountPath) | quote }}
               {{- else }}
               value: "jdbc:duckdb:/opt/horizon/var/analytics.db"
               {{- end }}
@@ -276,8 +276,8 @@ spec:
           volumeMounts:
             {{- if .Values.analytics.enabled }}
             - name: analytics
-              {{- if .Values.persistance.enabled }}
-              mountPath: {{ .Values.persistance.volumeClaimTemplates.analytics.mountPath }}
+              {{- if .Values.persistence.enabled }}
+              mountPath: {{ .Values.persistence.volumeClaimTemplates.analytics.mountPath }}
               {{- else }}
               mountPath: "/opt/horizon/var"
               {{- end }}
@@ -314,7 +314,7 @@ spec:
       dnsPolicy: {{ .Values.dnsPolicy | quote }}
       {{- end }}
       volumes:
-        {{- if and (not .Values.persistance.enabled) .Values.analytics.enabled }}
+        {{- if and (not .Values.persistence.enabled) .Values.analytics.enabled }}
         - name: analytics
           emptyDir: {}
         {{- end }}

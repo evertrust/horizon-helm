@@ -801,14 +801,14 @@ analytics:
   ## @param analytics.enabled Whether to enable analytics
   enabled: false
 
-## Enable Persistance
+## Enable Persistence
 ## When enabled, horizon will be deployed as a statefulset
 ##
-persistance:
-  ## @param persistance.enabled Whether to enable persistance
+persistence:
+  ## @param persistence.enabled Whether to enable persistence
   ##
   enabled: false
-  ## @param persistance.persistentVolumeClaimRetentionPolicy [object] Persistent Volume Claim Retention Policy
+  ## @param persistence.persistentVolumeClaimRetentionPolicy [object] Persistent Volume Claim Retention Policy
   ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
   ##
   persistentVolumeClaimRetentionPolicy:
