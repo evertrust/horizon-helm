@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.2](https://github.com/evertrust/horizon-helm/compare/v0.20.1...v0.20.2) (2025-03-27)
+
+
+### Bug Fixes
+
+* **typo:** persistence ([#88](https://github.com/evertrust/horizon-helm/issues/88)) ([9571110](https://github.com/evertrust/horizon-helm/commit/95711105fc07ba19efff02a44c5e5ff3368bb603))
+
 ## [0.20.1](https://github.com/evertrust/horizon-helm/compare/v0.20.0...v0.20.1) (2025-03-27)
 
 
