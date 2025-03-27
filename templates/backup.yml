@@ -27,8 +27,42 @@ spec:
   successfulJobsHistoryLimit: {{ .Values.backup.successfulJobsHistoryLimit }}
   failedJobsHistoryLimit: {{ .Values.backup.failedJobsHistoryLimit }}
   jobTemplate:
+    metadata:
+      labels: {{- include "horizon.labels.standard" . | nindent 8 }}
+      {{- if .Values.commonLabels }}
+      {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.backup.labels }}
+      {{- include "common.tplvalues.render" ( dict "value" .Values.backup.labels "context" $ ) | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.commonAnnotations .Values.backup.annotations }}
+      annotations: 
+      {{- if .Values.backup.annotations }}
+      {{- include "common.tplvalues.render" ( dict "value" .Values.backup.annotations "context" $ ) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.commonAnnotations }}
+      {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 8 }}
+      {{- end }}
+      {{- end }}
     spec:
       template:
+        metadata:
+          labels: {{- include "horizon.labels.standard" . | nindent 12 }}
+          {{- if .Values.commonLabels }}
+          {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.backup.labels }}
+          {{- include "common.tplvalues.render" ( dict "value" .Values.backup.labels "context" $ ) | nindent 12 }}
+          {{- end }}
+          {{- if or .Values.commonAnnotations .Values.backup.annotations }}
+          annotations: 
+          {{- if .Values.backup.annotations }}
+          {{- include "common.tplvalues.render" ( dict "value" .Values.backup.annotations "context" $ ) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.commonAnnotations }}
+          {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 12 }}
+          {{- end }}
+          {{- end }}
         spec:
           containers:
           - name: backup
