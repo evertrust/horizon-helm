@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.20.0](https://github.com/evertrust/horizon-helm/compare/v0.19.5...v0.20.0) (2025-03-27)
+
+
+### Features
+
+* **analytics:** enhance analytics persistency with statefuleset ([#84](https://github.com/evertrust/horizon-helm/issues/84)) ([efd2087](https://github.com/evertrust/horizon-helm/commit/efd208784291cb0fc7eead94d591aa7ee6d19d6b))
+
+
+### Bug Fixes
+
+* **backup:** propagate labels and annotation to jolsb and job's pod ([#86](https://github.com/evertrust/horizon-helm/issues/86)) ([2308ad5](https://github.com/evertrust/horizon-helm/commit/2308ad50d9d2e9a51f9b5e1c1d9315f030ab7d88))
+* **typo:** persistence ([#88](https://github.com/evertrust/horizon-helm/issues/88)) ([572ab80](https://github.com/evertrust/horizon-helm/commit/572ab80d5fb8c81a55c5ce70443fa77f6de00b22))
+
 ## [0.19.5](https://github.com/evertrust/horizon-helm/compare/v0.19.4...v0.19.5) (2025-03-26)
 
 
