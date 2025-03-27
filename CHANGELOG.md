@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.1](https://github.com/evertrust/horizon-helm/compare/v0.20.0...v0.20.1) (2025-03-27)
+
+
+### Bug Fixes
+
+* **backup:** propagate labels and annotation to jolsb and job's pod ([#86](https://github.com/evertrust/horizon-helm/issues/86)) ([50290da](https://github.com/evertrust/horizon-helm/commit/50290da04f45b458b9c0b7f20a1f967720568a4d))
+
 ## [0.20.0](https://github.com/evertrust/horizon-helm/compare/v0.19.5...v0.20.0) (2025-03-26)
 
 
