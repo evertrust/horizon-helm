@@ -1,10 +1,13 @@
-all: package test setup-unittest
+.PHONY: all package test dependencies setup-unittest
+all: package test
 
-package:
+dependencies:
 	helm dependencies build
+
+package: dependencies
 	helm package .
 
-test: setup-unittest
+test: dependencies setup-unittest
 	helm unittest . -v tests/values.yaml
 
 setup-unittest:
