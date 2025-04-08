@@ -1,0 +1,68 @@
+{{- if .Values.temporaryDatabase.enabled }}
+apiVersion: {{ if .Values.persistence.enabled }}{{ include "common.capabilities.statefulset.apiVersion" . }}{{- else }}{{ include "common.capabilities.deployment.apiVersion" . }}{{- end }}
+kind: {{ if .Values.persistence.enabled }}StatefulSet{{- else }}Deployment{{- end }}
+metadata:
+  name: {{ include "common.names.dependency.fullname" (dict "chartName" "mongodb" "chartValues" .Values.temporaryDatabase "context" $) }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.labels .Values.commonLabels ) "context" . ) }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: mongodb
+  {{- if or .Values.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
+  strategy: 
+    type: "RollingUpdate"
+  template:
+    metadata:
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 8 }}
+        app.kubernetes.io/component: mongodb
+    spec:
+      {{- if .Values.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: mongo
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.temporaryDatabase.image "global" .Values.global) }}
+          imagePullPolicy: {{ .Values.temporaryDatabase.image.pullPolicy | default "IfNotPresent" | quote }}
+          livenessProbe:
+            tcpSocket:
+              port: mongo
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+          startupProbe:
+            tcpSocket:
+              port: mongo
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+          readinessProbe:
+            tcpSocket:
+              port: mongo
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+          resources: {{- toYaml .Values.temporaryDatabase.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.temporaryDatabase.persistence.enabled }}
+            - name: data
+              mountPath: /data/db
+            {{- end }}
+          ports:
+            - name: mongo
+              containerPort: 27017
+      {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.temporaryDatabase.image) "context" $) | nindent 6 }}
+      volumes:
+        {{- if and .Values.temporaryDatabase.persistence.enabled (not .Values.persistence.enabled) }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "common.names.dependency.fullname" (dict "chartName" "mongodb" "chartValues" .Values.temporaryDatabase "context" $) }}
+        {{- end }}
+{{- end }}
