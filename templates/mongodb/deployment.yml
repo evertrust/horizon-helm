@@ -60,7 +60,7 @@ spec:
               containerPort: 27017
       {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.temporaryDatabase.image) "context" $) | nindent 6 }}
       volumes:
-        {{- if and .Values.temporaryDatabase.persistence.enabled (not .Values.persistence.enabled) }}
+        {{- if and .Values.temporaryDatabase.persistence.enabled }}
         - name: data
           persistentVolumeClaim:
             claimName: {{ include "common.names.dependency.fullname" (dict "chartName" "mongodb" "chartValues" .Values.temporaryDatabase "context" $) }}

@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: analytics functionality
+templates:
+  - deployment.yml
+tests:
+  - it: should use Deployment when analytics is disabled
+    set:
+      analytics.enabled: false
+      persistence.enabled: false
+    asserts:
+      - isKind:
+          of: Deployment
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ANALYTICS
+            value: "true"
+      - notContains:
+          path: spec.template.spec.volumes
+          content:
+            name: analytics
+            
+  - it: should use Deployment with emptyDir volume when analytics is enabled but persistence is disabled
+    set:
+      analytics.enabled: true
+      persistence.enabled: false
+    asserts:
+      - isKind:
+          of: Deployment
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ANALYTICS
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: analytics
+            mountPath: "/opt/horizon/var"
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: analytics
+            emptyDir: {}
+            
+  - it: should use StatefulSet with PVC when both analytics and persistence are enabled
+    set:
+      analytics.enabled: true
+      persistence.enabled: true
+      persistence.volumeClaimTemplates.analytics.size: "1Gi"
+      persistence.volumeClaimTemplates.analytics.mountPath: "/opt/horizon/var"
+      persistence.volumeClaimTemplates.analytics.storageClass: "standard-rwo"
+    asserts:
+      - isKind:
+          of: StatefulSet

@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: temporary mongodb database
+templates:
+  - mongodb/deployment.yml
+  - mongodb/service.yml
+  - mongodb/pvc.yml
+tests:
+  - it: should deploy a temporary mongodb by default
+    template: mongodb/deployment.yml
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.containers[0].name
+          value: mongo
+          
+  - it: should create a persistent volume claim for mongodb when enabled
+    set:
+      temporaryDatabase.persistence.enabled: true
+    template: mongodb/pvc.yml
+    asserts:
+      - isKind:
+          of: PersistentVolumeClaim
+          
+  - it: should create a service for mongodb
+    template: mongodb/service.yml
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: spec.ports[0].port
+          value: 27017
