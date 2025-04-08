@@ -29,6 +29,7 @@ spec:
   jobTemplate:
     metadata:
       labels: {{- include "horizon.labels.standard" . | nindent 8 }}
+        app.kubernetes.io/component: backup
       {{- if .Values.commonLabels }}
       {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 8 }}
       {{- end }}

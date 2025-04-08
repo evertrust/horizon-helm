@@ -25,5 +25,5 @@ spec:
       targetPort: mongo
   {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.labels .Values.commonLabels ) "context" . ) }}
   selector: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
-    app.kubernetes.io/component: mongodb
+    app.kubernetes.io/component: database
 {{- end }}
