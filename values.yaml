@@ -275,7 +275,7 @@ horizontalAutoscaler:
 disruptionBudget:
   ## @param disruptionBudget.enabled Created a PodDisruptionBudget
   ##
-  enabled: false
+  enabled: true
   ## @param disruptionBudget.minAvailable Min number of pods that must still be available after the eviction
   ##
   minAvailable: 1
