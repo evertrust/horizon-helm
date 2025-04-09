@@ -1,0 +1,88 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: service configuration
+templates:
+  - service.yml
+tests:
+  - it: should create a service with default settings
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: spec.type
+          value: ClusterIP
+          
+  - it: should apply common labels to service
+    set:
+      commonLabels:
+        environment: test
+        team: platform
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: metadata.labels.environment
+          value: test
+      - equal:
+          path: metadata.labels.team
+          value: platform
+  
+  - it: should apply common annotations to service
+    set:
+      commonAnnotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9095"
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: metadata.annotations["prometheus.io/scrape"]
+          value: "true"
+      - equal:
+          path: metadata.annotations["prometheus.io/port"]
+          value: "9095"
+  
+  - it: should apply service-specific annotations
+    set:
+      service:
+        annotations:
+          service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-internal"]
+          value: "true"
+  
+  - it: should merge common labels and service-specific annotations
+    set:
+      commonAnnotations:
+        prometheus.io/scrape: "true"
+      service:
+        annotations:
+          service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: metadata.annotations["prometheus.io/scrape"]
+          value: "true"
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-internal"]
+          value: "true"
+  
+  - it: should properly handle matchLabels in selector
+    set:
+      commonLabels:
+        environment: test
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: spec.selector["app.kubernetes.io/name"]
+          value: horizon
+      - equal:
+          path: spec.selector["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - equal:
+          path: spec.selector["app.kubernetes.io/component"]
+          value: app

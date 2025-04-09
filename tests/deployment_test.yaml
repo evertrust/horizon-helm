@@ -1,0 +1,141 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: deployment configuration
+templates:
+  - deployment.yml
+tests:
+  - it: should create a deployment by default
+    asserts:
+      - isKind:
+          of: Deployment
+      
+  - it: should apply common labels to deployment
+    set:
+      commonLabels:
+        environment: test
+        team: platform
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.labels.environment
+          value: test
+      - equal:
+          path: metadata.labels.team
+          value: platform
+  
+  - it: should apply deployment-specific labels
+    set:
+      deploymentLabels:
+        tier: backend
+        app: horizon
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.labels.tier
+          value: backend
+      - equal:
+          path: metadata.labels.app
+          value: horizon
+  
+  - it: should apply common annotations to deployment
+    set:
+      commonAnnotations:
+        kubernetes.io/change-cause: "Test deployment"
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.annotations["kubernetes.io/change-cause"]
+          value: "Test deployment"
+  
+  - it: should apply deployment-specific annotations
+    set:
+      deploymentAnnotations:
+        deployment.kubernetes.io/revision: "1"
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.annotations["deployment.kubernetes.io/revision"]
+          value: "1"
+  
+  - it: should merge common labels, deployment-specific labels, and component label
+    set:
+      commonLabels:
+        environment: test
+      deploymentLabels:
+        tier: backend
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.labels.environment
+          value: test
+      - equal:
+          path: metadata.labels.tier
+          value: backend
+      - equal:
+          path: metadata.labels["app.kubernetes.io/component"]
+          value: app
+  
+  - it: should merge common annotations and deployment-specific annotations
+    set:
+      commonAnnotations:
+        kubernetes.io/change-cause: "Test deployment"
+      deploymentAnnotations:
+        deployment.kubernetes.io/revision: "1"
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.annotations["kubernetes.io/change-cause"]
+          value: "Test deployment"
+      - equal:
+          path: metadata.annotations["deployment.kubernetes.io/revision"]
+          value: "1"
+  
+  - it: should properly handle matchLabels in selector
+    set:
+      commonLabels:
+        environment: test
+      deploymentLabels:
+        tier: backend
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.selector.matchLabels["app.kubernetes.io/name"]
+          value: horizon
+      - equal:
+          path: spec.selector.matchLabels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - equal:
+          path: spec.selector.matchLabels["app.kubernetes.io/component"]
+          value: app
+  
+  - it: should inherit common labels into pod template
+    set:
+      commonLabels:
+        environment: test
+        team: platform
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.metadata.labels.environment
+          value: test
+      - equal:
+          path: spec.template.metadata.labels.team
+          value: platform
+            
+  - it: should apply pod-specific labels
+    set:
+      podLabels:
+        pod-label: test-pod
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.metadata.labels["pod-label"]
+          value: test-pod
