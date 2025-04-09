@@ -10,5 +10,5 @@ sources:
   - https://github.com/evertrust/horizon-helm
 dependencies:
   - name: common
-    version: 2.14.1
+    version: 2.30.0
     repository: oci://registry-1.docker.io/bitnamicharts

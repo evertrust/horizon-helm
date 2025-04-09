@@ -13,6 +13,9 @@ metadata:
 spec:
   template:
     spec:
+      {{- if .Values.upgrade.podSecurityContext.enabled }}
+      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.upgrade.podSecurityContext "context" $) | nindent 10 -}}
+      {{- end }}
       containers:
         - name: horizon-upgrade
           image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}
@@ -29,6 +32,9 @@ spec:
               {{- end }}
           ]
           resources: {{- toYaml .Values.upgrade.resources | nindent 12 }}
+          {{- if .Values.upgrade.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.upgrade.containerSecurityContext "context" $) | nindent 12 -}}
+          {{- end }}
           env:
             - name: MONGODB_URI
               {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}

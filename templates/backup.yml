@@ -70,7 +70,7 @@ spec:
             image: {{ include "common.images.image" (dict "imageRoot" .Values.backup.image) }}
             imagePullPolicy: {{ .Values.backup.imagePullPolicy | default "IfNotPresent" | quote }}
             {{- if .Values.backup.containerSecurityContext.enabled }}
-            securityContext: {{- omit .Values.backup.containerSecurityContext "enabled" | toYaml | nindent 14 }}
+            securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.backup.containerSecurityContext "context" $) | nindent 14 -}}
             {{- end }}
             command:
               - toolbox

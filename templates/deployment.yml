@@ -40,13 +40,7 @@ spec:
           {{- toYaml $v.annotations | nindent 10 }}
         {{- end }}
       spec:
-        {{- if $v.storageClass }}
-        {{- if (eq "-" $v.storageClass) }}
-        storageClassName: ""
-        {{- else }}
-        storageClassName: {{ $v.storageClass }}
-        {{- end }}
-        {{- end }}
+        {{- include "common.storage.class" (dict "persistence" $v "global" $.Values.global) | nindent 8 }}
         accessModes:
           {{- toYaml $v.accessModes | nindent 10 }}
         resources:
@@ -97,14 +91,14 @@ spec:
       priorityClassName: {{ .Values.priorityClassName | quote }}
       {{- end }}
       {{- if .Values.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.podSecurityContext "context" $) | nindent 8 -}}
       {{- end }}
       containers:
         - name: horizon
           image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" | quote }}
           {{- if .Values.containerSecurityContext.enabled }}
-          securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
           {{- if .Values.lifecycleHooks }}
           lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.lifecycleHooks "context" $) | nindent 12 }}
