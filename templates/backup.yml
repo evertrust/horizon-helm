@@ -29,7 +29,7 @@ spec:
           labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 12 }}
           {{- if or .Values.commonAnnotations .Values.backup.annotations }}
           {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.backup.annotations .Values.commonAnnotations ) "context" . ) }}
-          annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 2 }}
+          annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 12 }}
           {{- end }}
         spec:
           containers:
