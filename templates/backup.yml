@@ -4,21 +4,11 @@ apiVersion: {{ include "common.capabilities.cronjob.apiVersion" . }}
 kind: CronJob
 metadata:
   name: {{ template "common.names.fullname" . }}
-  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
-  {{- if .Values.commonLabels }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-  {{- end }}
-  {{- if .Values.backup.labels }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.backup.labels "context" $ ) | nindent 4 }}
-  {{- end }}
-  {{- if or .Values.commonAnnotations .Values.backup.annotations }}
-  annotations: 
-  {{- if .Values.backup.annotations }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.backup.annotations "context" $ ) | nindent 4 }}
-  {{- end }}
-  {{- if .Values.commonAnnotations }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-  {{- end }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.labels .Values.commonLabels (dict "app.kubernetes.io/component" "backup")) "context" . ) }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
+  {{- if or .Values.backup.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.backup.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
   {{- end }}
 spec:
   schedule: {{ .Values.backup.schedule | quote }}
@@ -28,41 +18,18 @@ spec:
   failedJobsHistoryLimit: {{ .Values.backup.failedJobsHistoryLimit }}
   jobTemplate:
     metadata:
-      labels: {{- include "horizon.labels.standard" . | nindent 8 }}
-        app.kubernetes.io/component: backup
-      {{- if .Values.commonLabels }}
-      {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 8 }}
-      {{- end }}
-      {{- if .Values.backup.labels }}
-      {{- include "common.tplvalues.render" ( dict "value" .Values.backup.labels "context" $ ) | nindent 8 }}
-      {{- end }}
-      {{- if or .Values.commonAnnotations .Values.backup.annotations }}
-      annotations: 
-      {{- if .Values.backup.annotations }}
-      {{- include "common.tplvalues.render" ( dict "value" .Values.backup.annotations "context" $ ) | nindent 8 }}
-      {{- end }}
-      {{- if .Values.commonAnnotations }}
-      {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 8 }}
-      {{- end }}
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 8 }}
+      {{- if or .Values.backup.annotations .Values.commonAnnotations }}
+      {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.backup.annotations .Values.commonAnnotations ) "context" . ) }}
+      annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 8 }}
       {{- end }}
     spec:
       template:
         metadata:
-          labels: {{- include "horizon.labels.standard" . | nindent 12 }}
-          {{- if .Values.commonLabels }}
-          {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 12 }}
-          {{- end }}
-          {{- if .Values.backup.labels }}
-          {{- include "common.tplvalues.render" ( dict "value" .Values.backup.labels "context" $ ) | nindent 12 }}
-          {{- end }}
+          labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 12 }}
           {{- if or .Values.commonAnnotations .Values.backup.annotations }}
-          annotations: 
-          {{- if .Values.backup.annotations }}
-          {{- include "common.tplvalues.render" ( dict "value" .Values.backup.annotations "context" $ ) | nindent 12 }}
-          {{- end }}
-          {{- if .Values.commonAnnotations }}
-          {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 12 }}
-          {{- end }}
+          {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.backup.annotations .Values.commonAnnotations ) "context" . ) }}
+          annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 2 }}
           {{- end }}
         spec:
           containers:

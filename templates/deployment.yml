@@ -2,28 +2,18 @@ apiVersion: {{ if .Values.persistence.enabled }}{{ include "common.capabilities.
 kind: {{ if .Values.persistence.enabled }}StatefulSet{{- else }}Deployment{{- end }}
 metadata:
   name: {{ template "common.names.fullname" . }}
-  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
-  {{- if .Values.commonLabels }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-  {{- end }}
-  {{- if .Values.deploymentLabels }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentLabels "context" $ ) | nindent 4 }}
-  {{- end }}
-  {{- if or .Values.commonAnnotations .Values.deploymentAnnotations }}
-  annotations: 
-  {{- if .Values.deploymentAnnotations }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentAnnotations "context" $ ) | nindent 4 }}
-  {{- end }}
-  {{- if .Values.commonAnnotations }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-  {{- end }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.deploymentLabels .Values.commonLabels (dict "app.kubernetes.io/component" "app")) "context" . ) }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
+  {{- if or .Values.deploymentAnnotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.deploymentAnnotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
   {{- end }}
 spec:
   {{- if .Values.horizontalAutoscaler.enabled }}
   replicas: {{ .Values.horizontalAutoscaler.minReplicas }}
   {{- end }}
   selector:
-    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
+    matchLabels: {{- include "horizon.labels.matchLabels" (dict "customLabels" (dict "app.kubernetes.io/component" "app") "context" .) | nindent 6 }}
   strategy: {{- include "common.tplvalues.render" (dict "value" .Values.updateStrategy "context" $ ) | nindent 4 }}
   {{- if .Values.persistence.enabled }}
   persistentVolumeClaimRetentionPolicy:
@@ -50,22 +40,10 @@ spec:
   {{- end }}
   template:
     metadata:
-      labels: {{- include "horizon.labels.standard" . | nindent 8 }}
-        app.kubernetes.io/component: app
-        {{- if .Values.commonLabels }}
-        {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 8 }}
-        {{- end }}
-        {{- if .Values.podLabels }}
-        {{- include "common.tplvalues.render" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
-        {{- end }}
-      annotations:
-        checksum/config: {{ tpl (.Files.Glob "config/*").AsConfig . | sha256sum }}
-        {{- if .Values.commonAnnotations }}
-        {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 8 }}
-        {{- end }}
-        {{- if .Values.podAnnotations }}
-        {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
-        {{- end }}
+      {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.podLabels .Values.commonLabels (dict "app.kubernetes.io/component" "app")) "context" . ) }}
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 8 }}
+      {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.podAnnotations .Values.commonAnnotations (dict "checksum/config" ( tpl (.Files.Glob "config/*").AsConfig . | sha256sum)) ) "context" . ) }}
+      annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 8 }}
     spec:
       {{- if .Values.hostAliases }}
       hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.hostAliases "context" $) | nindent 8 }}

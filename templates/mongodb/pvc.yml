@@ -4,8 +4,12 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ include "common.names.dependency.fullname" (dict "chartName" "mongodb" "chartValues" .Values.temporaryDatabase "context" $) }}
   namespace: {{ .Release.Namespace }}
-  labels: {{- include "common.labels.standard" . | nindent 4 }}
-    app.kubernetes.io/component: mongodb
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.labels .Values.commonLabels (dict "app.kubernetes.io/component" "database")) "context" . ) }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
+  {{- if or .Values.temporaryDatabase.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.temporaryDatabase.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
 spec:
   {{- include "common.storage.class" (dict "persistence" .Values.temporaryDatabase.persistence "global" .Values.global) | nindent 2 }}
   accessModes:

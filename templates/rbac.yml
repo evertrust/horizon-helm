@@ -3,12 +3,11 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ template "common.names.fullname" . }}-lease-updater
-  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
-  {{- if .Values.commonLabels }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-  {{- end }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.commonLabels (dict "app.kubernetes.io/component" "app")) "context" . ) }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
   {{- if .Values.commonAnnotations }}
-  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
   {{- end }}
 rules:
   - apiGroups: ["coordination.k8s.io"]

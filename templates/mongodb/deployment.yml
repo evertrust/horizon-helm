@@ -3,23 +3,21 @@ apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
 kind: Deployment
 metadata:
   name: {{ include "common.names.dependency.fullname" (dict "chartName" "mongodb" "chartValues" .Values.temporaryDatabase "context" $) }}
-  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.labels .Values.commonLabels ) "context" . ) }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.labels .Values.commonLabels (dict "app.kubernetes.io/component" "database")) "context" . ) }}
   labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
-    app.kubernetes.io/component: database
-  {{- if or .Values.annotations .Values.commonAnnotations }}
-  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.annotations .Values.commonAnnotations ) "context" . ) }}
+  {{- if or .Values.temporaryDatabase.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.temporaryDatabase.annotations .Values.commonAnnotations ) "context" . ) }}
   annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
   {{- end }}
 spec:
   replicas: 1
   selector:
-    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
+    matchLabels: {{- include "horizon.labels.matchLabels" (dict "customLabels" (dict "app.kubernetes.io/component" "database") "context" .) | nindent 6 }}
   strategy: 
     type: Recreate
   template:
     metadata:
       labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 8 }}
-        app.kubernetes.io/component: database
     spec:
       {{- if .Values.temporaryDatabase.podSecurityContext.enabled }}
       securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.temporaryDatabase.podSecurityContext "context" $) | nindent 14 -}}
