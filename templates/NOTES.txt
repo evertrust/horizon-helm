@@ -24,6 +24,12 @@ An ingress has been deployed and Horizon will be shortly available
 at {{ .Values.ingress.tls | ternary "https" "http" }}://{{ .Values.ingress.hostname }}
 {{ end }}
 
+{{- if .Values.clientCertificateHeader }}
+
+WARNING: the "clientCertificateHeader" setting has been set to "{{ .Values.clientCertificateHeader }}". You should configure the ingress controller to send the client certificate in this header, or you will allow anyone to impersonate certificate users. 
+See https://docs.evertrust.fr/horizon/install-guide/-/k8s/production#ingress.
+{{ end }}
+
 {{- if eq (include "horizon.shouldRunUpgrade" .) "true" }}
 An upgrade job has been created. Check that it ran successfully before proceeding.
 {{ end }}
