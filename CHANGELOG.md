@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.1](https://github.com/evertrust/horizon-helm/compare/v0.20.0...v0.20.1) (2025-04-10)
+
+
+### Bug Fixes
+
+* disable metrics for span processing ([#92](https://github.com/evertrust/horizon-helm/issues/92)) ([4fc49b3](https://github.com/evertrust/horizon-helm/commit/4fc49b3d82a33ac7da6e5bc93784b5ae8d7ddee5))
+
 ## [0.20.0](https://github.com/evertrust/horizon-helm/compare/v0.19.5...v0.20.0) (2025-03-27)
 
 
