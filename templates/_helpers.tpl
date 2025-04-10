@@ -136,3 +136,16 @@ Prints true if an upgrade job should run, false if not.
     {{- end }}
 {{- end }}
 {{- end }}
+
+{{/*
+Returns the proper service account name depending if an explicit service account name is set
+in the values file. If the name is not set it will default to either horizon.fullname if serviceAccount.create
+is true or default otherwise.
+*/}}
+{{- define "horizon.serviceAccountName" -}}
+    {{- if .Values.serviceAccount.create -}}
+        {{- default (include "common.names.fullname" .) (print .Values.serviceAccount.name) -}}
+    {{- else -}}
+        {{- default "default" (print .Values.serviceAccount.name) -}}
+    {{- end -}}
+{{- end -}}

@@ -26,6 +26,8 @@ spec:
       {{- if .Values.temporaryDatabase.podSecurityContext.enabled }}
       securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.temporaryDatabase.podSecurityContext "context" $) | nindent 14 -}}
       {{- end }}
+      serviceAccountName: {{ template "horizon.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
       containers:
         - name: mongo
           image: {{ include "common.images.image" (dict "imageRoot" .Values.temporaryDatabase.image "global" .Values.global) }}

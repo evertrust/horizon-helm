@@ -45,6 +45,8 @@ spec:
       {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.podAnnotations .Values.commonAnnotations (dict "checksum/config" ( tpl (.Files.Glob "config/*").AsConfig . | sha256sum)) ) "context" . ) }}
       annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 8 }}
     spec:
+      serviceAccountName: {{ template "horizon.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
       {{- if .Values.hostAliases }}
       hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.hostAliases "context" $) | nindent 8 }}
       {{- end }}

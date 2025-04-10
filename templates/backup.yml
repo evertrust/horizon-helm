@@ -32,6 +32,8 @@ spec:
           annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 12 }}
           {{- end }}
         spec:
+          serviceAccountName: {{ template "horizon.serviceAccountName" . }}
+          automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
           containers:
           - name: backup
             image: {{ include "common.images.image" (dict "imageRoot" .Values.backup.image) }}

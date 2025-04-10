@@ -21,6 +21,8 @@ spec:
       {{- if .Values.upgrade.podSecurityContext.enabled }}
       securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.upgrade.podSecurityContext "context" $) | nindent 8 -}}
       {{- end }}
+      serviceAccountName: {{ template "horizon.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
       containers:
         - name: horizon-upgrade
           image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}
