@@ -3,7 +3,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "common.names.fullname" . }}
-  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.commonLabels (dict "app.kubernetes.io/component" "app")) "context" . ) }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.commonLabels) "context" . ) }}
   labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
   {{- if .Values.commonAnnotations }}
   {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.commonAnnotations ) "context" . ) }}
@@ -17,5 +17,5 @@ spec:
   maxUnavailable: {{ .Values.disruptionBudget.maxUnavailable }}
   {{- end }}
   selector:
-    matchLabels: {{- include "horizon.labels.matchLabels" (dict "customLabels" (dict "app.kubernetes.io/component" "app") "context" .) | nindent 6 }}
+    matchLabels: {{- include "common.labels.matchLabels" (dict "customLabels" $labels "context" .) | nindent 6 }}
   {{ end }}

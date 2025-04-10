@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ printf "%s-upgrade-%s" (include "common.names.fullname" $) (randAlphaNum 6 | lower) }}
-  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.commonLabels (dict "app.kubernetes.io/component" "upgrade")) "context" . ) }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.commonLabels (dict "app.kubernetes.io/name" "horizon-upgrade" "app.kubernetes.io/part-of" "horizon")) "context" . ) }}
   labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
   {{- if .Values.commonAnnotations }}
   {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.commonAnnotations ) "context" . ) }}
@@ -11,12 +11,13 @@ metadata:
   {{- end }}
 spec:
   template:
-    spec:
+    metadata:
       labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 8 }}
       {{- if .Values.commonAnnotations }}
       {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.commonAnnotations ) "context" . ) }}
       annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 8 }}
       {{- end }}
+    spec:
       {{- if .Values.upgrade.podSecurityContext.enabled }}
       securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.upgrade.podSecurityContext "context" $) | nindent 8 -}}
       {{- end }}

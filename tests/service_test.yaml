@@ -83,6 +83,3 @@ tests:
       - equal:
           path: spec.selector["app.kubernetes.io/instance"]
           value: RELEASE-NAME
-      - equal:
-          path: spec.selector["app.kubernetes.io/component"]
-          value: app

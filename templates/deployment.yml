@@ -2,7 +2,7 @@ apiVersion: {{ if .Values.persistence.enabled }}{{ include "common.capabilities.
 kind: {{ if .Values.persistence.enabled }}StatefulSet{{- else }}Deployment{{- end }}
 metadata:
   name: {{ template "common.names.fullname" . }}
-  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.deploymentLabels .Values.commonLabels (dict "app.kubernetes.io/component" "app")) "context" . ) }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.deploymentLabels .Values.commonLabels) "context" . ) }}
   labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
   {{- if or .Values.deploymentAnnotations .Values.commonAnnotations }}
   {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.deploymentAnnotations .Values.commonAnnotations ) "context" . ) }}
@@ -13,7 +13,7 @@ spec:
   replicas: {{ .Values.horizontalAutoscaler.minReplicas }}
   {{- end }}
   selector:
-    matchLabels: {{- include "horizon.labels.matchLabels" (dict "customLabels" (dict "app.kubernetes.io/component" "app") "context" .) | nindent 6 }}
+    matchLabels: {{- include "common.labels.matchLabels" (dict "customLabels" $labels "context" .) | nindent 6 }}
   strategy: {{- include "common.tplvalues.render" (dict "value" .Values.updateStrategy "context" $ ) | nindent 4 }}
   {{- if .Values.persistence.enabled }}
   persistentVolumeClaimRetentionPolicy:
@@ -40,7 +40,7 @@ spec:
   {{- end }}
   template:
     metadata:
-      {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.podLabels .Values.commonLabels (dict "app.kubernetes.io/component" "app")) "context" . ) }}
+      {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.podLabels .Values.commonLabels) "context" . ) }}
       labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 8 }}
       {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.podAnnotations .Values.commonAnnotations (dict "checksum/config" ( tpl (.Files.Glob "config/*").AsConfig . | sha256sum)) ) "context" . ) }}
       annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 8 }}

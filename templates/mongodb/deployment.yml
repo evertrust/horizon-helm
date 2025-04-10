@@ -3,7 +3,7 @@ apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
 kind: Deployment
 metadata:
   name: {{ include "common.names.dependency.fullname" (dict "chartName" "mongodb" "chartValues" .Values.temporaryDatabase "context" $) }}
-  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.labels .Values.commonLabels (dict "app.kubernetes.io/component" "database")) "context" . ) }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.labels .Values.commonLabels (dict "app.kubernetes.io/name" "mongodb" "app.kubernetes.io/version" (.Values.temporaryDatabase.image.tag | toString) "app.kubernetes.io/part-of" "horizon")) "context" . ) }}
   labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
   {{- if or .Values.temporaryDatabase.annotations .Values.commonAnnotations }}
   {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.temporaryDatabase.annotations .Values.commonAnnotations ) "context" . ) }}
@@ -12,12 +12,16 @@ metadata:
 spec:
   replicas: 1
   selector:
-    matchLabels: {{- include "horizon.labels.matchLabels" (dict "customLabels" (dict "app.kubernetes.io/component" "database") "context" .) | nindent 6 }}
+    matchLabels: {{- include "common.labels.matchLabels" (dict "customLabels" (dict "app.kubernetes.io/name" "mongodb") "context" .) | nindent 6 }}
   strategy: 
     type: Recreate
   template:
     metadata:
       labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 8 }}
+      {{- if or .Values.temporaryDatabase.annotations .Values.commonAnnotations }}
+      {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.temporaryDatabase.annotations .Values.commonAnnotations ) "context" . ) }}
+      annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 8 }}
+      {{- end }}
     spec:
       {{- if .Values.temporaryDatabase.podSecurityContext.enabled }}
       securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.temporaryDatabase.podSecurityContext "context" $) | nindent 14 -}}

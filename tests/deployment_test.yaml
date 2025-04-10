@@ -76,8 +76,8 @@ tests:
           path: metadata.labels.tier
           value: backend
       - equal:
-          path: metadata.labels["app.kubernetes.io/component"]
-          value: app
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: horizon
   
   - it: should merge common annotations and deployment-specific annotations
     set:
@@ -110,9 +110,6 @@ tests:
       - equal:
           path: spec.selector.matchLabels["app.kubernetes.io/instance"]
           value: RELEASE-NAME
-      - equal:
-          path: spec.selector.matchLabels["app.kubernetes.io/component"]
-          value: app
   
   - it: should inherit common labels into pod template
     set:
