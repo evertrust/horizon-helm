@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: ingress configuration
+templates:
+  - ingress.yml
+tests:
+  - it: should not create ingress when disabled
+    set:
+      ingress:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+          
+  - it: should create basic ingress when enabled
+    set:
+      ingress:
+        enabled: true
+        hostname: horizon.example.com
+        path: /
+        pathType: Prefix
+    template: ingress.yml
+    asserts:
+      - isKind:
+          of: Ingress
+      - equal:
+          path: spec.rules[0].host
+          value: horizon.example.com
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: Prefix
+          
+  - it: should configure TLS for ingress when enabled
+    set:
+      ingress:
+        enabled: true
+        hostname: horizon.example.com
+        tls: true
+    template: ingress.yml
+    asserts:
+      - isKind:
+          of: Ingress
+      - contains:
+          path: spec.tls
+          content:
+            hosts:
+              - horizon.example.com
+            secretName: horizon.example.com-tls
+          

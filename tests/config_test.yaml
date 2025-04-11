@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: configuration features
+templates:
+  - deployment.yml
+  - config.yml
+tests:
+  - it: should properly configure extraConfig when provided
+    set:
+      extraConfig: |
+        Hello
+    template: config.yml
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - matchRegex:
+          path: data["application.conf"]
+          pattern: ".*Hello.*"
+          
+  - it: should properly mount custom startup scripts via extraVolumes and extraVolumeMounts
+    set:
+      extraVolumes:
+        - name: horizon-entrypoint-scripts
+          configMap:
+            name: horizon-entrypoint-scripts
+      extraVolumeMounts:
+        - name: horizon-entrypoint-scripts
+          mountPath: /docker-entrypoint.d/
+    template: deployment.yml
+    asserts:
+      - isKind:
+          of: Deployment
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: horizon-entrypoint-scripts
+            configMap:
+              name: horizon-entrypoint-scripts
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: horizon-entrypoint-scripts
+            mountPath: /docker-entrypoint.d/

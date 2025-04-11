@@ -2,28 +2,18 @@ apiVersion: {{ if .Values.persistence.enabled }}{{ include "common.capabilities.
 kind: {{ if .Values.persistence.enabled }}StatefulSet{{- else }}Deployment{{- end }}
 metadata:
   name: {{ template "common.names.fullname" . }}
-  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
-  {{- if .Values.commonLabels }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-  {{- end }}
-  {{- if .Values.deploymentLabels }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentLabels "context" $ ) | nindent 4 }}
-  {{- end }}
-  {{- if or .Values.commonAnnotations .Values.deploymentAnnotations }}
-  annotations: 
-  {{- if .Values.deploymentAnnotations }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentAnnotations "context" $ ) | nindent 4 }}
-  {{- end }}
-  {{- if .Values.commonAnnotations }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-  {{- end }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.deploymentLabels .Values.commonLabels) "context" . ) }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
+  {{- if or .Values.deploymentAnnotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.deploymentAnnotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
   {{- end }}
 spec:
   {{- if .Values.horizontalAutoscaler.enabled }}
   replicas: {{ .Values.horizontalAutoscaler.minReplicas }}
   {{- end }}
   selector:
-    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
+    matchLabels: {{- include "common.labels.matchLabels" (dict "customLabels" $labels "context" .) | nindent 6 }}
   strategy: {{- include "common.tplvalues.render" (dict "value" .Values.updateStrategy "context" $ ) | nindent 4 }}
   {{- if .Values.persistence.enabled }}
   persistentVolumeClaimRetentionPolicy:
@@ -40,13 +30,7 @@ spec:
           {{- toYaml $v.annotations | nindent 10 }}
         {{- end }}
       spec:
-        {{- if $v.storageClass }}
-        {{- if (eq "-" $v.storageClass) }}
-        storageClassName: ""
-        {{- else }}
-        storageClassName: {{ $v.storageClass }}
-        {{- end }}
-        {{- end }}
+        {{- include "common.storage.class" (dict "persistence" $v "global" $.Values.global) | nindent 8 }}
         accessModes:
           {{- toYaml $v.accessModes | nindent 10 }}
         resources:
@@ -56,22 +40,13 @@ spec:
   {{- end }}
   template:
     metadata:
-      labels: {{- include "horizon.labels.standard" . | nindent 8 }}
-        {{- if .Values.commonLabels }}
-        {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 8 }}
-        {{- end }}
-        {{- if .Values.podLabels }}
-        {{- include "common.tplvalues.render" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
-        {{- end }}
-      annotations:
-        checksum/config: {{ tpl (.Files.Glob "config/*").AsConfig . | sha256sum }}
-        {{- if .Values.commonAnnotations }}
-        {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 8 }}
-        {{- end }}
-        {{- if .Values.podAnnotations }}
-        {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
-        {{- end }}
+      {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.podLabels .Values.commonLabels) "context" . ) }}
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 8 }}
+      {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.podAnnotations .Values.commonAnnotations (dict "checksum/config" ( tpl (.Files.Glob "config/*").AsConfig . | sha256sum)) ) "context" . ) }}
+      annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 8 }}
     spec:
+      serviceAccountName: {{ template "horizon.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
       {{- if .Values.hostAliases }}
       hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.hostAliases "context" $) | nindent 8 }}
       {{- end }}
@@ -96,14 +71,14 @@ spec:
       priorityClassName: {{ .Values.priorityClassName | quote }}
       {{- end }}
       {{- if .Values.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.podSecurityContext "context" $) | nindent 8 -}}
       {{- end }}
       containers:
         - name: horizon
           image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" | quote }}
           {{- if .Values.containerSecurityContext.enabled }}
-          securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
           {{- if .Values.lifecycleHooks }}
           lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.lifecycleHooks "context" $) | nindent 12 }}
@@ -217,9 +192,9 @@ spec:
             {{- if .Values.mailer.password }}
             - name: SMTP_PASSWORD {{- include "common.tplvalues.render" (dict "value" .Values.mailer.password "context" $) | nindent 14 }}
             {{- end }}
-            {{- if eq (include "horizon.shouldEnableClientCertificateAuth" .) "true" }}
+            {{- if .Values.clientCertificateHeader }}
             - name: HTTP_CERTIFICATE_HEADER
-              value: {{ include "horizon.clientCertificateHeader" (dict "context" $) | quote }}
+              value: {{ .Values.clientCertificateHeader | quote }}
             {{- end }}
             - name: EVENT_CHAINSIGN
               value: {{ .Values.events.chainsign | quote }}
