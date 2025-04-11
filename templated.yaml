@@ -1,0 +1,685 @@
+---
+# Source: horizon/templates/pdb.yml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: release-name-horizon
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: horizon
+---
+# Source: horizon/templates/serviceaccount.yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: release-name-horizon
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+automountServiceAccountToken: true
+---
+# Source: horizon/templates/secrets.yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: release-name-horizon
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+type: Opaque
+data:
+  appSecret: "bU5RTHZqRkk1elZ1YnNLU2k1RThQOEg0ZG9BOEdaVDI="
+  mongoUri: "bW9uZ29kYjovL3JlbGVhc2UtbmFtZS1tb25nb2RiL2hvcml6b24="
+  eventSealSecret: "VFJJN0V2d0hxWVFNUHNwSTFHMmx1aW82WnpTUm1jMUE="
+  defaultVaultMasterPassword: "WWtlYmpXbnNIVlhrcnp4TjBSOEx4RzBleDh0ZURFaTg="
+---
+# Source: horizon/templates/config.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-name-horizon-config
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+data:
+  application.conf: |
+    # Specific dispatcher to isolate the actors with blocking IO
+    blocking-io-dispatcher {
+      executor = "thread-pool-executor"
+      throughput = 1
+      thread-pool-executor {
+        fixed-pool-size = 10
+      }
+    }
+  
+    # Play configurations
+    play {
+      server {
+        pidfile.path = "/dev/null"
+      }
+    }
+  
+    # Extra configuration injected by extraConfig
+    
+    horizon.request.grace_period {
+      est.enroll = 1s
+      est.renew = 1s
+      est.recover = 1s
+      webra.enroll = 1s
+      webra.renew = 1s
+      webra.recover = 1s
+    }
+    horizon.notification.mail.attachment.extension.der = der.pem
+    
+  pekko.conf: |
+    # pekko configurations
+    pekko {
+      extensions = ["org.apache.pekko.cluster.pubsub.DistributedPubSub"]
+      log-dead-letters = off
+      log-dead-letters-during-shutdown = off
+      http.parsing.max-uri-length = 64k
+      actor {
+        provider = cluster
+        serialize-messages = on
+        serializers {
+          proto = "org.apache.pekko.remote.serialization.ProtobufSerializer"
+        }
+        serialization-bindings {
+          "actors.serializer.Serializable" = proto
+        }
+      }
+      remote {
+        log-remote-lifecycle-events = off
+        transport = tcp
+        artery {
+          canonical {
+            hostname = ${?HOSTNAME}
+            port = 25520
+          }
+          bind {
+            hostname = 0.0.0.0
+            port = 25520
+          }
+        }
+      }
+      discovery {
+        kubernetes-api {
+          use-raw-ip = false
+          pod-namespace = "default"
+          pod-label-selector = "app.kubernetes.io/name=horizon,app.kubernetes.io/instance=release-name"
+        }
+      }
+      management {
+        http {
+          hostname = ${?HOSTNAME}
+          bind-hostname = 0.0.0.0
+          port = 7626
+          bind-port = 7626
+        }
+        health-checks {
+          readiness-checks {
+            horizon = "healthcheck.HorizonReadinessCheck"
+          }
+          liveness-checks {
+            horizon = "healthcheck.HorizonLivenessCheck"
+          }
+        }
+        cluster.bootstrap {
+          contact-point-discovery {
+            discovery-method = kubernetes-api
+            port-name = management
+            protocol = tcp
+          
+            required-contact-point-nr = 1
+          
+          }
+        }
+      }
+      cluster {
+        downing-provider-class = "org.apache.pekko.cluster.sbr.SplitBrainResolverProvider"
+        split-brain-resolver {
+          active-strategy = "lease-majority"
+          lease-majority {
+            lease-implementation = "pekko.coordination.lease.kubernetes"
+          }
+        }
+        singleton {
+          use-lease = "pekko.coordination.lease.kubernetes"
+        }
+        shutdown-after-unsuccessful-join-seed-nodes = 60s
+        pub-sub {
+          name = distributedPubSubMediator
+          routing-logic = random
+          send-to-dead-letters-when-no-subscribers = on
+        }
+      }
+      coordination.lease.kubernetes {
+        lease-class = "org.apache.pekko.coordination.lease.kubernetes.NativeKubernetesLease"
+      }
+      coordinated-shutdown.exit-jvm = off
+    }
+---
+# Source: horizon/templates/mongodb/pvc.yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: release-name-mongodb
+  namespace: default
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/part-of: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+spec:
+  
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "1Gi"
+---
+# Source: horizon/templates/rbac.yml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: release-name-horizon-lease-updater
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+rules:
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "create", "update", "list", "delete"]
+---
+# Source: horizon/templates/rbac.yml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: release-name-horizon-pod-reader
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "pods" ]
+    verbs: [ "get", "watch", "list" ]
+---
+# Source: horizon/templates/rbac.yml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: release-name-horizon-lease-updater
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+subjects:
+  - kind: ServiceAccount
+    name: release-name-horizon
+    namespace: default
+roleRef:
+  kind: Role
+  name: release-name-horizon-lease-updater
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: horizon/templates/rbac.yml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: release-name-horizon-pod-reader
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+subjects:
+  - kind: ServiceAccount
+    name: release-name-horizon
+    namespace: default
+roleRef:
+  kind: Role
+  name: release-name-horizon-pod-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: horizon/templates/mongodb/service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-mongodb
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/part-of: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+spec:
+  type: ClusterIP
+  ports:
+    - name: mongo
+      protocol: TCP
+      port: 27017
+      targetPort: mongo
+  selector:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: mongodb
+---
+# Source: horizon/templates/service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-horizon
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+spec:
+  type: ClusterIP
+  
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9000
+      targetPort: http
+    - name: https
+      protocol: TCP
+      port: 9443
+      targetPort: https
+    - name: kamon
+      protocol: TCP
+      port: 9095
+      targetPort: 9095
+  selector:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: horizon
+---
+# Source: horizon/templates/deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-horizon
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: horizon
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: horizon
+        app.kubernetes.io/version: 2.7.4
+        helm.sh/chart: horizon-0.20.0
+      annotations:
+        checksum/config: 6b0eea0fba9e5ead92c21d1b3e3f5a7cba5426149341df5382850af56749bf03
+    spec:
+      serviceAccountName: release-name-horizon
+      automountServiceAccountToken: 
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: release-name
+                    app.kubernetes.io/name: horizon
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+      containers:
+        - name: horizon
+          image: registry.evertrust.io/horizon:2.7.4
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          livenessProbe:
+            httpGet:
+              path: /alive
+              port: management
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          startupProbe:
+            httpGet:
+              path: /alive
+              port: management
+            periodSeconds: 3
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: management
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+            successThreshold: 1
+          resources:
+            limits: {}
+            requests:
+              cpu: 300m
+              memory: 512Mi
+          env:
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            # Inject the actor system name from the Helm release name
+            - name: AKKA_ACTOR_SYSTEM
+              valueFrom:
+                fieldRef:
+                  fieldPath : metadata.labels['app.kubernetes.io/instance']
+            - name: LICENSE
+              valueFrom:
+                secretKeyRef:
+                  name: horizon-license
+                  key: horizon.lic
+            - name: LOGGING_APPENDER
+              value: console
+            - name: LOGGING_PATTERN
+              value: "%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%traceID] - [%level] - %message%n%xException{full}"
+            - name: LOGGING_LEVEL
+              value: "info"
+            - name: LOGGING_LOGGERS
+              value: "events=warn"
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-horizon
+                  key: mongoUri
+            - name: APPLICATION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-horizon
+                  key: appSecret
+            - name: EVENT_CHAINSIGN
+              value: "true"
+            - name: EVENT_TTL
+              value: 90 days
+            - name: EVENT_SEAL_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-horizon
+                  key: eventSealSecret
+            - name: HOSTS_ALLOWED.0
+              value: localhost:9000
+            - name: VAULT_TYPE
+              value: ssv
+            - name: VAULT_MASTER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-horizon
+                  key: defaultVaultMasterPassword
+          volumeMounts:
+            - name: config
+              mountPath: /opt/horizon/etc
+          ports:
+            - name: http
+              containerPort: 9000
+            - name: https
+              containerPort: 9443
+            - name: metrics
+              containerPort: 9095
+            - name: management
+              containerPort: 7626
+            - name: artery
+              containerPort: 25520
+      imagePullSecrets:
+        - name: evertrust-registry
+      volumes:
+        - name: config
+          configMap:
+            name: release-name-horizon-config
+---
+# Source: horizon/templates/mongodb/deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-mongodb
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/part-of: horizon
+    app.kubernetes.io/version: "7"
+    helm.sh/chart: horizon-0.20.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: mongodb
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: mongodb
+        app.kubernetes.io/part-of: horizon
+        app.kubernetes.io/version: "7"
+        helm.sh/chart: horizon-0.20.0
+    spec:
+      securityContext:
+              fsGroup: 1001
+      serviceAccountName: release-name-horizon
+      automountServiceAccountToken: 
+      containers:
+        - name: mongo
+          image: mongo:7
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+              runAsNonRoot: true
+              runAsUser: 1001
+          livenessProbe:
+            tcpSocket:
+              port: mongo
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          startupProbe:
+            tcpSocket:
+              port: mongo
+            periodSeconds: 3
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket:
+              port: mongo
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+            successThreshold: 1
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: data
+              mountPath: /data/db
+          ports:
+            - name: mongo
+              containerPort: 27017
+      
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: release-name-mongodb
+---
+# Source: horizon/templates/upgrade.yml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: release-name-horizon-upgrade-2sluxu
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: horizon-upgrade
+    app.kubernetes.io/part-of: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: horizon-upgrade
+        app.kubernetes.io/part-of: horizon
+        app.kubernetes.io/version: 2.7.4
+        helm.sh/chart: horizon-0.20.0
+    spec:
+      securityContext:
+        fsGroup: 1001
+      serviceAccountName: release-name-horizon
+      automountServiceAccountToken: 
+      containers:
+        - name: horizon-upgrade
+          image: registry.evertrust.io/horizon-upgrade:2.7.4
+          imagePullPolicy: "IfNotPresent"
+          
+          args: [
+              "-y",
+              "-m", "$(MONGODB_URI)",
+          ]
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-horizon
+                  key: mongoUri
+      restartPolicy: Never
+  backoffLimit: 0
+---
+# Source: horizon/templates/backup.yml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: release-name-horizon
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: toolbox
+    app.kubernetes.io/part-of: horizon
+    app.kubernetes.io/version: 2.7.4
+    helm.sh/chart: horizon-0.20.0
+spec:
+  schedule: "0 * * * *"
+  suspend: false
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: toolbox
+        app.kubernetes.io/part-of: horizon
+        app.kubernetes.io/version: 2.7.4
+        helm.sh/chart: horizon-0.20.0
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/instance: release-name
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/name: toolbox
+            app.kubernetes.io/part-of: horizon
+            app.kubernetes.io/version: 2.7.4
+            helm.sh/chart: horizon-0.20.0
+        spec:
+          serviceAccountName: release-name-horizon
+          automountServiceAccountToken: 
+          containers:
+          - name: backup
+            image: quay.io/evertrust/toolbox:v0.3.0
+            imagePullPolicy: "IfNotPresent"
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 1001
+            command:
+              - toolbox
+              - backup
+            env:
+              - name: MONGODB_URI
+                valueFrom:
+                  secretKeyRef:
+                    name: release-name-horizon
+                    key: mongoUri
+            resources:
+              limits:
+                cpu: 500m
+                memory: 512Mi
+              requests:
+                cpu: 500m
+                memory: 512Mi
+          restartPolicy: Never
+          securityContext:
+            fsGroup: 1001
+      backoffLimit: 3

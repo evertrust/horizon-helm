@@ -18,4 +18,4 @@ spec:
   {{- end }}
   selector:
     matchLabels: {{- include "common.labels.matchLabels" (dict "customLabels" $labels "context" .) | nindent 6 }}
-  {{ end }}
+{{ end }}
