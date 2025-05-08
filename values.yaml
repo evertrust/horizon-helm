@@ -14,6 +14,15 @@ global:
   ##   - myRegistryKeySecretName
   ##
   imagePullSecrets: []
+  ## Compatibility adaptations for Kubernetes platforms
+  ##
+  compatibility:
+    ## Compatibility adaptations for Openshift
+    ##
+    openshift:
+      ## @param global.compatibility.openshift.adaptSecurityContext Adapt the securityContext sections of the deployment to make them compatible with Openshift restricted-v2 SCC: remove runAsUser, runAsGroup and fsGroup and let the platform use their allowed default IDs. Possible values: auto (apply if the detected running cluster is Openshift), force (perform the adaptation always), disabled (do not perform adaptation)
+      ##
+      adaptSecurityContext: auto
 
 ## @section Common parameters
 ##
@@ -85,6 +94,9 @@ deploymentLabels: {}
 ## @param priorityClassName Horizon pod priority class name
 ##
 priorityClassName: ""
+## @param automountServiceAccountToken Mount Service Account token in pod
+##
+automountServiceAccountToken: true
 ## @param hostAliases Horizon pod host aliases
 ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
 ##
@@ -266,7 +278,7 @@ horizontalAutoscaler:
 disruptionBudget:
   ## @param disruptionBudget.enabled Created a PodDisruptionBudget
   ##
-  enabled: false
+  enabled: true
   ## @param disruptionBudget.minAvailable Min number of pods that must still be available after the eviction
   ##
   minAvailable: 1
@@ -598,6 +610,24 @@ logback:
 rbac:
   create: true
 
+## Horizon pods ServiceAccount
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+##
+serviceAccount:
+  ## @param serviceAccount.create Enable the creation of a ServiceAccount for Horizon pods
+  ##
+  create: true
+  ## @param serviceAccount.name Name of the created ServiceAccount
+  ## If not set and create is true, a name is generated using the horizon.fullname template
+  ##
+  name: ""
+  ## @param serviceAccount.annotations Annotations for Horizon Service Account
+  ##
+  annotations: {}
+  ## @param serviceAccount.automountServiceAccountToken Automount service account token for the server service account
+  ##
+  automountServiceAccountToken: true
+
 ## @param leases.enabled Whether leases should be used when launching multiple replicas of Horizon pods.
 leases:
   enabled: true
@@ -625,34 +655,51 @@ extraConfig: ""
 
 ## Install a MongoDB instance
 ## ref: https://github.com/bitnami/charts/tree/master/bitnami/mongodb
-mongodb:
-  ## @param mongodb.enabled Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter
-  ##
+temporaryDatabase:
   enabled: true
-  ## @param mongodb.image.tag MongoDB image tag (immutable tags are recommended)
-  ##
+
   image:
-    tag: 5.0.17-debian-11-r2
-  ## @param mongodb.architecture MongoDB architecture (`standalone` or `replicaset`)
+    registry: ~
+    repository: mongo
+    tag: 7
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+
+  persistence:
+    enabled: true
+    annotations: {}
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: "1Gi"
+
+  resources:
+    limits:
+      memory: 512Mi
+      cpu: 500m
+    requests:
+      memory: 512Mi
+      cpu: 500m
+
+  ## Configure Pods Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param backup.podSecurityContext.enabled Enabled Horizon pods' Security Context
+  ## @param backup.podSecurityContext.fsGroup Set Horizon pod's Security Context fsGroup
   ##
-  architecture: standalone
-  ## MongoDB Authentication parameters
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  ## Configure Container Security Context (only main container)
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+  ## @param backup.containerSecurityContext.enabled Enabled Horizon containers' Security Context
+  ## @param backup.containerSecurityContext.runAsUser Set Horizon container's Security Context runAsUser
+  ## @param backup.containerSecurityContext.runAsNonRoot Set Horizon container's Security Context runAsNonRoot
   ##
-  auth:
-    ## @param mongodb.auth.rootPassword MongoDB admin password
-    ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#setting-the-root-password-on-first-run
-    ##
-    rootPassword: ""
-    ## @param mongodb.auth.username MongoDB custom user
-    ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#creating-a-user-and-database-on-first-run
-    ##
-    username: horizon
-    ## @param mongodb.auth.database MongoDB custom database
-    ##
-    database: horizon
-    ## @param mongodb.auth.password MongoDB custom password
-    ##
-    password: secret_password
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
+
 ## @section Upgrade parameters
 upgrade:
   ## @param upgrade.enabled If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
@@ -685,6 +732,24 @@ upgrade:
     requests:
       memory: 512Mi
       cpu: 500m
+  ## Configure Pods Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param backup.podSecurityContext.enabled Enabled Horizon pods' Security Context
+  ## @param backup.podSecurityContext.fsGroup Set Horizon pod's Security Context fsGroup
+  ##
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  ## Configure Container Security Context (only main container)
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+  ## @param backup.containerSecurityContext.enabled Enabled Horizon containers' Security Context
+  ## @param backup.containerSecurityContext.runAsUser Set Horizon container's Security Context runAsUser
+  ## @param backup.containerSecurityContext.runAsNonRoot Set Horizon container's Security Context runAsNonRoot
+  ##
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
   ## @param upgrade.from Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.
   ##
   from: ""
@@ -817,7 +882,7 @@ persistence:
   volumeClaimTemplates:
     analytics:
       annotations: {}
-      storageClass: "standard-rwo"
+      storageClass: ""
       accessModes:
         - ReadWriteOnce
       size: "1Gi"

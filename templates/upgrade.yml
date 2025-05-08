@@ -3,16 +3,26 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ printf "%s-upgrade-%s" (include "common.names.fullname" $) (randAlphaNum 6 | lower) }}
-  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
-  {{- if .Values.commonLabels }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-  {{- end }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.commonLabels (dict "app.kubernetes.io/name" "horizon-upgrade" "app.kubernetes.io/part-of" "horizon")) "context" . ) }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
   {{- if .Values.commonAnnotations }}
-  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
   {{- end }}
 spec:
   template:
+    metadata:
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 8 }}
+      {{- if .Values.commonAnnotations }}
+      {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.commonAnnotations ) "context" . ) }}
+      annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 8 }}
+      {{- end }}
     spec:
+      {{- if .Values.upgrade.podSecurityContext.enabled }}
+      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.upgrade.podSecurityContext "context" $) | nindent 8 -}}
+      {{- end }}
+      serviceAccountName: {{ template "horizon.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
       containers:
         - name: horizon-upgrade
           image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}
@@ -29,6 +39,9 @@ spec:
               {{- end }}
           ]
           resources: {{- toYaml .Values.upgrade.resources | nindent 12 }}
+          {{- if .Values.upgrade.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.upgrade.containerSecurityContext "context" $) | nindent 12 -}}
+          {{- end }}
           env:
             - name: MONGODB_URI
               {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}
