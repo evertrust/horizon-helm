@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.21.0](https://github.com/evertrust/horizon-helm/compare/v0.20.1...v0.21.0) (2025-05-12)
+
+
+### Features
+
+* add service account support ([#95](https://github.com/evertrust/horizon-helm/issues/95)) ([aab6629](https://github.com/evertrust/horizon-helm/commit/aab6629cdeaee18847ca1b0500337455554ecb02))
+
+
+### Bug Fixes
+
+* update repository URLs to use OCI format ([#97](https://github.com/evertrust/horizon-helm/issues/97)) ([ddd1f9d](https://github.com/evertrust/horizon-helm/commit/ddd1f9da6989f2d38fbe280d2b25d0aa4c2324aa))
+
 ## [0.20.1](https://github.com/evertrust/horizon-helm/compare/v0.20.0...v0.20.1) (2025-05-07)
 
 
