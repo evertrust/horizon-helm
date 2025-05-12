@@ -64,6 +64,8 @@ spec:
           {{- end }}
           {{- end }}
         spec:
+          serviceAccountName: {{ template "horizon.serviceAccountName" . }}
+          automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
           containers:
           - name: backup
             image: {{ include "common.images.image" (dict "imageRoot" .Values.backup.image) }}
