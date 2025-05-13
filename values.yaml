@@ -575,6 +575,8 @@ logback:
     # In Kubernetes, we usually don't care to log functional events to stdout.
     - name: events
       level: warn
+    - name: json_events
+      level: info
     ## You might want to uncomment the following loggers to gather more info about your Horizon instance.
     ## E.g.
     ## - name: actors
