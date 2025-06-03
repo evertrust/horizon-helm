@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.22.1](https://github.com/evertrust/horizon-helm/compare/v0.22.0...v0.22.1) (2025-06-03)
+
+
+### Bug Fixes
+
+* application.conf newline template ([#100](https://github.com/evertrust/horizon-helm/issues/100)) ([8ca8131](https://github.com/evertrust/horizon-helm/commit/8ca813152b1a163eee1d5e92b91e4db754dc5a53))
+* create rbac when an external service account is used ([#101](https://github.com/evertrust/horizon-helm/issues/101)) ([51fa4ee](https://github.com/evertrust/horizon-helm/commit/51fa4ee2220940cd57fb0b18472c9f5fce58da10))
+
 ## [0.22.0](https://github.com/evertrust/horizon-helm/compare/v0.21.0...v0.22.0) (2025-05-13)
 
 
