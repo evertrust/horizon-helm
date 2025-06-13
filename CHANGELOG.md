@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.22.3](https://github.com/evertrust/horizon-helm/compare/v0.22.2...v0.22.3) (2025-06-13)
+
+
+### Bug Fixes
+
+* add internal config injector ([#106](https://github.com/evertrust/horizon-helm/issues/106)) ([e71b2d5](https://github.com/evertrust/horizon-helm/commit/e71b2d577f337ca67e27444dd8b2d349268c6aa8))
+* statefulset strategy ([#105](https://github.com/evertrust/horizon-helm/issues/105)) ([1fe76d3](https://github.com/evertrust/horizon-helm/commit/1fe76d31771034793f17441f6cbbc4162f78fd98))
+
 ## [0.22.2](https://github.com/evertrust/horizon-helm/compare/v0.22.1...v0.22.2) (2025-06-06)
 
 
