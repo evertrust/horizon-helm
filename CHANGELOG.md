@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.4](https://github.com/evertrust/horizon-helm/compare/v0.22.3...v0.22.4) (2025-06-19)
+
+
+### Bug Fixes
+
+* **hpa:** support StatefulSet target ref ([#108](https://github.com/evertrust/horizon-helm/issues/108)) ([b9956bc](https://github.com/evertrust/horizon-helm/commit/b9956bc6fb4f3475ebdd67e1557f23d5ee2f3686))
+
 ## [0.22.3](https://github.com/evertrust/horizon-helm/compare/v0.22.2...v0.22.3) (2025-06-13)
 
 
