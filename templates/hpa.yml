@@ -12,8 +12,13 @@ metadata:
   {{- end }}
 spec:
   scaleTargetRef:
+    {{- if .Values.persistence.enabled }}
+    apiVersion: {{ template "common.capabilities.statefulset.apiVersion" . }}
+    kind: StatefulSet
+    {{- else }}
     apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
     kind: Deployment
+    {{- end }}
     name: {{ template "common.names.fullname" . }}
   minReplicas: {{ .Values.horizontalAutoscaler.minReplicas }}
   maxReplicas: {{ .Values.horizontalAutoscaler.maxReplicas }}
