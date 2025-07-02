@@ -15,10 +15,10 @@ spec:
     spec:
       serviceAccountName: {{ template "horizon.serviceAccountName" . }}
       automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
-      {{- if .Values.backup.nodeSelector }}
+      {{- if .Values.upgrade.nodeSelector }}
       nodeSelector: {{- toYaml .Values.upgrade.nodeSelector | nindent 8 }}
       {{- end }}
-      {{- if .Values.backup.tolerations }}
+      {{- if .Values.upgrade.tolerations }}
       tolerations: {{- toYaml .Values.upgrade.tolerations | nindent 8 }}
       {{- end }}
       containers:
