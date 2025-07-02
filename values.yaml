@@ -711,6 +711,14 @@ upgrade:
   ## @param upgrade.to Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.
   ##
   to: ""
+  ## @param upgrade.nodeSelector [object]  Node labels for upgrade pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  ##
+  nodeSelector: {}
+  ## @param upgrade.tolerations [array] Tolerations for upgrade pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ##
+  tolerations: []
 
 ## @section Backup parameters
 backup:
