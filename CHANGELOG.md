@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.6](https://github.com/evertrust/horizon-helm/compare/v0.22.5...v0.22.6) (2025-07-10)
+
+
+### Bug Fixes
+
+* statefulset clustering fix ([#114](https://github.com/evertrust/horizon-helm/issues/114)) ([5c32031](https://github.com/evertrust/horizon-helm/commit/5c320311dce33bf87fc20773f7c85fdbb14739c0))
+
 ## [0.22.5](https://github.com/evertrust/horizon-helm/compare/v0.22.4...v0.22.5) (2025-07-09)
 
 
