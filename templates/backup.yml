@@ -66,6 +66,12 @@ spec:
         spec:
           serviceAccountName: {{ template "horizon.serviceAccountName" . }}
           automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
+          {{- if .Values.backup.nodeSelector }}
+          nodeSelector: {{- toYaml .Values.backup.nodeSelector | nindent 12 }}
+          {{- end }}
+          {{- if .Values.backup.tolerations }}
+          tolerations: {{- toYaml .Values.backup.tolerations | nindent 12 }}
+          {{- end }}
           containers:
           - name: backup
             image: {{ include "common.images.image" (dict "imageRoot" .Values.backup.image) }}
