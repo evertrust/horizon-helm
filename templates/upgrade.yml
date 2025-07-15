@@ -15,6 +15,12 @@ spec:
     spec:
       serviceAccountName: {{ template "horizon.serviceAccountName" . }}
       automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+      {{- if .Values.upgrade.nodeSelector }}
+      nodeSelector: {{- toYaml .Values.upgrade.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.upgrade.tolerations }}
+      tolerations: {{- toYaml .Values.upgrade.tolerations | nindent 8 }}
+      {{- end }}
       containers:
         - name: horizon-upgrade
           image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}

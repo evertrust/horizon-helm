@@ -711,6 +711,14 @@ upgrade:
   ## @param upgrade.to Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.
   ##
   to: ""
+  ## @param upgrade.nodeSelector [object]  Node labels for upgrade pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  ##
+  nodeSelector: {}
+  ## @param upgrade.tolerations [array] Tolerations for upgrade pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ##
+  tolerations: []
 
 ## @section Backup parameters
 backup:
@@ -774,10 +782,18 @@ backup:
   ## to use the Kubernetes secrets implementation.
   ##
   ## ref: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
-  ## @param environment [array] Extra env vars passed to the backup pods
+  ## @param backup.environment [array] Extra env vars passed to the backup pods
   environment: []
-  ## @param envFrom [array] Extra env vars passed to the backup pods
+  ## @param backup.envFrom [array] Extra env vars passed to the backup pods
   envFrom: []
+  ## @param backup.nodeSelector [object]  Node labels for backup pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  ##
+  nodeSelector: {}
+  ## @param backup.tolerations [array] Tolerations for backup pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ##
+  tolerations: []
 
 ## Configuration for an Horizon external database
 ## Refer to the Horizon installation guide to configure the installation correctly
