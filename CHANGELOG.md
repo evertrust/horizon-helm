@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.1](https://github.com/evertrust/horizon-helm/compare/v0.23.0...v0.23.1) (2025-07-16)
+
+
+### Bug Fixes
+
+* non string env values ([#118](https://github.com/evertrust/horizon-helm/issues/118)) ([5ffe5b0](https://github.com/evertrust/horizon-helm/commit/5ffe5b0f8f48fcf93addc5ca13326a54422031aa))
+
 ## [0.23.0](https://github.com/evertrust/horizon-helm/compare/v0.22.6...v0.23.0) (2025-07-16)
 
 
