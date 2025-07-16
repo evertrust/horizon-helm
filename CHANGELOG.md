@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.0](https://github.com/evertrust/horizon-helm/compare/v0.22.6...v0.23.0) (2025-07-16)
+
+
+### Features
+
+* support tolerations and nodeSelector for backup and upgrade jobs ([#111](https://github.com/evertrust/horizon-helm/issues/111)) ([b399719](https://github.com/evertrust/horizon-helm/commit/b399719fc3e6e8263df381c3aa92fed82f1df49e))
+
 ## [0.22.6](https://github.com/evertrust/horizon-helm/compare/v0.22.5...v0.22.6) (2025-07-10)
 
 
