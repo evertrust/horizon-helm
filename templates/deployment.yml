@@ -153,7 +153,7 @@ spec:
             {{- end }}
             - name: {{ .name }}
             {{- if .value }}
-              value: {{ .value }}
+              value: {{ .value | quote }}
             {{- end }}
             {{- if .valueFrom }}
               valueFrom: 
