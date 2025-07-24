@@ -10,5 +10,8 @@ metadata:
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
 data:
-{{ tpl (.Files.Glob "config/*").AsConfig . | indent 2 }}
+  application.conf: |
+{{ tpl (.Files.Get "config/application.conf") . | indent 4 }}
+  pekko.conf: |
+{{ tpl (.Files.Get "config/pekko.conf") . | indent 4 }}
 
