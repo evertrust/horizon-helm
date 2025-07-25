@@ -246,7 +246,7 @@ spec:
               value: {{ $value }}
             {{- end }}
             - name: VAULT_TYPE
-              value: {{ .Values.defaultVault.vaultType | quote }}
+              value: {{ .Values.defaultVault.type | quote }}
             {{- if .Values.defaultVault.masterKeyURI }}
             - name: VAULT_TINK_MASTER_KEY_URI 
               value: {{ .Values.defaultVault.masterKeyURI | quote }}
