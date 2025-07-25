@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.3](https://github.com/evertrust/horizon-helm/compare/v0.23.2...v0.23.3) (2025-07-24)
+
+
+### Bug Fixes
+
+* properly render multiline extra config ([#122](https://github.com/evertrust/horizon-helm/issues/122)) ([a7d9012](https://github.com/evertrust/horizon-helm/commit/a7d9012cbe2bd3b1e3de8d20f9dd5a980fe4781d))
+
 ## [0.23.2](https://github.com/evertrust/horizon-helm/compare/v0.23.1...v0.23.2) (2025-07-24)
 
 
