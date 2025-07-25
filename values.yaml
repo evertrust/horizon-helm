@@ -464,22 +464,23 @@ initialAdminHashPassword:
   secretName: ""
   secretKey: ""
 
-## For backwards-compatibility reasons, this array should contain
-## only one element.
-## For more information, refer to the Horizon installation guide.
-## @param vaults [array] Horizon vaults configuration
-vaults:
-  - name: default
-    vault_type: ssv
-    ## The master_password field can be a reference to a secret.
-    ## E.g.
-    ##   master_password:
-    ##     valueFrom:
-    ##       secretKeyRef:
-    ##         name: horizon-secret
-    ##         key: defaultMasterPassword
-    ##
-    master_password: {}
+## Horizon Default vault configuration.
+##
+defaultVault:
+  type: tink
+  masterKeyURI: ""
+  ## keyset is a reference to a secret that contains the keyset.
+  ## You should store it (base64-encoded) in a Kubernetes secret and specify
+  ## the secret details here.
+  ## ref: README.md
+  ## @param defaultvault.keyset.secretName Existing secret name where the Horizon keyset is stored
+  ## @param defaultvault.keyset.secretKey Existing secret key where the Horizon keyset is stored
+  ## E.g.
+  ## keyset:
+  ##  secretName: ""
+  ##  secretKey: ""
+  ##
+  keyset: {}
 
 ## Additional allowed hosts that are whitelisted to access the Horizon UI.
 ## Configured ingresses will automatically be added to the list, this should
