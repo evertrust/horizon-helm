@@ -473,8 +473,8 @@ defaultVault:
   ## You should store it (base64-encoded) in a Kubernetes secret and specify
   ## the secret details here.
   ## ref: README.md
-  ## @param defaultvault.keyset.secretName Existing secret name where the Horizon keyset is stored
-  ## @param defaultvault.keyset.secretKey Existing secret key where the Horizon keyset is stored
+  ## @param defaultVault.keyset.secretName Existing secret name where the Horizon keyset is stored
+  ## @param defaultVault.keyset.secretKey Existing secret key where the Horizon keyset is stored
   ## E.g.
   ## keyset:
   ##  secretName: ""
