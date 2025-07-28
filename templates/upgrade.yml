@@ -38,6 +38,22 @@ spec:
           ]
           resources: {{- toYaml .Values.upgrade.resources | nindent 12 }}
           env:
+            {{- if .Values.legacySsvPassword }}
+            - name: HORIZON_MIG_280_SSV_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.legacySsvPassword.secretName | quote }} 
+                  key: {{ .Values.legacySsvPassword.secretKey | quote }}
+            {{- end }}
+            {{- if .Values.defaultVault.masterKeyURI }}
+            - name: HORIZON_MIG_280_MASTER_KEY_URI 
+              value: {{ .Values.defaultVault.masterKeyURI | quote }}
+            {{- end }}
+            - name: HORIZON_MIG_280_KEYSET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "You must specify a keyset secret" .Values.defaultVault.keyset.secretName | quote }}
+                  key: {{ required "You must specify a keyset secret" .Values.defaultVault.keyset.secretKey | quote }}
             - name: MONGODB_URI
               {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}
       restartPolicy: Never

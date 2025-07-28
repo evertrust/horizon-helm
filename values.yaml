@@ -482,6 +482,18 @@ defaultVault:
   ##
   keyset: {}
 
+## Horizon legacy SSV password (Optional).
+## Should be set if upgrade from Horizon 2.7 or earlier to Horizon 2.8 or later.
+##
+## @param legacySsvPassword.secretName Existing secret name where the legacy SSV password is stored
+## @param legacySsvPassword.secretKey Existing secret key where the legacy SSV password is stored
+## E.g.
+## legacySsvPassword:
+##   secretName: horizon-legacy-ssv-password
+##   secretKey: legacySsvPassword
+##
+legacySsvPassword: {}
+
 ## Additional allowed hosts that are whitelisted to access the Horizon UI.
 ## Configured ingresses will automatically be added to the list, this should
 ## only be used when port forwarding or when an ingress is created manually.
@@ -690,8 +702,8 @@ upgrade:
   ##
   image:
     registry: registry.evertrust.io
-    repository: horizon-upgrade
-    tag: 2.7.9
+    repository: horizon-migration
+    tag: 1.0.0
     pullPolicy: IfNotPresent
     pullSecrets: []
   ## horizon-upgrade container resource requests and limits
