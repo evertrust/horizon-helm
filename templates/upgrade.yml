@@ -27,6 +27,7 @@ spec:
           imagePullPolicy: {{ .Values.upgrade.image.pullPolicy | default "IfNotPresent" | quote }}
           {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 10 }}
           args: [
+              "migrate",
               "-y",
               "-m", "$(MONGODB_URI)",
               {{- if .Values.upgrade.from }}
