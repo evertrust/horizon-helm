@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.24.0-rc3](https://github.com/evertrust/horizon-helm/compare/v0.24.0-rc2...v0.24.0-rc3) (2025-07-29)
+
+
+### Bug Fixes
+
+* **upgrade:** update migrate flags ([f844e56](https://github.com/evertrust/horizon-helm/commit/f844e567b42b9ba8e0132caacf8cd0b00f0d7247))
+
+
+### Miscellaneous Chores
+
+* release 0.24.0-rc3 ([05555ff](https://github.com/evertrust/horizon-helm/commit/05555ffacd962e572afa5a3248b16e2eef79a8dd))
+
 ## [0.24.0-rc2](https://github.com/evertrust/horizon-helm/compare/v0.24.0-rc1...v0.24.0-rc2) (2025-07-29)
 
 
