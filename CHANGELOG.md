@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.24.0-rc2](https://github.com/evertrust/horizon-helm/compare/v0.24.0-rc1...v0.24.0-rc2) (2025-07-29)
+
+
+### Bug Fixes
+
+* **upgrade:** imagePullSecret indentation ([41b7763](https://github.com/evertrust/horizon-helm/commit/41b7763a44d78bac05bf97d9e5d8931762ab8655))
+
+
+### Miscellaneous Chores
+
+* release 0.24.0-rc2 ([f8efd87](https://github.com/evertrust/horizon-helm/commit/f8efd8785a663d483b739c1f173ec9c955005a47))
+
 ## [0.24.0-rc1](https://github.com/evertrust/horizon-helm/compare/v0.23.3...v0.24.0-rc1) (2025-07-29)
 
 
