@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.24.0-rc1](https://github.com/evertrust/horizon-helm/compare/v0.23.3...v0.24.0-rc1) (2025-07-29)
+
+
+### Miscellaneous Chores
+
+* release 0.24.0-rc1 ([d00d26f](https://github.com/evertrust/horizon-helm/commit/d00d26fe35887044053cdd6d1640d71eb20748ed))
+
 ## [0.23.3](https://github.com/evertrust/horizon-helm/compare/v0.23.2...v0.23.3) (2025-07-24)
 
 
