@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - horizon_2.8
 
 permissions:
   contents: write

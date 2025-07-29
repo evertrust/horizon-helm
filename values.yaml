@@ -732,6 +732,9 @@ upgrade:
   ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
   tolerations: []
+  ## @param upgrade.ignoreEmptyFrom
+  ##
+  ignoreEmptyFrom: false
 
 ## @section Backup parameters
 backup:

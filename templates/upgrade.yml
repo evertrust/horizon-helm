@@ -34,7 +34,10 @@ spec:
               "-s", "{{ coalesce .Values.upgrade.from }}",
               {{- end }}
               {{- if .Values.upgrade.to }}
-              "-t", "{{ coalesce .Values.upgrade.to }}"
+              "-t", "{{ coalesce .Values.upgrade.to }}",
+              {{- end }}
+              {{- if .Values.upgrade.ignoreEmptyFrom }}
+              "--ignore-empty-from",
               {{- end }}
           ]
           resources: {{- toYaml .Values.upgrade.resources | nindent 12 }}
