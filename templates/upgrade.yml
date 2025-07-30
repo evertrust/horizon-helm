@@ -13,6 +13,7 @@ metadata:
 spec:
   template:
     spec:
+      {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 6 }}
       serviceAccountName: {{ template "horizon.serviceAccountName" . }}
       automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
       {{- if .Values.upgrade.nodeSelector }}
@@ -21,7 +22,6 @@ spec:
       {{- if .Values.upgrade.tolerations }}
       tolerations: {{- toYaml .Values.upgrade.tolerations | nindent 8 }}
       {{- end }}
-      {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 6 }}
       containers:
         - name: horizon-upgrade
           image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}
