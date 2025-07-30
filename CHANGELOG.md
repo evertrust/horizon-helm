@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.4](https://github.com/evertrust/horizon-helm/compare/v0.23.3...v0.23.4) (2025-07-30)
+
+
+### Bug Fixes
+
+* **upgrade:** renderPullSecrets level and indentation ([#129](https://github.com/evertrust/horizon-helm/issues/129)) ([06fb72e](https://github.com/evertrust/horizon-helm/commit/06fb72eac36416e369de0797dae3843516a866c0))
+
 ## [0.23.3](https://github.com/evertrust/horizon-helm/compare/v0.23.2...v0.23.3) (2025-07-24)
 
 
