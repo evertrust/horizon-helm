@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.24.0-rc4](https://github.com/evertrust/horizon-helm/compare/v0.23.4...v0.24.0-rc4) (2025-07-31)
+
+
+### Features
+
+* **upgrade:** run upgrade post-upgrade ([301e030](https://github.com/evertrust/horizon-helm/commit/301e030d4fd78837f01863f70348833d314133e3))
+
+
+### Miscellaneous Chores
+
+* release 0.24.0-rc4 ([66eab7c](https://github.com/evertrust/horizon-helm/commit/66eab7ca56790c62654febe8bbe6437fdd649694))
+
 ## [0.23.4](https://github.com/evertrust/horizon-helm/compare/v0.23.3...v0.23.4) (2025-07-30)
 
 ### Bug Fixes
