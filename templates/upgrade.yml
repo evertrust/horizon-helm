@@ -7,8 +7,12 @@ metadata:
   {{- if .Values.commonLabels }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
   {{- end }}
+  annotations: 
+  {{- if .Values.upgrade.annotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.upgrade.annotations "context" $ ) | nindent 4 }}
+  {{- end }}
   {{- if .Values.commonAnnotations }}
-  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
 spec:
   template:
@@ -27,17 +31,37 @@ spec:
           image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.upgrade.image.pullPolicy | default "IfNotPresent" | quote }}
           args: [
+              "migrate",
               "-y",
-              "-m", "$(MONGODB_URI)",
+              "--mongo-uri", "$(MONGODB_URI)",
               {{- if .Values.upgrade.from }}
-              "-s", "{{ coalesce .Values.upgrade.from }}",
+              "--from", "{{ coalesce .Values.upgrade.from }}",
               {{- end }}
               {{- if .Values.upgrade.to }}
-              "-t", "{{ coalesce .Values.upgrade.to }}"
+              "--to", "{{ coalesce .Values.upgrade.to }}",
+              {{- end }}
+              {{- if .Values.upgrade.ignoreEmptyFrom }}
+              "--ignore-empty-from",
               {{- end }}
           ]
           resources: {{- toYaml .Values.upgrade.resources | nindent 12 }}
           env:
+            {{- if .Values.legacySsvPassword }}
+            - name: HORIZON_MIG_280_SSV_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.legacySsvPassword.secretName | quote }} 
+                  key: {{ .Values.legacySsvPassword.secretKey | quote }}
+            {{- end }}
+            {{- if .Values.defaultVault.masterKeyURI }}
+            - name: HORIZON_MIG_280_MASTER_KEY_URI 
+              value: {{ .Values.defaultVault.masterKeyURI | quote }}
+            {{- end }}
+            - name: HORIZON_MIG_280_KEYSET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "You must specify a keyset secret" .Values.defaultVault.keyset.secretName | quote }}
+                  key: {{ required "You must specify a keyset secret" .Values.defaultVault.keyset.secretKey | quote }}
             - name: MONGODB_URI
               {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}
       restartPolicy: Never

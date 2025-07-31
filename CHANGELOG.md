@@ -1,11 +1,51 @@
 # Changelog
 
-## [0.23.4](https://github.com/evertrust/horizon-helm/compare/v0.23.3...v0.23.4) (2025-07-30)
+## [0.24.0-rc4](https://github.com/evertrust/horizon-helm/compare/v0.23.4...v0.24.0-rc4) (2025-07-31)
 
+
+### Features
+
+* **upgrade:** run upgrade post-upgrade ([301e030](https://github.com/evertrust/horizon-helm/commit/301e030d4fd78837f01863f70348833d314133e3))
+
+
+### Miscellaneous Chores
+
+* release 0.24.0-rc4 ([66eab7c](https://github.com/evertrust/horizon-helm/commit/66eab7ca56790c62654febe8bbe6437fdd649694))
+
+## [0.23.4](https://github.com/evertrust/horizon-helm/compare/v0.23.3...v0.23.4) (2025-07-30)
 
 ### Bug Fixes
 
 * **upgrade:** renderPullSecrets level and indentation ([#129](https://github.com/evertrust/horizon-helm/issues/129)) ([06fb72e](https://github.com/evertrust/horizon-helm/commit/06fb72eac36416e369de0797dae3843516a866c0))
+
+## [0.24.0-rc3](https://github.com/evertrust/horizon-helm/compare/v0.24.0-rc2...v0.24.0-rc3) (2025-07-29)
+
+### Bug Fixes
+
+* **upgrade:** update migrate flags ([f844e56](https://github.com/evertrust/horizon-helm/commit/f844e567b42b9ba8e0132caacf8cd0b00f0d7247))
+
+### Miscellaneous Chores
+
+* release 0.24.0-rc3 ([05555ff](https://github.com/evertrust/horizon-helm/commit/05555ffacd962e572afa5a3248b16e2eef79a8dd))
+
+## [0.24.0-rc2](https://github.com/evertrust/horizon-helm/compare/v0.24.0-rc1...v0.24.0-rc2) (2025-07-29)
+
+
+### Bug Fixes
+
+* **upgrade:** imagePullSecret indentation ([41b7763](https://github.com/evertrust/horizon-helm/commit/41b7763a44d78bac05bf97d9e5d8931762ab8655))
+
+
+### Miscellaneous Chores
+
+* release 0.24.0-rc2 ([f8efd87](https://github.com/evertrust/horizon-helm/commit/f8efd8785a663d483b739c1f173ec9c955005a47))
+
+## [0.24.0-rc1](https://github.com/evertrust/horizon-helm/compare/v0.23.3...v0.24.0-rc1) (2025-07-29)
+
+
+### Miscellaneous Chores
+
+* release 0.24.0-rc1 ([d00d26f](https://github.com/evertrust/horizon-helm/commit/d00d26fe35887044053cdd6d1640d71eb20748ed))
 
 ## [0.23.3](https://github.com/evertrust/horizon-helm/compare/v0.23.2...v0.23.3) (2025-07-24)
 

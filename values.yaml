@@ -464,22 +464,35 @@ initialAdminHashPassword:
   secretName: ""
   secretKey: ""
 
-## For backwards-compatibility reasons, this array should contain
-## only one element.
-## For more information, refer to the Horizon installation guide.
-## @param vaults [array] Horizon vaults configuration
-vaults:
-  - name: default
-    vault_type: ssv
-    ## The master_password field can be a reference to a secret.
-    ## E.g.
-    ##   master_password:
-    ##     valueFrom:
-    ##       secretKeyRef:
-    ##         name: horizon-secret
-    ##         key: defaultMasterPassword
-    ##
-    master_password: {}
+## Horizon Default vault configuration.
+##
+defaultVault:
+  type: tink
+  masterKeyURI: ""
+  ## keyset is a reference to a secret that contains the keyset.
+  ## You should store it (base64-encoded) in a Kubernetes secret and specify
+  ## the secret details here.
+  ## ref: README.md
+  ## @param defaultVault.keyset.secretName Existing secret name where the Horizon keyset is stored
+  ## @param defaultVault.keyset.secretKey Existing secret key where the Horizon keyset is stored
+  ## E.g.
+  ## keyset:
+  ##  secretName: ""
+  ##  secretKey: ""
+  ##
+  keyset: {}
+
+## Horizon legacy SSV password (Optional).
+## Should be set if upgrade from Horizon 2.7 or earlier to Horizon 2.8 or later.
+##
+## @param legacySsvPassword.secretName Existing secret name where the legacy SSV password is stored
+## @param legacySsvPassword.secretKey Existing secret key where the legacy SSV password is stored
+## E.g.
+## legacySsvPassword:
+##   secretName: horizon-legacy-ssv-password
+##   secretKey: legacySsvPassword
+##
+legacySsvPassword: {}
 
 ## Additional allowed hosts that are whitelisted to access the Horizon UI.
 ## Configured ingresses will automatically be added to the list, this should
@@ -681,6 +694,11 @@ upgrade:
   ## @param upgrade.enabled If true, an upgrade job will be run everytime the Chart is installed or upgraded.
   ##
   force: false
+  ## @param upgrade.annotations Extra annotations to add to the upgrade job
+  annotations:
+    helm.sh/hook: post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "0"
   ## @param upgrade.image.registry Horizon image registry
   ## @param upgrade.image.repository Horizon image repository
   ## @param upgrade.image.tag Horizon image tag (immutable tags are recommended)
@@ -689,8 +707,8 @@ upgrade:
   ##
   image:
     registry: registry.evertrust.io
-    repository: horizon-upgrade
-    tag: 2.7.9
+    repository: horizon-migration
+    tag: v1.0.0
     pullPolicy: IfNotPresent
     pullSecrets: []
   ## horizon-upgrade container resource requests and limits
@@ -719,6 +737,9 @@ upgrade:
   ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
   tolerations: []
+  ## @param upgrade.ignoreEmptyFrom
+  ##
+  ignoreEmptyFrom: false
 
 ## @section Backup parameters
 backup:
