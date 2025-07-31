@@ -694,6 +694,11 @@ upgrade:
   ## @param upgrade.enabled If true, an upgrade job will be run everytime the Chart is installed or upgraded.
   ##
   force: false
+  ## @param upgrade.annotations Extra annotations to add to the upgrade job
+  annotations:
+    helm.sh/hook: post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "0"
   ## @param upgrade.image.registry Horizon image registry
   ## @param upgrade.image.repository Horizon image repository
   ## @param upgrade.image.tag Horizon image tag (immutable tags are recommended)
