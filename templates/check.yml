@@ -27,11 +27,11 @@ spec:
       tolerations: {{- toYaml .Values.upgradeCompatibilityCheck.tolerations | nindent 8 }}
       {{- end }}
       containers:
-        - name: horizon-upgrade
+        - name: horizon-upgrade-compatibility-check
           image: {{ include "common.images.image" (dict "imageRoot" .Values.upgradeCompatibilityCheck.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.upgradeCompatibilityCheck.image.pullPolicy | default "IfNotPresent" | quote }}
           args: [
-              "migrate",
+              "check",
               "-y",
               "--mongo-uri", "$(MONGODB_URI)",
               {{- if .Values.upgrade.from }}
