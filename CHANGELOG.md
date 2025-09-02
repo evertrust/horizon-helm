@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.23.5](https://github.com/evertrust/horizon-helm/compare/v0.23.4...v0.23.5) (2025-09-02)
+
+
+### Bug Fixes
+
+* bump horizon 2.7.10 ([#134](https://github.com/evertrust/horizon-helm/issues/134)) ([5932068](https://github.com/evertrust/horizon-helm/commit/5932068fe93c665dffc03f84b663ae034c18291d))
+* **upgrade:** propagate labels ([#135](https://github.com/evertrust/horizon-helm/issues/135)) ([6c4c9ab](https://github.com/evertrust/horizon-helm/commit/6c4c9aba8530a8873239939f02dd7a8b0cf87d9a))
+
 ## [0.23.4](https://github.com/evertrust/horizon-helm/compare/v0.23.3...v0.23.4) (2025-07-30)
 
 
