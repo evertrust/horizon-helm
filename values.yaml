@@ -794,7 +794,7 @@ backup:
   ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
   tolerations: []
-  ## @param backup.affinity [object] Affinity for the upgrade job (e.g., nodeAffinity, podAffinity, podAntiAffinity)
+  ## @param backup.affinity [object] Affinity for the backup job (e.g., nodeAffinity, podAffinity, podAntiAffinity)
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
   ##
   affinity: {}
