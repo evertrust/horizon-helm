@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.24.0](https://github.com/evertrust/horizon-helm/compare/v0.23.5...v0.24.0) (2025-09-09)
+
+
+### Features
+
+* **backup:** support affinity ([#137](https://github.com/evertrust/horizon-helm/issues/137)) ([871734d](https://github.com/evertrust/horizon-helm/commit/871734d23e2967e0ffc936b1af36f7c63799562b))
+
 ## [0.23.5](https://github.com/evertrust/horizon-helm/compare/v0.23.4...v0.23.5) (2025-09-02)
 
 

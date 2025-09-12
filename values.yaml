@@ -511,14 +511,14 @@ trustedProxies:
 ## @param events.discoveryTtl Duration during which discovery events are kept in database.
 events:
   chainsign: true
-    ## The events.secret field can be a reference to a secret.
-    ## E.g.
-    ##   secret:
-    ##     valueFrom:
-    ##       secretKeyRef:
-    ##         name: horizon-secret
-    ##         key: eventSealSecret
-    ##
+  ## The events.secret field can be a reference to a secret.
+  ## E.g.
+  ##   secret:
+  ##     valueFrom:
+  ##       secretKeyRef:
+  ##         name: horizon-secret
+  ##         key: eventSealSecret
+  ##
   secret: {}
   ttl: ""
   discoveryTtl: ""
@@ -550,14 +550,14 @@ mailer:
   tls: ""
   ssl: ""
   user: ""
-    ## The password field can be a reference to a secret.
-    ## E.g.
-    ##   password:
-    ##     valueFrom:
-    ##       secretKeyRef:
-    ##         name: horizon-secret
-    ##         key: mailerPassword
-    ##
+  ## The password field can be a reference to a secret.
+  ## E.g.
+  ##   password:
+  ##     valueFrom:
+  ##       secretKeyRef:
+  ##         name: horizon-secret
+  ##         key: mailerPassword
+  ##
   password: {}
 
 ## Configure the logger for this Horizon instance.
@@ -794,6 +794,10 @@ backup:
   ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
   tolerations: []
+  ## @param backup.affinity [object] Affinity for the backup job (e.g., nodeAffinity, podAffinity, podAntiAffinity)
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
+  ##
+  affinity: {}
 
 ## Configuration for an Horizon external database
 ## Refer to the Horizon installation guide to configure the installation correctly
