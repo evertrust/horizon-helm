@@ -28,8 +28,8 @@ spec:
       {{- end }}
       containers:
         - name: horizon-upgrade-compatibility-check
-          image: {{ include "common.images.image" (dict "imageRoot" .Values.upgradeCompatibilityCheck.image "global" .Values.global) }}
-          imagePullPolicy: {{ .Values.upgradeCompatibilityCheck.image.pullPolicy | default "IfNotPresent" | quote }}
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}
+          imagePullPolicy: {{ .Values.upgrade.image.pullPolicy | default "IfNotPresent" | quote }}
           args: [
               "check",
               "-y",

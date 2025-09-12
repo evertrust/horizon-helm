@@ -740,6 +740,7 @@ upgrade:
   ## @param upgrade.ignoreEmptyFrom
   ##
   ignoreEmptyFrom: false
+
 ## @section upgradeCompatibilityCheck parameters
 upgradeCompatibilityCheck:
   ## @param upgradeCompatibilityCheck.enabled If true, a check job will be run before upgrading the release.
@@ -750,18 +751,6 @@ upgradeCompatibilityCheck:
     helm.sh/hook: pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation
     helm.sh/hook-weight: "0"
-  ## @param upgradeCompatibilityCheck.image.registry Horizon Migration image registry
-  ## @param upgradeCompatibilityCheck.image.repository Horizon Migration image repository
-  ## @param upgradeCompatibilityCheck.image.tag Horizon Migration image tag (immutable tags are recommended)
-  ## @param upgradeCompatibilityCheck.image.pullPolicy Horizon Migration image pull policy
-  ## @param upgradeCompatibilityCheck.image.pullSecrets Horizon Migration image pull secrets
-  ##
-  image:
-    registry: registry.evertrust.io
-    repository: horizon-migration
-    tag: v1.0.0
-    pullPolicy: IfNotPresent
-    pullSecrets: []
   ## horizon-migration container resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param upgradeCompatibilityCheck.resources.limits [object] The resources limits for the Horizon container
