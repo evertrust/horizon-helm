@@ -40,7 +40,7 @@ spec:
               {{- if .Values.upgrade.to }}
               "--to", "{{ coalesce .Values.upgrade.to }}",
               {{- end }}
-              {{- if .Values.upgrade.ignoreEmptyFrom }}
+              {{- if .Values.upgradeCompatibilityCheck.ignoreEmptyFrom }}
               "--ignore-empty-from",
               {{- end }}
           ]
