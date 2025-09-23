@@ -699,11 +699,11 @@ upgrade:
     helm.sh/hook: post-upgrade
     helm.sh/hook-delete-policy: before-hook-creation
     helm.sh/hook-weight: "0"
-  ## @param upgrade.image.registry Horizon image registry
-  ## @param upgrade.image.repository Horizon image repository
-  ## @param upgrade.image.tag Horizon image tag (immutable tags are recommended)
-  ## @param upgrade.image.pullPolicy Horizon image pull policy
-  ## @param upgrade.image.pullSecrets Horizon image pull secrets
+  ## @param upgrade.image.registry Horizon Migration image registry
+  ## @param upgrade.image.repository Horizon Migration image repository
+  ## @param upgrade.image.tag Horizon Migration image tag (immutable tags are recommended)
+  ## @param upgrade.image.pullPolicy Horizon Migration image pull policy
+  ## @param upgrade.image.pullSecrets Horizon Migration image pull secrets
   ##
   image:
     registry: registry.evertrust.io
@@ -711,7 +711,7 @@ upgrade:
     tag: v1.0.0
     pullPolicy: IfNotPresent
     pullSecrets: []
-  ## horizon-upgrade container resource requests and limits
+  ## horizon-migration container resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param upgrade.resources.limits [object] The resources limits for the Horizon container
   ## @param upgrade.resources.requests [object] The requested resources for the Horizon container
@@ -740,6 +740,41 @@ upgrade:
   ## @param upgrade.ignoreEmptyFrom
   ##
   ignoreEmptyFrom: false
+
+## @section upgradeCompatibilityCheck parameters
+upgradeCompatibilityCheck:
+  ## @param upgradeCompatibilityCheck.enabled If true, a check job will be run before upgrading the release.
+  ##
+  enabled: true
+  ## @param upgradeCompatibilityCheck.annotations Extra annotations to add to the upgrade job
+  annotations:
+    helm.sh/hook: pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "0"
+  ## horizon-migration container resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param upgradeCompatibilityCheck.resources.limits [object] The resources limits for the Horizon container
+  ## @param upgradeCompatibilityCheck.resources.requests [object] The requested resources for the Horizon container
+  ##
+  resources:
+    limits:
+      memory: 512Mi
+      cpu: 500m
+    requests:
+      memory: 512Mi
+      cpu: 500m
+  ## @param upgradeCompatibilityCheck.nodeSelector [object]  Node labels for upgrade pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  ##
+  nodeSelector: {}
+  ## @param upgradeCompatibilityCheck.tolerations [array] Tolerations for upgrade pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ##
+  tolerations: []
+  ## @param upgradeCompatibilityCheck.ignoreEmptyFrom
+  ##
+  ignoreEmptyFrom: false
+
 
 ## @section Backup parameters
 backup:

@@ -1,0 +1,69 @@
+{{- if eq (include "upgradeCompatibilityCheck.enabled" .) "true" }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-upgrade-compatibility-check-%s" (include "common.names.fullname" $) (randAlphaNum 6 | lower) }}
+  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- end }}
+  annotations: 
+  {{- if .Values.upgradeCompatibilityCheck.annotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.upgradeCompatibilityCheck.annotations "context" $ ) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  template:
+    spec:
+      {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 6 }}
+      serviceAccountName: {{ template "horizon.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+      {{- if .Values.upgradeCompatibilityCheck.nodeSelector }}
+      nodeSelector: {{- toYaml .Values.upgradeCompatibilityCheck.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.upgradeCompatibilityCheck.tolerations }}
+      tolerations: {{- toYaml .Values.upgradeCompatibilityCheck.tolerations | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: horizon-upgrade-compatibility-check
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}
+          imagePullPolicy: {{ .Values.upgrade.image.pullPolicy | default "IfNotPresent" | quote }}
+          args: [
+              "check",
+              "-y",
+              "--mongo-uri", "$(MONGODB_URI)",
+              {{- if .Values.upgrade.from }}
+              "--from", "{{ coalesce .Values.upgrade.from }}",
+              {{- end }}
+              {{- if .Values.upgrade.to }}
+              "--to", "{{ coalesce .Values.upgrade.to }}",
+              {{- end }}
+              {{- if .Values.upgradeCompatibilityCheck.ignoreEmptyFrom }}
+              "--ignore-empty-from",
+              {{- end }}
+          ]
+          resources: {{- toYaml .Values.upgradeCompatibilityCheck.resources | nindent 12 }}
+          env:
+            {{- if .Values.legacySsvPassword }}
+            - name: HORIZON_MIG_280_SSV_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.legacySsvPassword.secretName | quote }} 
+                  key: {{ .Values.legacySsvPassword.secretKey | quote }}
+            {{- end }}
+            {{- if .Values.defaultVault.masterKeyURI }}
+            - name: HORIZON_MIG_280_MASTER_KEY_URI 
+              value: {{ .Values.defaultVault.masterKeyURI | quote }}
+            {{- end }}
+            - name: HORIZON_MIG_280_KEYSET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "You must specify a keyset secret" .Values.defaultVault.keyset.secretName | quote }}
+                  key: {{ required "You must specify a keyset secret" .Values.defaultVault.keyset.secretKey | quote }}
+            - name: MONGODB_URI
+              {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}
+      restartPolicy: Never
+  backoffLimit: 0
+{{- end }}
