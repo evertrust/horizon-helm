@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.25.0-rc1](https://github.com/evertrust/horizon-helm/compare/v0.24.0-rc4...v0.25.0-rc1) (2025-09-29)
+
+
+### Features
+
+* **upgrade:** add Compatibility check before upgrade ([#133](https://github.com/evertrust/horizon-helm/issues/133)) ([0d56189](https://github.com/evertrust/horizon-helm/commit/0d56189f18a3cb298e74400acc3f3411b0f26e32))
+
+
+### Miscellaneous Chores
+
+* release 0.25.0-rc1 ([6263655](https://github.com/evertrust/horizon-helm/commit/626365536108454a06b2f2c455c1aa52234e1331))
+
 ## [0.24.0-rc4](https://github.com/evertrust/horizon-helm/compare/v0.23.4...v0.24.0-rc4) (2025-07-31)
 
 
