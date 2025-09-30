@@ -1,4 +1,4 @@
-{{- if eq (include "upgradeCompatibilityCheck.enabled" .) "true" }}
+{{- if .Values.upgradeCompatibilityCheck.enabled  | default false -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
