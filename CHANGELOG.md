@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.25.0-rc2](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc1...v0.25.0-rc2) (2025-09-30)
+
+
+### Bug Fixes
+
+* check rendering ([5ad1bfc](https://github.com/evertrust/horizon-helm/commit/5ad1bfc18c51c1f6ac1e55d4c0c4e1f0a74ad221))
+
+
+### Miscellaneous Chores
+
+* release 0.25.0-rc2 ([1da8b42](https://github.com/evertrust/horizon-helm/commit/1da8b42a3c325f6742f901006717e72c9d030a56))
+
 ## [0.25.0-rc1](https://github.com/evertrust/horizon-helm/compare/v0.24.0-rc4...v0.25.0-rc1) (2025-09-29)
 
 
