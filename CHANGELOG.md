@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.25.0-rc4](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc3...v0.25.0-rc4) (2025-10-01)
+
+
+### Bug Fixes
+
+* **upgrade-check:** shorten resource name ([#146](https://github.com/evertrust/horizon-helm/issues/146)) ([d74e615](https://github.com/evertrust/horizon-helm/commit/d74e615988875d18b7b69f62709221f4289cda58))
+
+
+### Miscellaneous Chores
+
+* release 0.25.0-rc4 ([0d39f45](https://github.com/evertrust/horizon-helm/commit/0d39f45acc195b33f6721197e4eebe7bc443a21a))
+
 ## [0.25.0-rc3](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc2...v0.25.0-rc3) (2025-10-01)
 
 
