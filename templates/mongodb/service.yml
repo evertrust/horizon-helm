@@ -1,0 +1,20 @@
+{{- if .Values.temporaryDatabase.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.names.dependency.fullname" (dict "chartName" "mongodb" "chartValues" .Values.temporaryDatabase "context" $) }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.labels .Values.commonLabels (dict "app.kubernetes.io/name" "mongodb" "app.kubernetes.io/part-of" "horizon")) "context" . ) }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
+  {{- if or .Values.temporaryDatabase.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.temporaryDatabase.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: mongo
+      protocol: TCP
+      port: 27017
+      targetPort: mongo
+  selector: {{- include "common.labels.matchLabels" (dict "customLabels" $labels "context" .) | nindent 4 }}
+{{- end }}
