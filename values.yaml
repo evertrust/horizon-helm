@@ -644,8 +644,15 @@ extraConfig: ""
 ## @section Database parameters
 
 temporaryDatabase:
+  ## @param temporaryDatabase.enabled Whether to enable the deployment of a temporary MongoDB instance
   enabled: true
 
+  ## @param temporaryDatabase.image.registry MongoDB image registry
+  ## @param temporaryDatabase.image.repository MongoDB image repository
+  ## @param temporaryDatabase.image.tag MongoDB image tag (immutable tags are recommended)
+  ## @param temporaryDatabase.image.pullPolicy MongoDB image pull policy
+  ## @param temporaryDatabase.image.pullSecrets MongoDB image pull secrets
+  ##
   image:
     registry: ~
     repository: mongo
@@ -654,13 +661,23 @@ temporaryDatabase:
     pullSecrets: []
 
   persistence:
+    ## @param temporaryDatabase.persistence.enabled Whether to enable persistence on the temporary MongoDB
     enabled: true
+    ## @param temporaryDatabase.persistence.annotations Extra annotations to add to the PVC
     annotations: {}
+    ## @param temporaryDatabase.persistence.storageClass Storage class of backing PVC
     storageClass: ""
+    ## @param temporaryDatabase.persistence.accessModes Access modes of the PVC
     accessModes:
       - ReadWriteOnce
+    ## @param temporaryDatabase.persistence.size Size of data volume for MongoDB
     size: "1Gi"
 
+  ## MongoDB container resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param temporaryDatabase.resources.limits [object] The resources limits for the Horizon container
+  ## @param temporaryDatabase.resources.requests [object] The requested resources for the Horizon container
+  ##
   resources:
     limits:
       memory: 512Mi
@@ -671,17 +688,17 @@ temporaryDatabase:
 
   ## Configure Pods Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  ## @param backup.podSecurityContext.enabled Enabled Horizon pods' Security Context
-  ## @param backup.podSecurityContext.fsGroup Set Horizon pod's Security Context fsGroup
+  ## @param temporaryDatabase.podSecurityContext.enabled Enabled Horizon pods' Security Context
+  ## @param temporaryDatabase.podSecurityContext.fsGroup Set Horizon pod's Security Context fsGroup
   ##
   podSecurityContext:
     enabled: true
     fsGroup: 1001
   ## Configure Container Security Context (only main container)
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-  ## @param backup.containerSecurityContext.enabled Enabled Horizon containers' Security Context
-  ## @param backup.containerSecurityContext.runAsUser Set Horizon container's Security Context runAsUser
-  ## @param backup.containerSecurityContext.runAsNonRoot Set Horizon container's Security Context runAsNonRoot
+  ## @param temporaryDatabase.containerSecurityContext.enabled Enabled Horizon containers' Security Context
+  ## @param temporaryDatabase.containerSecurityContext.runAsUser Set Horizon container's Security Context runAsUser
+  ## @param temporaryDatabase.containerSecurityContext.runAsNonRoot Set Horizon container's Security Context runAsNonRoot
   ##
   containerSecurityContext:
     enabled: true
