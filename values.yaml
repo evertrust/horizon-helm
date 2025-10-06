@@ -645,36 +645,68 @@ extraConfig: ""
 
 ## @section Database parameters
 
-## Install a MongoDB instance
-## ref: https://github.com/bitnami/charts/tree/master/bitnami/mongodb
-mongodb:
-  ## @param mongodb.enabled Whether to deploy a mongodb server to satisfy the application database requirements. To use an external database set this to false and configure the `externalDatabase.uri` parameter
-  ##
+temporaryDatabase:
+  ## @param temporaryDatabase.enabled Whether to enable the deployment of a temporary MongoDB instance
   enabled: true
-  ## @param mongodb.image.tag MongoDB image tag (immutable tags are recommended)
+
+  ## @param temporaryDatabase.image.registry MongoDB image registry
+  ## @param temporaryDatabase.image.repository MongoDB image repository
+  ## @param temporaryDatabase.image.tag MongoDB image tag (immutable tags are recommended)
+  ## @param temporaryDatabase.image.pullPolicy MongoDB image pull policy
+  ## @param temporaryDatabase.image.pullSecrets MongoDB image pull secrets
   ##
   image:
-    tag: 5.0.17-debian-11-r2
-  ## @param mongodb.architecture MongoDB architecture (`standalone` or `replicaset`)
+    registry: ~
+    repository: mongo
+    tag: 7
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+
+  persistence:
+    ## @param temporaryDatabase.persistence.enabled Whether to enable persistence on the temporary MongoDB
+    enabled: true
+    ## @param temporaryDatabase.persistence.annotations Extra annotations to add to the PVC
+    annotations: {}
+    ## @param temporaryDatabase.persistence.storageClass Storage class of backing PVC
+    storageClass: ""
+    ## @param temporaryDatabase.persistence.accessModes Access modes of the PVC
+    accessModes:
+      - ReadWriteOnce
+    ## @param temporaryDatabase.persistence.size Size of data volume for MongoDB
+    size: "1Gi"
+
+  ## MongoDB container resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param temporaryDatabase.resources.limits [object] The resources limits for the Horizon container
+  ## @param temporaryDatabase.resources.requests [object] The requested resources for the Horizon container
   ##
-  architecture: standalone
-  ## MongoDB Authentication parameters
+  resources:
+    limits:
+      memory: 512Mi
+      cpu: 500m
+    requests:
+      memory: 512Mi
+      cpu: 500m
+
+  ## Configure Pods Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param temporaryDatabase.podSecurityContext.enabled Enabled Horizon pods' Security Context
+  ## @param temporaryDatabase.podSecurityContext.fsGroup Set Horizon pod's Security Context fsGroup
   ##
-  auth:
-    ## @param mongodb.auth.rootPassword MongoDB admin password
-    ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#setting-the-root-password-on-first-run
-    ##
-    rootPassword: ""
-    ## @param mongodb.auth.username MongoDB custom user
-    ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#creating-a-user-and-database-on-first-run
-    ##
-    username: horizon
-    ## @param mongodb.auth.database MongoDB custom database
-    ##
-    database: horizon
-    ## @param mongodb.auth.password MongoDB custom password
-    ##
-    password: secret_password
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  ## Configure Container Security Context (only main container)
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+  ## @param temporaryDatabase.containerSecurityContext.enabled Enabled Horizon containers' Security Context
+  ## @param temporaryDatabase.containerSecurityContext.runAsUser Set Horizon container's Security Context runAsUser
+  ## @param temporaryDatabase.containerSecurityContext.runAsNonRoot Set Horizon container's Security Context runAsNonRoot
+  ##
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
+
 ## @section Upgrade parameters
 upgrade:
   ## @param upgrade.enabled If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
