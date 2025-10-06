@@ -1,4 +1,4 @@
-{{- if .Values.temporaryDatabase.persistence.enabled }}
+{{- if and (ne (.Values.mongodb).enabled false) .Values.temporaryDatabase.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

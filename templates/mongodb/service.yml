@@ -1,4 +1,4 @@
-{{- if .Values.temporaryDatabase.enabled }}
+{{- if and (ne (.Values.mongodb).enabled false) .Values.temporaryDatabase.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
