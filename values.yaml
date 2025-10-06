@@ -49,7 +49,7 @@ commonAnnotations: {}
 ## @param image.registry Horizon image registry
 ## @param image.repository Horizon image repository
 ## @param image.tag Horizon image tag (immutable tags are recommended)
-## @param image.tag Horizon image flavor (for HSM compatible images)
+## @param image.flavor Horizon image flavor (for HSM compatible images)
 ## @param image.pullPolicy Horizon image pull policy
 ## @param image.pullSecrets Horizon image pull secrets
 ##
