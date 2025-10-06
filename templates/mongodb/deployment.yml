@@ -57,19 +57,19 @@ spec:
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
             successThreshold: {{ .Values.readinessProbe.successThreshold }}
           resources: {{- toYaml .Values.temporaryDatabase.resources | nindent 12 }}
+          {{- if .Values.temporaryDatabase.persistence.enabled }}
           volumeMounts:
-            {{- if .Values.temporaryDatabase.persistence.enabled }}
             - name: data
               mountPath: /data/db
-            {{- end }}
+          {{- end }}
           ports:
             - name: mongo
               containerPort: 27017
       {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.temporaryDatabase.image) "context" $) | nindent 6 }}
+      {{- if and .Values.temporaryDatabase.persistence.enabled }}
       volumes:
-        {{- if and .Values.temporaryDatabase.persistence.enabled }}
         - name: data
           persistentVolumeClaim:
             claimName: {{ include "common.names.dependency.fullname" (dict "chartName" "mongodb" "chartValues" .Values.temporaryDatabase "context" $) }}
-        {{- end }}
+      {{- end }}
 {{- end }}
