@@ -1,4 +1,4 @@
-all: gen-schema package
+all: gen-schema dependencies package test setup-unittest
 
 gen-schema:
 	readme-generator -r README.md -v values.yaml -s values.schema.json
