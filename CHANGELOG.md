@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.0](https://github.com/evertrust/horizon-helm/compare/v0.24.1...v1.0.0) (2025-10-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* use the official mongodb image ([#148](https://github.com/evertrust/horizon-helm/issues/148))
+
+### Features
+
+* add flavored images ([#149](https://github.com/evertrust/horizon-helm/issues/149)) ([14754c1](https://github.com/evertrust/horizon-helm/commit/14754c18256291dd48c2b67f8fcebe510e7b6818))
+* use the official mongodb image ([#148](https://github.com/evertrust/horizon-helm/issues/148)) ([764d8f1](https://github.com/evertrust/horizon-helm/commit/764d8f1a66eb4955b6ed93013564a451454c446f))
+
+
+### Bug Fixes
+
+* mongodb deployment securityContext indentation ([#152](https://github.com/evertrust/horizon-helm/issues/152)) ([11404ec](https://github.com/evertrust/horizon-helm/commit/11404ec3d087d4b70f0199e555f9f7dae0ed1d1d))
+
 ## [0.24.1](https://github.com/evertrust/horizon-helm/compare/v0.24.0...v0.24.1) (2025-09-12)
 
 
