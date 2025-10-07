@@ -24,7 +24,7 @@ spec:
       {{- end }}
     spec:
       {{- if .Values.temporaryDatabase.podSecurityContext.enabled }}
-      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.temporaryDatabase.podSecurityContext "context" $) | nindent 14 -}}
+      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.temporaryDatabase.podSecurityContext "context" $) | nindent 8 -}}
       {{- end }}
       serviceAccountName: {{ template "horizon.serviceAccountName" . }}
       automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
@@ -33,7 +33,7 @@ spec:
           image: {{ include "common.images.image" (dict "imageRoot" .Values.temporaryDatabase.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.temporaryDatabase.image.pullPolicy | default "IfNotPresent" | quote }}
           {{- if .Values.temporaryDatabase.containerSecurityContext.enabled }}
-          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.temporaryDatabase.containerSecurityContext "context" $) | nindent 14 -}}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.temporaryDatabase.containerSecurityContext "context" $) | nindent 12 -}}
           {{- end }}
           livenessProbe:
             tcpSocket:
