@@ -82,8 +82,7 @@ spec:
             {{- if .Values.backup.containerSecurityContext.enabled }}
             securityContext: {{- omit .Values.backup.containerSecurityContext "enabled" | toYaml | nindent 14 }}
             {{- end }}
-            command:
-              - toolbox
+            args:
               - backup
             env:
               - name: MONGODB_URI
