@@ -779,7 +779,7 @@ backup:
   image:
     registry: quay.io/evertrust
     repository: toolbox
-    tag: v0.3.0
+    tag: v0.6.1
     pullPolicy: IfNotPresent
     pullSecrets: []
   ## Configure Pods Security Context
