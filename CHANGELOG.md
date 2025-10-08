@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/evertrust/horizon-helm/compare/v1.0.0...v1.0.1) (2025-10-08)
+
+
+### Bug Fixes
+
+* bump backup toolbox ([#153](https://github.com/evertrust/horizon-helm/issues/153)) ([d3cbde7](https://github.com/evertrust/horizon-helm/commit/d3cbde7a12f19c8f8953b6975cfcb6b4b5ca48f8))
+
 ## [1.0.0](https://github.com/evertrust/horizon-helm/compare/v0.24.1...v1.0.0) (2025-10-07)
 
 
