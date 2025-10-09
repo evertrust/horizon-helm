@@ -23,6 +23,7 @@ jobs:
         uses: googleapis/release-please-action@v4
         with:
           config-file: ${{ startsWith(github.ref_name, 'rc/') && '.github/workflows/rc-rp-config.json' || '.github/workflows/standard-rp-config.json' }}
+          manifest-file: .release-please-manifest.json
           target-branch: ${{ github.ref_name }}
 
   release:
