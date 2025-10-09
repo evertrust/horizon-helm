@@ -1,0 +1,5 @@
+{
+  "release-type": "helm",
+  "versioning": "default",
+  "include-component-in-tag": false
+}

@@ -22,10 +22,8 @@ jobs:
         id: release
         uses: googleapis/release-please-action@v4
         with:
-          release-type: helm
-          prerelease-type: rc
+          config-file: ${{ startsWith(github.ref_name, 'rc/') && '.github/workflows/rc-rp-config.json' || '.github/workflows/standard-rp-config.json' }}
           target-branch: ${{ github.ref_name }}
-          prerelease: ${{ startsWith(github.ref_name, 'rc/') }}
 
   release:
     runs-on: ubuntu-22.04
