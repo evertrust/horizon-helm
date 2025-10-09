@@ -1,5 +1,11 @@
 {
-  "release-type": "helm",
-  "versioning": "default",
-  "include-component-in-tag": false
+  "packages": {
+    ".": {
+      "release-type": "helm",
+      "versioning": "default",
+      "include-component-in-tag": false,
+      "component": "",
+      "prerelease": false
+    }
+  }
 }
