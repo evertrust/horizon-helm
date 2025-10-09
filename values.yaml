@@ -626,7 +626,11 @@ serviceAccount:
   name: ""
   ## @param serviceAccount.annotations Annotations for Horizon Service Account
   ##
-  annotations: {}
+  annotations:
+    helm.sh/hook: pre-install, pre-upgrade, pre-rollback
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "0"
+
   ## @param serviceAccount.automountServiceAccountToken Automount service account token for the server service account
   ##
   automountServiceAccountToken: true
