@@ -1,9 +1,11 @@
 {
-  "release-type": "helm",
-  "versioning": "default",
-  "include-component-in-tag": false,
-  "prerelease": true,
-  "prerelease-type": "rc",
-  "bump-minor-pre-major": true,
-  "bump-patch-for-minor-pre-major": true
+  "packages": {
+    ".": {
+      "release-type": "helm",
+      "versioning": "default",
+      "include-component-in-tag": false,
+      "prerelease": true,
+      "prerelease-type": "rc"
+    }
+  }
 }
