@@ -23,6 +23,7 @@ jobs:
         uses: googleapis/release-please-action@v4
         with:
           release-type: helm
+          prerelease-type: rc
           target-branch: ${{ github.ref_name }}
           prerelease: ${{ startsWith(github.ref_name, 'rc/') }}
 
