@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.25.1-rc4](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc4...v0.25.1-rc4) (2025-10-09)
+
+
+### Bug Fixes
+
+* **serviceAccount:** add pre-install, pre-uprgade, pre-rollback hooks ([#156](https://github.com/evertrust/horizon-helm/issues/156)) ([7e2d9de](https://github.com/evertrust/horizon-helm/commit/7e2d9debb2cd0fa6fee71be48e215fe40d2ea9d7))
+
 ## [0.25.0-rc4](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc3...v0.25.0-rc4) (2025-10-01)
 
 
