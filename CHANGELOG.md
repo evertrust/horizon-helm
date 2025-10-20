@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.25.0-rc.6](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc.5...v0.25.0-rc.6) (2025-10-20)
+
+
+### Bug Fixes
+
+* **upgrade:** set appVersion when uprgade.to is not provided ([#163](https://github.com/evertrust/horizon-helm/issues/163)) ([2a60c35](https://github.com/evertrust/horizon-helm/commit/2a60c354c839b3ffdb148b01a3109761eb6e0ca9))
+
+
+### Miscellaneous Chores
+
+* release 0.25.0-rc.6 ([f2006be](https://github.com/evertrust/horizon-helm/commit/f2006beb7ff1841e065f98de359cf88d75bc9888))
+
 ## [0.25.0-rc.5](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc4...v0.25.0-rc.5) (2025-10-09)
 
 
