@@ -7,7 +7,7 @@ metadata:
   {{- if .Values.commonLabels }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
   {{- end }}
-  annotations: 
+  annotations:
   {{- if .Values.upgradeCompatibilityCheck.annotations }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.upgradeCompatibilityCheck.annotations "context" $ ) | nindent 4 }}
   {{- end }}
@@ -37,9 +37,7 @@ spec:
               {{- if .Values.upgrade.from }}
               "--from", "{{ coalesce .Values.upgrade.from }}",
               {{- end }}
-              {{- if .Values.upgrade.to }}
-              "--to", "{{ coalesce .Values.upgrade.to }}",
-              {{- end }}
+              "--to", {{ include "horizon.upgrade.targetVersion" . | quote }},
               {{- if .Values.upgradeCompatibilityCheck.ignoreEmptyFrom }}
               "--ignore-empty-from",
               {{- end }}
@@ -50,11 +48,11 @@ spec:
             - name: HORIZON_MIG_280_SSV_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.legacySsvPassword.secretName | quote }} 
+                  name: {{ .Values.legacySsvPassword.secretName | quote }}
                   key: {{ .Values.legacySsvPassword.secretKey | quote }}
             {{- end }}
             {{- if .Values.defaultVault.masterKeyURI }}
-            - name: HORIZON_MIG_280_MASTER_KEY_URI 
+            - name: HORIZON_MIG_280_MASTER_KEY_URI
               value: {{ .Values.defaultVault.masterKeyURI | quote }}
             {{- end }}
             - name: HORIZON_MIG_280_KEYSET
