@@ -1,3 +1,7 @@
 license:
   secretKey: "test"
   secretName: "test"
+
+keyset:
+  secretKey: "test"
+  secretName: "test"
