@@ -1,0 +1,21 @@
+{{- if and (ne (.Values.mongodb).enabled false) .Values.temporaryDatabase.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "common.names.dependency.fullname" (dict "chartName" "mongodb" "chartValues" .Values.temporaryDatabase "context" $) }}
+  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.labels .Values.commonLabels (dict "app.kubernetes.io/name" "mongodb" "app.kubernetes.io/part-of" "horizon")) "context" . ) }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
+  {{- if or .Values.temporaryDatabase.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.temporaryDatabase.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  {{- include "common.storage.class" (dict "persistence" .Values.temporaryDatabase.persistence "global" .Values.global) | nindent 2 }}
+  accessModes:
+    {{- range .Values.temporaryDatabase.persistence.accessModes }}
+    - {{ . | quote }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.temporaryDatabase.persistence.size | quote }}
+{{- end }}

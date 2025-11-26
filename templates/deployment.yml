@@ -106,7 +106,7 @@ spec:
       {{- end }}
       containers:
         - name: horizon
-          image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }} {{- if .Values.image.flavor }}{{ printf "-%s" .Values.image.flavor }}{{ end }}
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" | quote }}
           {{- if .Values.containerSecurityContext.enabled }}
           securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}

@@ -45,21 +45,13 @@ valueFrom:
 {{- end -}}
 
 {{/*
-Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-*/}}
-{{- define "horizon.mongodb.fullname" -}}
-{{- printf "%s-%s" .Release.Name "mongodb" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{/*
 Prints either a local or external MongoDB URI.
 */}}
 {{- define "horizon.mongodbUri" }}
 {{- /* If the mongodb subchart is enabled, we force Horizon to use it. */}}
-{{- if .context.Values.mongodb.enabled }}
+{{- if .context.Values.temporaryDatabase.enabled }}
     {{- if .context.Values.externalDatabase.uri }}
-    {{- fail "When mongodb.enabled is set to true, you cannot specify externalDatabase.uri" }}
+    {{- fail "When temporaryDatabase.enabled is set to true, you cannot specify externalDatabase.uri" }}
     {{- else }}
     {{- include "horizon.rendersecret" (dict "key" "mongoUri" "context" .context) }}
     {{- end }}
@@ -67,7 +59,7 @@ Prints either a local or external MongoDB URI.
     {{- if .context.Values.externalDatabase.uri }}
     {{- include "horizon.rendersecret" (dict "value" .context.Values.externalDatabase.uri "key" "mongoUri" "context" .context) }}
     {{- else }}
-    {{- fail "When mongodb.enabled is set to false, you must specify externalDatabase.uri" }}
+    {{- fail "When temporaryDatabase.enabled is set to false, you must specify externalDatabase.uri" }}
     {{- end }}
 {{- end }}
 {{- end }}

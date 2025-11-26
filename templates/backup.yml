@@ -12,7 +12,7 @@ metadata:
   {{- include "common.tplvalues.render" ( dict "value" .Values.backup.labels "context" $ ) | nindent 4 }}
   {{- end }}
   {{- if or .Values.commonAnnotations .Values.backup.annotations }}
-  annotations: 
+  annotations:
   {{- if .Values.backup.annotations }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.backup.annotations "context" $ ) | nindent 4 }}
   {{- end }}
@@ -36,7 +36,7 @@ spec:
       {{- include "common.tplvalues.render" ( dict "value" .Values.backup.labels "context" $ ) | nindent 8 }}
       {{- end }}
       {{- if or .Values.commonAnnotations .Values.backup.annotations }}
-      annotations: 
+      annotations:
       {{- if .Values.backup.annotations }}
       {{- include "common.tplvalues.render" ( dict "value" .Values.backup.annotations "context" $ ) | nindent 8 }}
       {{- end }}
@@ -55,7 +55,7 @@ spec:
           {{- include "common.tplvalues.render" ( dict "value" .Values.backup.labels "context" $ ) | nindent 12 }}
           {{- end }}
           {{- if or .Values.commonAnnotations .Values.backup.annotations }}
-          annotations: 
+          annotations:
           {{- if .Values.backup.annotations }}
           {{- include "common.tplvalues.render" ( dict "value" .Values.backup.annotations "context" $ ) | nindent 12 }}
           {{- end }}
@@ -72,6 +72,9 @@ spec:
           {{- if .Values.backup.tolerations }}
           tolerations: {{- toYaml .Values.backup.tolerations | nindent 12 }}
           {{- end }}
+          {{- if .Values.backup.affinity }}
+          affinity: {{- toYaml .Values.backup.affinity | nindent 12 }}
+          {{- end }}
           containers:
           - name: backup
             image: {{ include "common.images.image" (dict "imageRoot" .Values.backup.image) }}
@@ -79,8 +82,7 @@ spec:
             {{- if .Values.backup.containerSecurityContext.enabled }}
             securityContext: {{- omit .Values.backup.containerSecurityContext "enabled" | toYaml | nindent 14 }}
             {{- end }}
-            command:
-              - toolbox
+            args:
               - backup
             env:
               - name: MONGODB_URI
@@ -89,7 +91,7 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end }}
             {{- with .Values.backup.envFrom }}
-            envFrom: 
+            envFrom:
             {{- toYaml . | nindent 12 }}
             {{- end }}
             resources: {{- toYaml .Values.backup.resources | nindent 14 }}

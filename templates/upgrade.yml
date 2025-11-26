@@ -16,6 +16,14 @@ metadata:
   {{- end }}
 spec:
   template:
+    metadata:
+      labels: {{- include "horizon.labels.standard" . | nindent 8 }}
+      {{- if .Values.commonLabels }}
+      {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.commonAnnotations }}
+      annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 8 }}
+      {{- end }}
     spec:
       {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 6 }}
       serviceAccountName: {{ template "horizon.serviceAccountName" . }}
