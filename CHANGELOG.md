@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.25.0-rc.7](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc.6...v0.25.0-rc.7) (2025-11-26)
+
+
+### Bug Fixes
+
+* add keyset in tests ([469ca8a](https://github.com/evertrust/horizon-helm/commit/469ca8aa650f5b037cf85dd85f99b89dad09680f))
+* bump horizon 2.7.12 ([#162](https://github.com/evertrust/horizon-helm/issues/162)) ([b344a5d](https://github.com/evertrust/horizon-helm/commit/b344a5d347654f224fae0d2094efdac207593b47))
+* bump horizon 2.7.13 ([#166](https://github.com/evertrust/horizon-helm/issues/166)) ([beeea7d](https://github.com/evertrust/horizon-helm/commit/beeea7d10848365dab82a05dd35ecdf17a5747c6))
+
+
+### Miscellaneous Chores
+
+* release 0.25.0-rc.7 ([b605a0f](https://github.com/evertrust/horizon-helm/commit/b605a0f4ff4da8a558f6e2ccb50834af22ae84af))
+
 ## [0.25.0-rc.6](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc.5...v0.25.0-rc.6) (2025-10-20)
 
 
