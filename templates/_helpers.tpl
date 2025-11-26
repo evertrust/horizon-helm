@@ -196,6 +196,13 @@ Prints the actual installed version on the cluster
 {{- end }}
 
 {{/*
+Returns the upgrade target version or defaults to the chart AppVersion.
+*/}}
+{{- define "horizon.upgrade.targetVersion" -}}
+{{- default .Chart.AppVersion .Values.upgrade.to -}}
+{{- end -}}
+
+{{/*
 Prints true if an upgrade job should run, false if not.
 */}}
 {{- define "horizon.shouldRunUpgrade" }}

@@ -3,7 +3,8 @@ name: Release
 on:
   push:
     branches:
-      - master
+      - master # Final (GA) releases from master
+      - rc/** # Any branch under rc/ produces release-candidate prereleases
 
 permissions:
   contents: write
@@ -12,35 +13,58 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
-    steps:
-      - uses: googleapis/release-please-action@v4
-        id: release
-        with:
-          release-type: helm
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}
+    steps:
+      - name: Release Please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: ${{ startsWith(github.ref_name, 'rc/') && '.github/workflows/rc-rp-config.json' || '.github/workflows/standard-rp-config.json' }}
+          manifest-file: .release-please-manifest.json
+          target-branch: ${{ github.ref_name }}
 
   release:
-      runs-on: ubuntu-22.04
-      needs: release-please
-      if: ${{ needs.release-please.outputs.release_created }}
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v3
-  
-        - name: Install Helm
-          uses: azure/setup-helm@v3
-  
-        - name: Build chart
-          run: |
-            helm repo add bitnami https://charts.bitnami.com/bitnami
-            helm dependencies build
-            helm package .
-  
-        - name: Upload to Sonatype repo
-          env:
-            NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-            NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-          run: |
-            PACKAGE="$(find . -type f -name 'horizon-*.tgz' -maxdepth 1 | head -n 1)"
-            curl -F file=@$PACKAGE --user "$NEXUS_USERNAME:$NEXUS_PASSWORD" --fail https://repo.evertrust.io/service/rest/v1/components?repository=charts
+    runs-on: ubuntu-22.04
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+
+      - name: Build chart
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm dependencies build
+          helm package .
+
+      - name: Show packaged chart(s)
+        run: ls -1 *.tgz || true
+
+      - name: Upload to Sonatype repo
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+        run: |
+          PACKAGE="$(find . -maxdepth 1 -type f -name 'horizon-*.tgz' | head -n 1)"
+          if [ -z "$PACKAGE" ]; then
+            echo "No packaged chart found" >&2
+            exit 1
+          fi
+          echo "Uploading $PACKAGE"
+          curl -sS -F file=@$PACKAGE --user "$NEXUS_USERNAME:$NEXUS_PASSWORD" --fail "https://repo.evertrust.io/service/rest/v1/components?repository=charts"
+
+      - name: Summary
+        run: |
+          echo "Tag: ${{ needs.release-please.outputs.tag_name }}"
+          echo "Version: ${{ needs.release-please.outputs.version }}"
+          if [[ "${GITHUB_REF_NAME}" == rc/* ]]; then
+            echo "This was a prerelease (release candidate) build."
+          else
+            echo "This was a final (GA) release."
+          fi
