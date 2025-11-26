@@ -2,6 +2,7 @@ license:
   secretKey: "test"
   secretName: "test"
 
-keyset:
-  secretKey: "test"
-  secretName: "test"
+defaultVault:
+  keyset:
+    secretKey: "test"
+    secretName: "test"
