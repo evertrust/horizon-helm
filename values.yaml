@@ -64,8 +64,6 @@ image:
 ## @param updateStrategy.type Horizon deployment strategy type
 ## @param updateStrategy.rollingUpdate [object] Rolling update spec
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
-## NOTE: Due to schema modifications, we do not support RollingUpdates.
-## Use them at your own risk
 ## e.g:
 ## updateStrategy:
 ##  type: RollingUpdate
@@ -74,7 +72,9 @@ image:
 ##    maxUnavailable: 25%
 ##
 updateStrategy:
-  type: Recreate
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 1
 
 ## @param deploymentAnnotations Annotations to add to the deployment object
 ##
