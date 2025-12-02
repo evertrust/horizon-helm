@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.25.0-rc.9](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc.8...v0.25.0-rc.9) (2025-12-02)
+
+
+### Miscellaneous Chores
+
+* release 0.25.0-rc.9 ([2b2e954](https://github.com/evertrust/horizon-helm/commit/2b2e9546afdd25237a7b8814e21899fbebc66d43))
+
 ## [0.25.0-rc.8](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc.7...v0.25.0-rc.8) (2025-12-02)
 
 
