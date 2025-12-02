@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ printf "%s-check-%s" (include "common.names.fullname" $) (randAlphaNum 6 | lower) }}
+  name: {{ printf "%s-check" (include "common.names.fullname" $) }}
   labels: {{- include "horizon.labels.standard" . | nindent 4 }}
   {{- if .Values.commonLabels }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
