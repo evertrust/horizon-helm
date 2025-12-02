@@ -153,6 +153,8 @@ nodeAffinityPreset:
   ##   - e2e-az2
   ##
   values: []
+## @param revisionHistoryLimit Number of controller revisions to keep
+revisionHistoryLimit: 3
 ## @param affinity Affinity for pod assignment
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ## NOTE: podAffinityPreset, podAntiAffinityPreset, and nodeAffinityPreset will be ignored when it's set
