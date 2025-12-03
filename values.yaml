@@ -56,7 +56,7 @@ commonAnnotations: {}
 image:
   registry: registry.evertrust.io
   repository: horizon
-  tag: 2.7.14
+  tag: 2.8.0
   flavor: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
@@ -64,8 +64,6 @@ image:
 ## @param updateStrategy.type Horizon deployment strategy type
 ## @param updateStrategy.rollingUpdate [object] Rolling update spec
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
-## NOTE: Due to schema modifications, we do not support RollingUpdates.
-## Use them at your own risk
 ## e.g:
 ## updateStrategy:
 ##  type: RollingUpdate
@@ -74,7 +72,9 @@ image:
 ##    maxUnavailable: 25%
 ##
 updateStrategy:
-  type: Recreate
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 1
 
 ## @param deploymentAnnotations Annotations to add to the deployment object
 ##
@@ -153,6 +153,8 @@ nodeAffinityPreset:
   ##   - e2e-az2
   ##
   values: []
+## @param revisionHistoryLimit Number of controller revisions to keep
+revisionHistoryLimit: 3
 ## @param affinity Affinity for pod assignment
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ## NOTE: podAffinityPreset, podAntiAffinityPreset, and nodeAffinityPreset will be ignored when it's set
@@ -466,22 +468,35 @@ initialAdminHashPassword:
   secretName: ""
   secretKey: ""
 
-## For backwards-compatibility reasons, this array should contain
-## only one element.
-## For more information, refer to the Horizon installation guide.
-## @param vaults [array] Horizon vaults configuration
-vaults:
-  - name: default
-    vault_type: ssv
-    ## The master_password field can be a reference to a secret.
-    ## E.g.
-    ##   master_password:
-    ##     valueFrom:
-    ##       secretKeyRef:
-    ##         name: horizon-secret
-    ##         key: defaultMasterPassword
-    ##
-    master_password: {}
+## Horizon Default vault configuration.
+##
+defaultVault:
+  type: tink
+  masterKeyURI: ""
+  ## keyset is a reference to a secret that contains the keyset.
+  ## You should store it (base64-encoded) in a Kubernetes secret and specify
+  ## the secret details here.
+  ## ref: README.md
+  ## @param defaultVault.keyset.secretName Existing secret name where the Horizon keyset is stored
+  ## @param defaultVault.keyset.secretKey Existing secret key where the Horizon keyset is stored
+  ## E.g.
+  ## keyset:
+  ##  secretName: ""
+  ##  secretKey: ""
+  ##
+  keyset: {}
+
+## Horizon legacy SSV password (Optional).
+## Should be set if upgrade from Horizon 2.7 or earlier to Horizon 2.8 or later.
+##
+## @param legacySsvPassword.secretName Existing secret name where the legacy SSV password is stored
+## @param legacySsvPassword.secretKey Existing secret key where the legacy SSV password is stored
+## E.g.
+## legacySsvPassword:
+##   secretName: horizon-legacy-ssv-password
+##   secretKey: legacySsvPassword
+##
+legacySsvPassword: {}
 
 ## Additional allowed hosts that are whitelisted to access the Horizon UI.
 ## Configured ingresses will automatically be added to the list, this should
@@ -615,7 +630,11 @@ serviceAccount:
   name: ""
   ## @param serviceAccount.annotations Annotations for Horizon Service Account
   ##
-  annotations: {}
+  annotations:
+    helm.sh/hook: pre-install, pre-upgrade, pre-rollback
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "0"
+
   ## @param serviceAccount.automountServiceAccountToken Automount service account token for the server service account
   ##
   automountServiceAccountToken: true
@@ -715,19 +734,24 @@ upgrade:
   ## @param upgrade.enabled If true, an upgrade job will be run everytime the Chart is installed or upgraded.
   ##
   force: false
-  ## @param upgrade.image.registry Horizon image registry
-  ## @param upgrade.image.repository Horizon image repository
-  ## @param upgrade.image.tag Horizon image tag (immutable tags are recommended)
-  ## @param upgrade.image.pullPolicy Horizon image pull policy
-  ## @param upgrade.image.pullSecrets Horizon image pull secrets
+  ## @param upgrade.annotations Extra annotations to add to the upgrade job
+  annotations:
+    helm.sh/hook: post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "0"
+  ## @param upgrade.image.registry Horizon Migration image registry
+  ## @param upgrade.image.repository Horizon Migration image repository
+  ## @param upgrade.image.tag Horizon Migration image tag (immutable tags are recommended)
+  ## @param upgrade.image.pullPolicy Horizon Migration image pull policy
+  ## @param upgrade.image.pullSecrets Horizon Migration image pull secrets
   ##
   image:
     registry: registry.evertrust.io
-    repository: horizon-upgrade
-    tag: 2.7.14
+    repository: horizon-migration
+    tag: v1.0.0
     pullPolicy: IfNotPresent
     pullSecrets: []
-  ## horizon-upgrade container resource requests and limits
+  ## horizon-migration container resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param upgrade.resources.limits [object] The resources limits for the Horizon container
   ## @param upgrade.resources.requests [object] The requested resources for the Horizon container
@@ -753,6 +777,43 @@ upgrade:
   ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
   tolerations: []
+  ## @param upgrade.ignoreEmptyFrom
+  ##
+  ignoreEmptyFrom: false
+
+## @section upgradeCompatibilityCheck parameters
+upgradeCompatibilityCheck:
+  ## @param upgradeCompatibilityCheck.enabled If true, a check job will be run before upgrading the release.
+  ##
+  enabled: true
+  ## @param upgradeCompatibilityCheck.annotations Extra annotations to add to the upgrade job
+  annotations:
+    helm.sh/hook: pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "0"
+  ## horizon-migration container resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param upgradeCompatibilityCheck.resources.limits [object] The resources limits for the Horizon container
+  ## @param upgradeCompatibilityCheck.resources.requests [object] The requested resources for the Horizon container
+  ##
+  resources:
+    limits:
+      memory: 512Mi
+      cpu: 500m
+    requests:
+      memory: 512Mi
+      cpu: 500m
+  ## @param upgradeCompatibilityCheck.nodeSelector [object]  Node labels for upgrade pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  ##
+  nodeSelector: {}
+  ## @param upgradeCompatibilityCheck.tolerations [array] Tolerations for upgrade pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ##
+  tolerations: []
+  ## @param upgradeCompatibilityCheck.ignoreEmptyFrom
+  ##
+  ignoreEmptyFrom: false
 
 ## @section Backup parameters
 backup:

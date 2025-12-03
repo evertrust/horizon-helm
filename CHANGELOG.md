@@ -7,6 +7,7 @@
 
 * bump horizon 2.7.14 ([#170](https://github.com/evertrust/horizon-helm/issues/170)) ([b793ee6](https://github.com/evertrust/horizon-helm/commit/b793ee61a2106c87587109a282012bbf060315d6))
 
+
 ## [1.0.3](https://github.com/evertrust/horizon-helm/compare/v1.0.2...v1.0.3) (2025-11-21)
 
 
@@ -72,7 +73,119 @@
 
 ### Bug Fixes
 
+* **upgrade:** set appVersion when uprgade.to is not provided ([#163](https://github.com/evertrust/horizon-helm/issues/163)) ([2a60c35](https://github.com/evertrust/horizon-helm/commit/2a60c354c839b3ffdb148b01a3109761eb6e0ca9))
+
+
+### Miscellaneous Chores
+
+* release 0.25.0-rc.6 ([f2006be](https://github.com/evertrust/horizon-helm/commit/f2006beb7ff1841e065f98de359cf88d75bc9888))
+
+## [0.25.0-rc.5](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc4...v0.25.0-rc.5) (2025-10-09)
+
+
+### Bug Fixes
+
+* **serviceAccount:** add pre-install, pre-uprgade, pre-rollback hooks ([#156](https://github.com/evertrust/horizon-helm/issues/156)) ([7e2d9de](https://github.com/evertrust/horizon-helm/commit/7e2d9debb2cd0fa6fee71be48e215fe40d2ea9d7))
+
+
+### Miscellaneous Chores
+
+* release 0.25.0-rc.5 ([e0b7506](https://github.com/evertrust/horizon-helm/commit/e0b7506b19a8e13844e127de40d1346acaa6c21c))
+
+## [0.25.0-rc4](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc3...v0.25.0-rc4) (2025-10-01)
+
+
+### Bug Fixes
+
+* **upgrade-check:** shorten resource name ([#146](https://github.com/evertrust/horizon-helm/issues/146)) ([d74e615](https://github.com/evertrust/horizon-helm/commit/d74e615988875d18b7b69f62709221f4289cda58))
+
+
+### Miscellaneous Chores
+
+* release 0.25.0-rc4 ([0d39f45](https://github.com/evertrust/horizon-helm/commit/0d39f45acc195b33f6721197e4eebe7bc443a21a))
+
+## [0.25.0-rc3](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc2...v0.25.0-rc3) (2025-10-01)
+
+
+### Bug Fixes
+
+* **upgrade-check:** shorten resource name ([#144](https://github.com/evertrust/horizon-helm/issues/144)) ([7d0c249](https://github.com/evertrust/horizon-helm/commit/7d0c24916a1c1df4a2142292ea1f6ea13a2da80a))
+
+
+### Miscellaneous Chores
+
+* release 0.25.0-rc3 ([df788b4](https://github.com/evertrust/horizon-helm/commit/df788b45e6e92883fbef7db55376c23ee3e55d65))
+
+## [0.25.0-rc2](https://github.com/evertrust/horizon-helm/compare/v0.25.0-rc1...v0.25.0-rc2) (2025-09-30)
+
+
+### Bug Fixes
+
+* check rendering ([5ad1bfc](https://github.com/evertrust/horizon-helm/commit/5ad1bfc18c51c1f6ac1e55d4c0c4e1f0a74ad221))
+
+
+### Miscellaneous Chores
+
+* release 0.25.0-rc2 ([1da8b42](https://github.com/evertrust/horizon-helm/commit/1da8b42a3c325f6742f901006717e72c9d030a56))
+
+## [0.25.0-rc1](https://github.com/evertrust/horizon-helm/compare/v0.24.0-rc4...v0.25.0-rc1) (2025-09-29)
+
+
+### Features
+
+* **upgrade:** add Compatibility check before upgrade ([#133](https://github.com/evertrust/horizon-helm/issues/133)) ([0d56189](https://github.com/evertrust/horizon-helm/commit/0d56189f18a3cb298e74400acc3f3411b0f26e32))
+
+
+### Miscellaneous Chores
+
+* release 0.25.0-rc1 ([6263655](https://github.com/evertrust/horizon-helm/commit/626365536108454a06b2f2c455c1aa52234e1331))
+
+## [0.24.0-rc4](https://github.com/evertrust/horizon-helm/compare/v0.23.4...v0.24.0-rc4) (2025-07-31)
+
+
+### Features
+
+* **upgrade:** run upgrade post-upgrade ([301e030](https://github.com/evertrust/horizon-helm/commit/301e030d4fd78837f01863f70348833d314133e3))
+
+
+### Miscellaneous Chores
+
+* release 0.24.0-rc4 ([66eab7c](https://github.com/evertrust/horizon-helm/commit/66eab7ca56790c62654febe8bbe6437fdd649694))
+
+## [0.23.4](https://github.com/evertrust/horizon-helm/compare/v0.23.3...v0.23.4) (2025-07-30)
+
+### Bug Fixes
+
 * **upgrade:** renderPullSecrets level and indentation ([#129](https://github.com/evertrust/horizon-helm/issues/129)) ([06fb72e](https://github.com/evertrust/horizon-helm/commit/06fb72eac36416e369de0797dae3843516a866c0))
+
+## [0.24.0-rc3](https://github.com/evertrust/horizon-helm/compare/v0.24.0-rc2...v0.24.0-rc3) (2025-07-29)
+
+### Bug Fixes
+
+* **upgrade:** update migrate flags ([f844e56](https://github.com/evertrust/horizon-helm/commit/f844e567b42b9ba8e0132caacf8cd0b00f0d7247))
+
+### Miscellaneous Chores
+
+* release 0.24.0-rc3 ([05555ff](https://github.com/evertrust/horizon-helm/commit/05555ffacd962e572afa5a3248b16e2eef79a8dd))
+
+## [0.24.0-rc2](https://github.com/evertrust/horizon-helm/compare/v0.24.0-rc1...v0.24.0-rc2) (2025-07-29)
+
+
+### Bug Fixes
+
+* **upgrade:** imagePullSecret indentation ([41b7763](https://github.com/evertrust/horizon-helm/commit/41b7763a44d78bac05bf97d9e5d8931762ab8655))
+
+
+### Miscellaneous Chores
+
+* release 0.24.0-rc2 ([f8efd87](https://github.com/evertrust/horizon-helm/commit/f8efd8785a663d483b739c1f173ec9c955005a47))
+
+## [0.24.0-rc1](https://github.com/evertrust/horizon-helm/compare/v0.23.3...v0.24.0-rc1) (2025-07-29)
+
+
+### Miscellaneous Chores
+
+* release 0.24.0-rc1 ([d00d26f](https://github.com/evertrust/horizon-helm/commit/d00d26fe35887044053cdd6d1640d71eb20748ed))
 
 ## [0.23.3](https://github.com/evertrust/horizon-helm/compare/v0.23.2...v0.23.3) (2025-07-24)
 

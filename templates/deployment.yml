@@ -19,6 +19,7 @@ metadata:
   {{- end }}
   {{- end }}
 spec:
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   {{- if .Values.horizontalAutoscaler.enabled }}
   replicas: {{ .Values.horizontalAutoscaler.minReplicas }}
   {{- end }}
@@ -245,29 +246,18 @@ spec:
             - name: HOSTS_ALLOWED.{{ $key }}
               value: {{ $value }}
             {{- end }}
-            {{- with (first .Values.vaults) }}
             - name: VAULT_TYPE
-              value: {{ .vault_type }}
-            {{- if hasKey . "master_password" }}
-            - name: VAULT_MASTER_PASSWORD
-            {{- include "horizon.rendersecret" (dict "value" .master_password "key" (printf "%sVaultMasterPassword" .name) "context" $) | nindent 14 }}
+              value: {{ .Values.defaultVault.type | quote }}
+            {{- if .Values.defaultVault.masterKeyURI }}
+            - name: VAULT_TINK_MASTER_KEY_URI 
+              value: {{ .Values.defaultVault.masterKeyURI | quote }}
             {{- end }}
-            {{- if hasKey . "module_path" }}
-            - name: VAULT_MODULE_PATH
-              value: {{ .module_path }}
-            {{- end }}
-            {{- if hasKey . "slot_id" }}
-            - name: VAULT_SLOT_ID
-              value: {{ .slot_id }}
-            {{- end }}
-            {{- if hasKey . "pin" }}
-            - name: VAULT_PIN
-              value: {{ .pin }}
-            {{- end }}
-            {{- if hasKey . "label" }}
-            - name: VAULT_LABEL
-              value: {{ .label }}
-            {{- end }}
+            {{- if hasKey .Values.defaultVault "keyset" }}
+            - name: KEYSET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "You must specify a keyset secret" .Values.defaultVault.keyset.secretName }}
+                  key: {{ required "You must specify a keyset secret" .Values.defaultVault.keyset.secretKey }}
             {{- end }}
             {{- if .Values.analytics.enabled }}
             - name: ANALYTICS

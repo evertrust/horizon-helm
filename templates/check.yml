@@ -1,56 +1,48 @@
-{{- if eq (include "horizon.shouldRunUpgrade" .) "true" }}
+{{- if .Values.upgradeCompatibilityCheck.enabled  | default false -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ printf "%s-upgrade" (include "common.names.fullname" $) }}
+  name: {{ printf "%s-check" (include "common.names.fullname" $) }}
   labels: {{- include "horizon.labels.standard" . | nindent 4 }}
   {{- if .Values.commonLabels }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
   {{- end }}
   annotations:
-  {{- if .Values.upgrade.annotations }}
-  {{- include "common.tplvalues.render" ( dict "value" .Values.upgrade.annotations "context" $ ) | nindent 4 }}
+  {{- if .Values.upgradeCompatibilityCheck.annotations }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.upgradeCompatibilityCheck.annotations "context" $ ) | nindent 4 }}
   {{- end }}
   {{- if .Values.commonAnnotations }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
 spec:
   template:
-    metadata:
-      labels: {{- include "horizon.labels.standard" . | nindent 8 }}
-      {{- if .Values.commonLabels }}
-      {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 8 }}
-      {{- end }}
-      {{- if .Values.commonAnnotations }}
-      annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 8 }}
-      {{- end }}
     spec:
       {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 6 }}
       serviceAccountName: {{ template "horizon.serviceAccountName" . }}
       automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
-      {{- if .Values.upgrade.nodeSelector }}
-      nodeSelector: {{- toYaml .Values.upgrade.nodeSelector | nindent 8 }}
+      {{- if .Values.upgradeCompatibilityCheck.nodeSelector }}
+      nodeSelector: {{- toYaml .Values.upgradeCompatibilityCheck.nodeSelector | nindent 8 }}
       {{- end }}
-      {{- if .Values.upgrade.tolerations }}
-      tolerations: {{- toYaml .Values.upgrade.tolerations | nindent 8 }}
+      {{- if .Values.upgradeCompatibilityCheck.tolerations }}
+      tolerations: {{- toYaml .Values.upgradeCompatibilityCheck.tolerations | nindent 8 }}
       {{- end }}
       containers:
-        - name: horizon-upgrade
+        - name: horizon-upgrade-compatibility-check
           image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.upgrade.image.pullPolicy | default "IfNotPresent" | quote }}
           args: [
-              "migrate",
+              "check",
               "-y",
               "--mongo-uri", "$(MONGODB_URI)",
               {{- if .Values.upgrade.from }}
               "--from", "{{ coalesce .Values.upgrade.from }}",
               {{- end }}
               "--to", {{ include "horizon.upgrade.targetVersion" . | quote }},
-              {{- if .Values.upgrade.ignoreEmptyFrom }}
+              {{- if .Values.upgradeCompatibilityCheck.ignoreEmptyFrom }}
               "--ignore-empty-from",
               {{- end }}
           ]
-          resources: {{- toYaml .Values.upgrade.resources | nindent 12 }}
+          resources: {{- toYaml .Values.upgradeCompatibilityCheck.resources | nindent 12 }}
           env:
             {{- if .Values.legacySsvPassword }}
             - name: HORIZON_MIG_280_SSV_PASSWORD
