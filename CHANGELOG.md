@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/evertrust/horizon-helm/compare/v1.0.4...v2.0.0) (2025-12-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* horizon 2.8 support ([#155](https://github.com/evertrust/horizon-helm/issues/155))
+
+### Features
+
+* horizon 2.8 support ([#155](https://github.com/evertrust/horizon-helm/issues/155)) ([3020759](https://github.com/evertrust/horizon-helm/commit/302075953b06a745b51495ed4f32f13a0fc3d3d3))
+
 ## [1.0.4](https://github.com/evertrust/horizon-helm/compare/v1.0.3...v1.0.4) (2025-12-01)
 
 
