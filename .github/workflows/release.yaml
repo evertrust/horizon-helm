@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - master
+      - legacy/horizon-2.7
 
 permissions:
   contents: write
