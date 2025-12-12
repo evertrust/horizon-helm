@@ -17,6 +17,7 @@ jobs:
         id: release
         with:
           release-type: helm
+          target-branch: ${{ github.ref_name }}
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
 
