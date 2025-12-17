@@ -13,7 +13,7 @@ spec:
   replicas: 1
   selector:
     matchLabels: {{- include "common.labels.matchLabels" (dict "customLabels" (dict "app.kubernetes.io/name" "mongodb") "context" .) | nindent 6 }}
-  strategy: 
+  strategy:
     type: Recreate
   template:
     metadata:
@@ -62,6 +62,9 @@ spec:
             - name: data
               mountPath: /data/db
             {{- end }}
+            {{- if .Values.temporaryDatabase.extraVolumeMounts }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.temporaryDatabase.extraVolumeMounts "context" $) | nindent 12 }}
+            {{- end }}
           ports:
             - name: mongo
               containerPort: 27017
@@ -71,5 +74,8 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: {{ include "common.names.dependency.fullname" (dict "chartName" "mongodb" "chartValues" .Values.temporaryDatabase "context" $) }}
+        {{- end }}
+        {{- if .Values.temporaryDatabase.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.temporaryDatabase.extraVolumes "context" $) | nindent 8 }}
         {{- end }}
 {{- end }}

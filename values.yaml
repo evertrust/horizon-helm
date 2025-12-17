@@ -694,6 +694,19 @@ temporaryDatabase:
     ## @param temporaryDatabase.persistence.size Size of data volume for MongoDB
     size: "1Gi"
 
+  ## @param temporaryDatabase.extraVolumes Optionally specify extra list of additional volumes for MongoDB pods
+  ## extraVolumes:
+  ##   - name: extra-volume-name
+  ##     configMap:
+  ##       name: example-configmap
+  extraVolumes: []
+
+  ## @param temporaryDatabase.extraVolumeMounts Optionally specify extra list of additional volumeMounts for MongoDB container(s)
+  ## extraVolumeMounts:
+  ##   - name: extra-volume-name
+  ##     mountPath: /mnt/extra-volume
+  extraVolumeMounts: []
+
   ## MongoDB container resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param temporaryDatabase.resources.limits [object] The resources limits for the Horizon container

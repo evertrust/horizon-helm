@@ -15,6 +15,29 @@ tests:
           path: spec.template.spec.containers[0].name
           value: mongo
 
+  - it: should mount extra volumes for temporary mongodb when provided
+    set:
+      temporaryDatabase.extraVolumes:
+        - name: mongo-extra
+          configMap:
+            name: mongo-extra-cm
+      temporaryDatabase.extraVolumeMounts:
+        - name: mongo-extra
+          mountPath: /docker-entrypoint-initdb.d
+    template: mongodb/deployment.yml
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: mongo-extra
+            configMap:
+              name: mongo-extra-cm
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: mongo-extra
+            mountPath: /docker-entrypoint-initdb.d
+
   - it: should not deploy a temporary mongodb when disabled
     set:
       temporaryDatabase.enabled: false
