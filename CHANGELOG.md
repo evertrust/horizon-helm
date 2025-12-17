@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/evertrust/horizon-helm/compare/v2.0.1...v2.0.2) (2025-12-17)
+
+
+### Bug Fixes
+
+* allow mounting volumes on the temporary database ([#180](https://github.com/evertrust/horizon-helm/issues/180)) ([887a494](https://github.com/evertrust/horizon-helm/commit/887a494d8ba8b1392f26cfbc3c724aeab4e9feb5))
+
 ## [2.0.1](https://github.com/evertrust/horizon-helm/compare/v2.0.0...v2.0.1) (2025-12-03)
 
 
