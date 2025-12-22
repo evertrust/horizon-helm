@@ -56,7 +56,7 @@ commonAnnotations: {}
 image:
   registry: registry.evertrust.io
   repository: horizon
-  tag: 2.7.16
+  tag: 2.7.17
   flavor: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
@@ -724,7 +724,7 @@ upgrade:
   image:
     registry: registry.evertrust.io
     repository: horizon-upgrade
-    tag: 2.7.16
+    tag: 2.7.17
     pullPolicy: IfNotPresent
     pullSecrets: []
   ## horizon-upgrade container resource requests and limits
