@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.9](https://github.com/evertrust/horizon-helm/compare/v1.0.8...v1.0.9) (2026-01-16)
+
+
+### Bug Fixes
+
+* bump horizon 2.7.19 ([#193](https://github.com/evertrust/horizon-helm/issues/193)) ([d17ac94](https://github.com/evertrust/horizon-helm/commit/d17ac944781083a7e8c63923e74a754501e4d5f1))
+
 ## [1.0.8](https://github.com/evertrust/horizon-helm/compare/v1.0.7...v1.0.8) (2026-01-13)
 
 
