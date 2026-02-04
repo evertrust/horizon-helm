@@ -761,7 +761,7 @@ upgrade:
   image:
     registry: registry.evertrust.io
     repository: horizon-migration
-    tag: 1.8.0
+    tag: 1.9.0
     pullPolicy: IfNotPresent
     pullSecrets: []
   ## horizon-migration container resource requests and limits
