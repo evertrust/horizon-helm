@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.6](https://github.com/evertrust/horizon-helm/compare/v2.0.5...v2.0.6) (2026-02-18)
+
+
+### Bug Fixes
+
+* Remove the serialize-messages = on form the pekko.conf ([#203](https://github.com/evertrust/horizon-helm/issues/203)) ([91c6da2](https://github.com/evertrust/horizon-helm/commit/91c6da25d454a4bd068675402b8b55f437502a50))
+
 ## [2.0.5](https://github.com/evertrust/horizon-helm/compare/v2.0.4...v2.0.5) (2026-02-04)
 
 
