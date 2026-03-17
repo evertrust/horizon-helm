@@ -10,7 +10,7 @@ metadata:
   {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentLabels "context" $ ) | nindent 4 }}
   {{- end }}
   {{- if or .Values.commonAnnotations .Values.deploymentAnnotations }}
-  annotations: 
+  annotations:
   {{- if .Values.deploymentAnnotations }}
   {{- include "common.tplvalues.render" ( dict "value" .Values.deploymentAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
@@ -20,8 +20,8 @@ metadata:
   {{- end }}
 spec:
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
-  {{- if .Values.horizontalAutoscaler.enabled }}
-  replicas: {{ .Values.horizontalAutoscaler.minReplicas }}
+  {{- if not .Values.horizontalAutoscaler.enabled }}
+  replicas: {{ .Values.replicas }}
   {{- end }}
   selector:
     matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
@@ -157,7 +157,7 @@ spec:
               value: {{ .value | quote }}
             {{- end }}
             {{- if .valueFrom }}
-              valueFrom: 
+              valueFrom:
             {{- toYaml .valueFrom | nindent 16 }}
             {{- end }}
             {{- end }}
@@ -249,7 +249,7 @@ spec:
             - name: VAULT_TYPE
               value: {{ .Values.defaultVault.type | quote }}
             {{- if .Values.defaultVault.masterKeyURI }}
-            - name: VAULT_TINK_MASTER_KEY_URI 
+            - name: VAULT_TINK_MASTER_KEY_URI
               value: {{ .Values.defaultVault.masterKeyURI | quote }}
             {{- end }}
             {{- if hasKey .Values.defaultVault "keyset" }}
