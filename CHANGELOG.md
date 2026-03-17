@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.10](https://github.com/evertrust/horizon-helm/compare/v2.0.9...v2.0.10) (2026-03-17)
+
+
+### Bug Fixes
+
+* do not render replicas when autoscaling is enabled ([#214](https://github.com/evertrust/horizon-helm/issues/214)) ([3a807b3](https://github.com/evertrust/horizon-helm/commit/3a807b3b0b4fd9d2671b820841c560f54b236acb))
+
 ## [2.0.9](https://github.com/evertrust/horizon-helm/compare/v2.0.8...v2.0.9) (2026-03-16)
 
 
