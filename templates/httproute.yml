@@ -1,0 +1,81 @@
+{{- if .Values.route.enabled }}
+{{- if empty .Values.route.parentRefs }}
+{{- fail "route.parentRefs must be specified when route.enabled is true" }}
+{{- end }}
+{{- if and .Values.route.redirect.enabled (empty .Values.route.redirect.parentRefs) }}
+{{- fail "route.redirect.parentRefs must be specified when route.redirect.enabled is true" }}
+{{- end }}
+{{- $fullName := include "common.names.fullname" . }}
+{{- $hostnames := .Values.route.hostnames }}
+{{- if empty $hostnames }}
+{{- fail "route.hostnames must contain at least one hostname when route.enabled is true" }}
+{{- end }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ $fullName }}
+  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" (dict "value" .Values.commonLabels "context" $) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations:
+    {{- include "common.tplvalues.render" (dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- include "common.tplvalues.render" (dict "value" .Values.route.parentRefs "context" $ ) | nindent 4 }}
+  hostnames:
+    {{- range $hostnames }}
+    - {{ . | quote }}
+    {{- end }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: {{ .Values.ingress.path | quote }}
+      backendRefs:
+        - name: {{ $fullName }}
+          port: 9000
+{{- if .Values.route.redirect.enabled }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ $fullName }}-http
+  labels: {{- include "horizon.labels.standard" . | nindent 4 }}
+  {{- if .Values.commonLabels }}
+  {{- include "common.tplvalues.render" (dict "value" .Values.commonLabels "context" $) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations:
+    {{- include "common.tplvalues.render" (dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- include "common.tplvalues.render" (dict "value" .Values.route.redirect.parentRefs "context" $ ) | nindent 4 }}
+  hostnames:
+    {{- range $hostnames }}
+    - {{ . | quote }}
+    {{- end }}
+  rules:
+    - matches:
+        {{- range .Values.route.redirect.exceptionPaths }}
+        - path:
+            type: PathPrefix
+            value: {{ . | quote }}
+        {{- end }}
+      backendRefs:
+        - name: {{ $fullName }}
+          port: 9000
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: 301
+{{- end }}
+{{- end }}
