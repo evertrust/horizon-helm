@@ -1,0 +1,234 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: gateway api httproute
+templates:
+  - httproute.yml
+  - ingress.yml
+  - deployment.yml
+tests:
+  - it: should not render httproute resources by default
+    template: httproute.yml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render two httproutes when redirect is enabled
+    set:
+      route:
+        enabled: true
+        hostnames:
+          - horizon.example.com
+        parentRefs:
+          - name: horizon-gateway
+            sectionName: https
+        redirect:
+          parentRefs:
+            - name: horizon-gateway
+              sectionName: http
+    template: httproute.yml
+    asserts:
+      - hasDocuments:
+          count: 2
+
+  - it: should name the HTTP redirect route with -http suffix
+    set:
+      route:
+        enabled: true
+        hostnames:
+          - horizon.example.com
+        parentRefs:
+          - name: horizon-gateway
+            sectionName: https
+        redirect:
+          parentRefs:
+            - name: horizon-gateway
+              sectionName: http
+    template: httproute.yml
+    documentIndex: 1
+    asserts:
+      - isKind:
+          of: HTTPRoute
+      - matchRegex:
+          path: metadata.name
+          pattern: ".*-http$"
+      - equal:
+          path: spec.parentRefs[0].sectionName
+          value: http
+
+  - it: should require redirect parentRefs when redirect is enabled
+    set:
+      route:
+        enabled: true
+        hostnames:
+          - horizon.example.com
+        parentRefs:
+          - name: horizon-gateway
+            sectionName: https
+    template: httproute.yml
+    asserts:
+      - failedTemplate:
+          errorMessage: route.redirect.parentRefs must be specified when route.redirect.enabled is true
+
+  - it: should keep ingress rendering when route is enabled
+    set:
+      ingress:
+        enabled: true
+        hostname: horizon.example.com
+      route:
+        enabled: true
+        hostnames:
+          - horizon.example.com
+        parentRefs:
+          - name: horizon-gateway
+            sectionName: https
+        redirect:
+          parentRefs:
+            - name: horizon-gateway
+              sectionName: http
+    template: ingress.yml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Ingress
+
+  - it: should configure redirect route with path prefix exceptions
+    set:
+      route:
+        enabled: true
+        hostnames:
+          - horizon.example.com
+        parentRefs:
+          - name: horizon-gateway
+            sectionName: https
+        redirect:
+          parentRefs:
+            - name: horizon-gateway
+              sectionName: http
+    template: httproute.yml
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.rules[0].matches[0].path.type
+          value: PathPrefix
+      - equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /scep
+      - equal:
+          path: spec.rules[0].matches[1].path.value
+          value: /certsrv
+      - equal:
+          path: spec.rules[0].matches[2].path.value
+          value: /certSrv
+      - equal:
+          path: spec.rules[0].matches[3].path.value
+          value: /intune
+      - equal:
+          path: spec.rules[0].matches[4].path.value
+          value: /jamf
+      - equal:
+          path: spec.rules[0].backendRefs[0].port
+          value: 9000
+      - notExists:
+          path: spec.rules[0].filters
+      - equal:
+          path: spec.rules[1].filters[0].type
+          value: RequestRedirect
+      - equal:
+          path: spec.rules[1].filters[0].requestRedirect.scheme
+          value: https
+      - equal:
+          path: spec.rules[1].filters[0].requestRedirect.statusCode
+          value: 301
+
+  - it: should use http backend port for main route when tls is disabled
+    set:
+      route:
+        enabled: true
+        hostnames:
+          - horizon.example.com
+        parentRefs:
+          - name: horizon-gateway
+            sectionName: https
+        redirect:
+          enabled: false
+      tls:
+        enabled: false
+    template: httproute.yml
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.rules[0].backendRefs[0].port
+          value: 9000
+
+  - it: should keep using http backend port for main route when tls is enabled
+    set:
+      route:
+        enabled: true
+        hostnames:
+          - horizon.example.com
+        parentRefs:
+          - name: horizon-gateway
+            sectionName: https
+        redirect:
+          enabled: false
+      tls:
+        enabled: true
+    template: httproute.yml
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.rules[0].backendRefs[0].port
+          value: 9000
+
+  - it: should fail when route.hostnames is not provided
+    set:
+      route:
+        enabled: true
+        parentRefs:
+          - name: horizon-gateway
+            sectionName: https
+        redirect:
+          enabled: false
+    template: httproute.yml
+    asserts:
+      - failedTemplate:
+          errorMessage: route.hostnames must contain at least one hostname when route.enabled is true
+
+  - it: should use explicit route hostnames in the main route
+    set:
+      route:
+        enabled: true
+        hostnames:
+          - route.horizon.example.com
+        parentRefs:
+          - name: horizon-gateway
+            sectionName: https
+        redirect:
+          enabled: false
+    template: httproute.yml
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.hostnames[0]
+          value: route.horizon.example.com
+      - notExists:
+          path: spec.hostnames[1]
+
+  - it: should add explicit route hostnames to deployment allowed hosts
+    set:
+      route:
+        enabled: true
+        hostnames:
+          - route.horizon.example.com
+        parentRefs:
+          - name: horizon-gateway
+            sectionName: https
+        redirect:
+          enabled: false
+    template: deployment.yml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: HOSTS_ALLOWED.0
+            value: route.horizon.example.com
