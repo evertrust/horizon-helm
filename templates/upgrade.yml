@@ -28,6 +28,9 @@ spec:
       {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 6 }}
       serviceAccountName: {{ template "horizon.serviceAccountName" . }}
       automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+      {{- if .Values.upgrade.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.upgrade.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
       {{- if .Values.upgrade.nodeSelector }}
       nodeSelector: {{- toYaml .Values.upgrade.nodeSelector | nindent 8 }}
       {{- end }}
@@ -38,6 +41,9 @@ spec:
         - name: horizon-upgrade
           image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.upgrade.image.pullPolicy | default "IfNotPresent" | quote }}
+          {{- if .Values.upgrade.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.upgrade.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
           args: [
               "migrate",
               "-y",
@@ -70,6 +76,14 @@ spec:
                   key: {{ required "You must specify a keyset secret" .Values.defaultVault.keyset.secretKey | quote }}
             - name: MONGODB_URI
               {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}
+          {{- if .Values.upgrade.extraVolumeMounts }}
+          volumeMounts:
+          {{- include "common.tplvalues.render" (dict "value" .Values.upgrade.extraVolumeMounts "context" $) | nindent 12 }}
+          {{- end }}
+      {{- if .Values.upgrade.extraVolumes }}
+      volumes:
+      {{- include "common.tplvalues.render" (dict "value" .Values.upgrade.extraVolumes "context" $) | nindent 8 }}
+      {{- end }}
       restartPolicy: Never
   backoffLimit: 0
 {{- end }}
