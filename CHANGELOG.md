@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.11](https://github.com/evertrust/horizon-helm/compare/v2.0.10...v2.0.11) (2026-03-25)
+
+
+### Bug Fixes
+
+* allow securityContexts and volumeMounts in more containers ([#217](https://github.com/evertrust/horizon-helm/issues/217)) ([e8e742b](https://github.com/evertrust/horizon-helm/commit/e8e742b6c158d80ce651361f41e36b74469aba7e))
+
 ## [2.0.10](https://github.com/evertrust/horizon-helm/compare/v2.0.9...v2.0.10) (2026-03-17)
 
 
