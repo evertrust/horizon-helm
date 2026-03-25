@@ -20,6 +20,9 @@ spec:
       {{- include "common.images.renderPullSecrets" (dict "images" (list .Values.upgrade.image) "context" $) | nindent 6 }}
       serviceAccountName: {{ template "horizon.serviceAccountName" . }}
       automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+      {{- if .Values.upgradeCompatibilityCheck.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.upgradeCompatibilityCheck.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
       {{- if .Values.upgradeCompatibilityCheck.nodeSelector }}
       nodeSelector: {{- toYaml .Values.upgradeCompatibilityCheck.nodeSelector | nindent 8 }}
       {{- end }}
@@ -30,6 +33,9 @@ spec:
         - name: horizon-upgrade-compatibility-check
           image: {{ include "common.images.image" (dict "imageRoot" .Values.upgrade.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.upgrade.image.pullPolicy | default "IfNotPresent" | quote }}
+          {{- if .Values.upgradeCompatibilityCheck.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.upgradeCompatibilityCheck.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
           args: [
               "check",
               "-y",
@@ -62,6 +68,14 @@ spec:
                   key: {{ required "You must specify a keyset secret" .Values.defaultVault.keyset.secretKey | quote }}
             - name: MONGODB_URI
               {{- include "horizon.mongodbUri" (dict "context" .) | nindent 14 }}
+          {{- if .Values.upgradeCompatibilityCheck.extraVolumeMounts }}
+          volumeMounts:
+          {{- include "common.tplvalues.render" (dict "value" .Values.upgradeCompatibilityCheck.extraVolumeMounts "context" $) | nindent 12 }}
+          {{- end }}
+      {{- if .Values.upgradeCompatibilityCheck.extraVolumes }}
+      volumes:
+      {{- include "common.tplvalues.render" (dict "value" .Values.upgradeCompatibilityCheck.extraVolumes "context" $) | nindent 8 }}
+      {{- end }}
       restartPolicy: Never
   backoffLimit: 0
 {{- end }}
