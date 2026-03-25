@@ -792,6 +792,35 @@ upgrade:
   ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
   tolerations: []
+  ## Configure Pods Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param upgrade.podSecurityContext.enabled Enabled upgrade pod Security Context
+  ## @param upgrade.podSecurityContext.fsGroup Set upgrade pod Security Context fsGroup
+  ##
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  ## Configure Container Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+  ## @param upgrade.containerSecurityContext.enabled Enabled upgrade container Security Context
+  ## @param upgrade.containerSecurityContext.runAsUser Set upgrade container Security Context runAsUser
+  ## @param upgrade.containerSecurityContext.runAsNonRoot Set upgrade container Security Context runAsNonRoot
+  ##
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
+  ## @param upgrade.extraVolumes Optionally specify extra list of additional volumes for the upgrade pod
+  ## extraVolumes:
+  ##   - name: extra-volume-name
+  ##     configMap:
+  ##       name: example-configmap
+  extraVolumes: []
+  ## @param upgrade.extraVolumeMounts Optionally specify extra list of additional volumeMounts for the upgrade container
+  ## extraVolumeMounts:
+  ##   - name: extra-volume-name
+  ##     mountPath: /mnt/extra-volume
+  extraVolumeMounts: []
   ## @param upgrade.ignoreEmptyFrom
   ##
   ignoreEmptyFrom: false
@@ -826,6 +855,35 @@ upgradeCompatibilityCheck:
   ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
   tolerations: []
+  ## Configure Pods Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param upgradeCompatibilityCheck.podSecurityContext.enabled Enabled upgrade compatibility check pod Security Context
+  ## @param upgradeCompatibilityCheck.podSecurityContext.fsGroup Set upgrade compatibility check pod Security Context fsGroup
+  ##
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  ## Configure Container Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+  ## @param upgradeCompatibilityCheck.containerSecurityContext.enabled Enabled upgrade compatibility check container Security Context
+  ## @param upgradeCompatibilityCheck.containerSecurityContext.runAsUser Set upgrade compatibility check container Security Context runAsUser
+  ## @param upgradeCompatibilityCheck.containerSecurityContext.runAsNonRoot Set upgrade compatibility check container Security Context runAsNonRoot
+  ##
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
+  ## @param upgradeCompatibilityCheck.extraVolumes Optionally specify extra list of additional volumes for the upgrade compatibility check pod
+  ## extraVolumes:
+  ##   - name: extra-volume-name
+  ##     configMap:
+  ##       name: example-configmap
+  extraVolumes: []
+  ## @param upgradeCompatibilityCheck.extraVolumeMounts Optionally specify extra list of additional volumeMounts for the upgrade compatibility check container
+  ## extraVolumeMounts:
+  ##   - name: extra-volume-name
+  ##     mountPath: /mnt/extra-volume
+  extraVolumeMounts: []
   ## @param upgradeCompatibilityCheck.ignoreEmptyFrom
   ##
   ignoreEmptyFrom: false
@@ -876,6 +934,17 @@ backup:
     enabled: true
     runAsUser: 1001
     runAsNonRoot: true
+  ## @param backup.extraVolumes Optionally specify extra list of additional volumes for the backup pod
+  ## extraVolumes:
+  ##   - name: extra-volume-name
+  ##     configMap:
+  ##       name: example-configmap
+  extraVolumes: []
+  ## @param backup.extraVolumeMounts Optionally specify extra list of additional volumeMounts for the backup container
+  ## extraVolumeMounts:
+  ##   - name: extra-volume-name
+  ##     mountPath: /mnt/extra-volume
+  extraVolumeMounts: []
   ## backup container resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param backup.resources.limits [object] The resources limits for the backup container
