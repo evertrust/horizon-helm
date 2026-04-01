@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.1.0](https://github.com/evertrust/horizon-helm/compare/v2.0.8...v2.1.0) (2026-04-01)
+
+
+### Bug Fixes
+
+* allow securityContexts and volumeMounts in more containers ([#217](https://github.com/evertrust/horizon-helm/issues/217)) ([193bb46](https://github.com/evertrust/horizon-helm/commit/193bb4656b9c808a49cb829be1bc204d59326f09))
+* Bump horizon to 2.9.0 ([#211](https://github.com/evertrust/horizon-helm/issues/211)) ([c7fa5d5](https://github.com/evertrust/horizon-helm/commit/c7fa5d56423708f76d3e1eee29a8cd0760b9eb43))
+* do not render replicas when autoscaling is enabled ([#214](https://github.com/evertrust/horizon-helm/issues/214)) ([cd39594](https://github.com/evertrust/horizon-helm/commit/cd39594dccad978a45bf399dcafede8fc03b2354))
+
+
+### Miscellaneous Chores
+
+* release 2.1.0 ([7025a35](https://github.com/evertrust/horizon-helm/commit/7025a350632ab3e641a5f0b5f76c5094211162f3))
+
 ## [2.0.8](https://github.com/evertrust/horizon-helm/compare/v2.0.7...v2.0.8) (2026-03-16)
 
 
