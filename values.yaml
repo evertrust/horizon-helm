@@ -429,6 +429,42 @@ ingress:
   ##
   extraRules: []
 
+## @section Horizon Route configuration
+##
+route:
+  ## @param route.enabled Set to true to enable Gateway API HTTPRoute generation
+  ##
+  enabled: false
+  ## @param route.parentRefs Parent references used by the HTTPRoute
+  ## e.g:
+  ## parentRefs:
+  ##   - name: horizon-gateway
+  ##     sectionName: https
+  ##
+  parentRefs: []
+  ## @param route.hostnames Explicit hostnames for HTTPRoute. Mandatory when route.enabled=true.
+  ##
+  hostnames: []
+  redirect:
+    ## @param route.redirect.enabled Set to true to generate HTTP to HTTPS redirects
+    ##
+    enabled: true
+    ## @param route.redirect.parentRefs Parent references used by the HTTP redirect route (e.g. HTTP listener)
+    ## e.g:
+    ## parentRefs:
+    ##   - name: horizon-gateway
+    ##     sectionName: http
+    ##
+    parentRefs: []
+    ## @param route.redirect.exceptionPaths Path prefixes that must not be redirected to HTTPS
+    ##
+    exceptionPaths:
+      - /scep
+      - /certsrv
+      - /certSrv
+      - /intune
+      - /jamf
+
 ## @section Prometheus monitor configuration
 ## @param monitoring.enabled Enable the creation of a ServiceMonitor object for Horizon if the cluster has the monitoring.coreos.com/v1 capability.
 monitoring:

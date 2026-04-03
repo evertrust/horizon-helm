@@ -94,8 +94,13 @@ Prints all Horizon allowed hosts.
   {{- end }}
   {{- end }}
 {{- end }}
+{{- if .Values.route.enabled }}
+    {{- range .Values.route.hostnames }}
+    {{- $allowedHosts = append $allowedHosts . }}
+    {{- end }}
+{{- end }}
 {{- $allowedHosts = concat $allowedHosts .Values.allowedHosts }}
-{{- toJson $allowedHosts}}
+{{- toJson $allowedHosts }}
 {{- end }}
 
 {{/*
