@@ -1,113 +1,93 @@
-## @section Global parameters
-## Global Docker image parameters
-## Please, note that this will override the image parameters, including dependencies, configured to use the global value
-## Current available global Docker image parameters: imageRegistry, imagePullSecrets
-##
-
-## @param global.imageRegistry Global Docker image registry
-## @param global.imagePullSecrets Global Docker registry secret names as an array
-##
+## Global Docker image parameters.
+## Please note that this will override the image parameters, including dependencies, configured to use the global value.
 global:
+  ## Global Docker image registry
   imageRegistry: ""
-  ## E.g.
+  ## Global Docker registry secret names as an array
+  ##
+  ## @example
   ## imagePullSecrets:
   ##   - myRegistryKeySecretName
-  ##
   imagePullSecrets: []
 
-## @section Common parameters
-##
-
-## @param kubeVersion Force target Kubernetes version (using Helm capabilities if not set)
-##
+## Force target Kubernetes version (using Helm capabilities if not set)
 kubeVersion: ""
-## @param nameOverride String to partially override horizon.fullname
-##
+## String to partially override horizon.fullname
 nameOverride: ""
-## @param fullnameOverride String to fully override horizon.fullname
-##
+## String to fully override horizon.fullname
 fullnameOverride: ""
-## @param imageRegistry String to override the image registry for all containers
-##
+## String to override the image registry for all containers
 imageRegistry: ""
-## @param commonLabels Labels to add to all deployed objects
-##
+## Labels to add to all deployed objects
 commonLabels: {}
-## @param commonAnnotations Annotations to add to all deployed objects
-##
+## Annotations to add to all deployed objects
 commonAnnotations: {}
 
-## @section Horizon deployment parameters
-
 ## By default, we fetch the Horizon image from the Evertrust registry.
-## If the tag is null or unset, the default value will be set the to the chart appVersion.
+## If the tag is null or unset, the default value will be set to the chart appVersion.
 ## As the official Evertrust registry is not in open-access,
 ## you should specify an image pull secret that has
 ## access to Horizon images.
 ##
-## ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-## @param image.registry Horizon image registry
-## @param image.repository Horizon image repository
-## @param image.tag Horizon image tag (immutable tags are recommended)
-## @param image.flavor Horizon image flavor (for HSM compatible images)
-## @param image.pullPolicy Horizon image pull policy
-## @param image.pullSecrets Horizon image pull secrets
-##
+## @ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 image:
+  ## Horizon image registry
   registry: registry.evertrust.io
+  ## Horizon image repository
   repository: horizon
+  ## Horizon image tag (immutable tags are recommended)
   tag: 2.9.0
+  ## Horizon image flavor (for HSM compatible images)
   flavor: ""
+  ## Horizon image pull policy
   pullPolicy: IfNotPresent
+  ## Horizon image pull secrets
   pullSecrets: []
 
-## @param updateStrategy.type Horizon deployment strategy type
-## @param updateStrategy.rollingUpdate [object] Rolling update spec
-## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
-## e.g:
+## @ref https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+## @example
 ## updateStrategy:
 ##  type: RollingUpdate
 ##  rollingUpdate:
 ##    maxSurge: 25%
 ##    maxUnavailable: 25%
-##
 updateStrategy:
+  ## Horizon deployment strategy type
   type: RollingUpdate
+  ## Rolling update spec
   rollingUpdate:
     maxUnavailable: 1
 
-## @param deploymentAnnotations Annotations to add to the deployment object
-##
+## Annotations to add to the deployment object
 deploymentAnnotations: {}
 
-## @param deploymentAnnotations Annotations to add to the deployment object
-##
+## Annotations to add to the deployment object
 deploymentLabels: {}
 
-## @param priorityClassName Horizon pod priority class name
-##
+## Horizon pod priority class name
 priorityClassName: ""
-## @param hostAliases Horizon pod host aliases
-## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
+## Horizon pod host aliases
 ##
+## @ref https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
 hostAliases: []
-## @param extraVolumes Optionally specify extra list of additional volumes for Horizon pods
-## e.g:
+## Optionally specify extra list of additional volumes for Horizon pods
+##
+## @example
 ## extraVolumes:
 ##   - name: extra-volume-name
 ##     configMap:
 ##       name: example-configmap
-##
 extraVolumes: []
-## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for Horizon container(s)
-## e.g:
+## Optionally specify extra list of additional volumeMounts for Horizon container(s)
+##
+## @example
 ## extraVolumeMounts:
 ##   - name: extra-volume-name
 ##     mountPath: /mnt/extra-volume
-##
 extraVolumeMounts: []
-## @param sidecars Add additional sidecar containers to the Horizon pod
-## e.g:
+## Add additional sidecar containers to the Horizon pod
+##
+## @example
 ## sidecars:
 ##   - name: your-image-name
 ##     image: your-image
@@ -115,187 +95,174 @@ extraVolumeMounts: []
 ##     ports:
 ##       - name: portname
 ##         containerPort: 1234
-##
 sidecars: []
-## @param lifecycleHooks Add lifecycle hooks to the Horizon deployment
-##
+## Add lifecycle hooks to the Horizon deployment
 lifecycleHooks: {}
-## @param podLabels Extra labels for Horizon pods
-## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+## Extra labels for Horizon pods
 ##
+## @ref https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
-## @param podAnnotations Annotations for Horizon pods
-## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+## Annotations for Horizon pods
 ##
+## @ref https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 podAnnotations: {}
-## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
-## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+## Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
 ##
+## @ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
 podAffinityPreset: ""
-## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
-## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+## Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
 ##
+## @ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
 podAntiAffinityPreset: soft
 ## Node affinity preset
-## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
 ##
+## @ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
 nodeAffinityPreset:
-  ## @param nodeAffinityPreset.type Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
-  ##
+  ## Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   type: ""
-  ## @param nodeAffinityPreset.key Node label key to match. Ignored if `affinity` is set
-  ##
+  ## Node label key to match. Ignored if `affinity` is set
   key: ""
-  ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set
-  ## E.g.
+  ## Node label values to match. Ignored if `affinity` is set
+  ##
+  ## @example
   ## values:
   ##   - e2e-az1
   ##   - e2e-az2
-  ##
   values: []
-## @param revisionHistoryLimit Number of controller revisions to keep
+## Number of controller revisions to keep
 revisionHistoryLimit: 3
-## @param replicas Replica count when no autoscaler is configured
+## Replica count when no autoscaler is configured
 replicas: 1
-## @param affinity Affinity for pod assignment
-## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-## NOTE: podAffinityPreset, podAntiAffinityPreset, and nodeAffinityPreset will be ignored when it's set
+## Affinity for pod assignment
 ##
+## NOTE: podAffinityPreset, podAntiAffinityPreset, and nodeAffinityPreset will be ignored when it's set.
+##
+## @ref https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 affinity: {}
-## @param nodeSelector Node labels for pod assignment
-## ref: https://kubernetes.io/docs/user-guide/node-selection/
+## Node labels for pod assignment
 ##
+## @ref https://kubernetes.io/docs/user-guide/node-selection/
 nodeSelector: {}
-## @param tolerations Tolerations for pod assignment
-## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+## Tolerations for pod assignment
 ##
+## @ref https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations: []
-## @param topologySpreadConstraints Spread Constraints for pod assignment
-## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
-## E.g.
+## Spread Constraints for pod assignment
+##
+## @ref https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+## @example
 ## topologySpreadConstraints:
 ##   - maxSkew: 1
 ##     topologyKey: node
 ##     whenUnsatisfiable: DoNotSchedule
-##
 topologySpreadConstraints: []
-## Horizon containers' resource requests and limits
-## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-## @param resources.limits [object] The resources limits for the Horizon container
-## @param resources.requests [object] The requested resources for the Horizon container
+## Horizon containers' resource requests and limits.
+## The JVM will automatically adapt the memory allocation pool to the container allocated resources.
 ##
-## **Notes** : The JVM will automatically adapt the memory allocation pool
-## to the container allocated resources.
-##
+## @ref https://kubernetes.io/docs/user-guide/compute-resources/
 resources:
+  ## The resources limits for the Horizon container
   limits: {}
+  ## The requested resources for the Horizon container
   requests:
     memory: 512Mi
     cpu: 300m
 ## Configure Pods Security Context
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-## @param podSecurityContext.enabled Enabled Horizon pods' Security Context
-## @param podSecurityContext.fsGroup Set Horizon pod's Security Context fsGroup
 ##
+## @ref https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
 podSecurityContext:
+  ## Enabled Horizon pods' Security Context
   enabled: true
+  ## Set Horizon pod's Security Context fsGroup
   fsGroup: 1001
 ## Configure Container Security Context (only main container)
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-## @param containerSecurityContext.enabled Enabled Horizon containers' Security Context
-## @param containerSecurityContext.runAsUser Set Horizon container's Security Context runAsUser
-## @param containerSecurityContext.runAsNonRoot Set Horizon container's Security Context runAsNonRoot
 ##
+## @ref https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
 containerSecurityContext:
+  ## Enabled Horizon containers' Security Context
   enabled: true
+  ## Set Horizon container's Security Context runAsUser
   runAsUser: 1001
+  ## Set Horizon container's Security Context runAsNonRoot
   runAsNonRoot: true
-## Configure extra options for Horizon containers probes
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
-## @param livenessProbe.enabled Enable livenessProbe
-## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
-## @param livenessProbe.periodSeconds Period seconds for livenessProbe
-## @param livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
-## @param livenessProbe.failureThreshold Failure threshold for livenessProbe
-## @param livenessProbe.successThreshold Success threshold for livenessProbe
+## Configure extra options for Horizon containers' liveness probe.
 ##
+## @ref https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
 livenessProbe:
+  ## Enable livenessProbe
   enabled: true
+  ## Initial delay seconds for livenessProbe
   initialDelaySeconds: 0
+  ## Period seconds for livenessProbe
   periodSeconds: 10
+  ## Timeout seconds for livenessProbe
   timeoutSeconds: 5
+  ## Success threshold for livenessProbe
   successThreshold: 1
+  ## Failure threshold for livenessProbe
   failureThreshold: 3
-## A startup probe allows us to define a shorter period to improve Horizon time-to-liveliness time while preserving the Horizon pod from a restart loop when it is slow to start.
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes
-## @param startupProbe.enabled Enable startupProbe. Since Horizon is slow to start, this is highly recommended.
-## @param startupProbe.periodSeconds Period seconds for startupProbe
-## @param startupProbe.failureThreshold Failure threshold for startupProbe
+## A startup probe allows us to define a shorter period to improve Horizon time-to-liveliness time
+## while preserving the Horizon pod from a restart loop when it is slow to start.
 ##
+## @ref https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes
 startupProbe:
+  ## Enable startupProbe. Since Horizon is slow to start, this is highly recommended.
   enabled: true
+  ## Failure threshold for startupProbe
   failureThreshold: 60
+  ## Period seconds for startupProbe
   periodSeconds: 3
-## @param readinessProbe.enabled Enable readinessProbe
-## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
-## @param readinessProbe.periodSeconds Period seconds for readinessProbe
-## @param readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
-## @param readinessProbe.failureThreshold Failure threshold for readinessProbe
-## @param readinessProbe.successThreshold Success threshold for readinessProbe
-##
+## @ref https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
 readinessProbe:
+  ## Enable readinessProbe
   enabled: true
+  ## Initial delay seconds for readinessProbe
   initialDelaySeconds: 0
+  ## Period seconds for readinessProbe
   periodSeconds: 5
+  ## Timeout seconds for readinessProbe
   timeoutSeconds: 3
+  ## Success threshold for readinessProbe
   successThreshold: 1
+  ## Failure threshold for readinessProbe
   failureThreshold: 3
 
-## Horizon Autoscaling configuration
-## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
-## @param horizontalAutoscaler.enabled Enable Horizontal POD autoscaling for Horizon
-## @param horizontalAutoscaler.minReplicas Minimum number of Horizon replicas
-## @param horizontalAutoscaler.maxReplicas Maximum number of Horizon replicas
-## @param horizontalAutoscaler.targetCPU Target CPU utilization percentage
-## @param horizontalAutoscaler.targetMemory Target Memory utilization percentage
-##
+## @ref https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 horizontalAutoscaler:
+  ## Enable Horizontal POD autoscaling for Horizon
   enabled: false
+  ## Minimum number of Horizon replicas
   minReplicas: 1
+  ## Maximum number of Horizon replicas
   maxReplicas: 3
+  ## Target CPU utilization percentage
   targetCPU: 50
+  ## Target Memory utilization percentage
   targetMemory: 50
 
-## Pod Disruption Budget configuration
-## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
-##
+## @ref https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 disruptionBudget:
-  ## @param disruptionBudget.enabled Created a PodDisruptionBudget
-  ##
+  ## Created a PodDisruptionBudget
   enabled: false
-  ## @param disruptionBudget.minAvailable Min number of pods that must still be available after the eviction
-  ##
+  ## Min number of pods that must still be available after the eviction
   minAvailable: 1
-  ## @param disruptionBudget.maxUnavailable Max number of pods that can be unavailable after the eviction
-  ##
+  ## Max number of pods that can be unavailable after the eviction
   maxUnavailable: 0
 
 ## Configure environment variable injections into Horizon's pods.
-## This is the way you should inject secrets into the app if you wish
-## to use the Kubernetes secrets implementation.
+## This is the way you should inject secrets into the app if you wish to use the Kubernetes secrets implementation.
 ##
-## ref: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
-## @param environment Extra env vars passed to the Horizon pods
-## eg.
+## @ref https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
+## @example
 ##   environment:
 ##     - name: KEY
 ##       value: VALUE
 environment: []
 
-## Pod's DNS Configuration
-## https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
-## This value is useful if you need to resolve your custom domain for ACME challenges
-## Example:
+## This value is useful if you need to resolve your custom domain for ACME challenges.
+##
+## @ref https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
+## @example
 ##  nameservers:
 ##    - 1.2.3.4
 ##  searches:
@@ -306,117 +273,121 @@ environment: []
 ##      value: "2"
 dnsConfig: {}
 
-# Pod's DNS Policy
-# https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+## @ref https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
 dnsPolicy: ""
 
-## @section Horizon Service configuration
-##
+## Service configuration
 service:
-  ## @param service.type Kubernetes service type
-  ##
+  ## Kubernetes service type
   type: ClusterIP
-  ## @param service.clusterIP Horizon service clusterIP IP
-  ## e.g:
+  ## Horizon service clusterIP IP
+  ##
+  ## @example
   ## clusterIP: None
-  ##
   clusterIP: ""
-  ## @param service.loadBalancerIP for the Horizon Service (optional, cloud specific)
-  ## ref: https://kubernetes.io/docs/user-guide/services/#type-loadbalancer
+  ## Load balancer IP for the Horizon Service (optional, cloud specific)
   ##
+  ## @ref https://kubernetes.io/docs/user-guide/services/#type-loadbalancer
   loadBalancerIP: ""
-  ## @param service.loadBalancerSourceRanges Address that are allowed when service is LoadBalancer
-  ## https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
-  ## Example:
+  ## Address that are allowed when service is LoadBalancer
+  ##
+  ## @ref https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+  ## @example
   ## loadBalancerSourceRanges:
   ##   - 10.10.10.0/24
-  ##
   loadBalancerSourceRanges: []
-  ## @param service.externalTrafficPolicy Enable client source IP preservation
-  ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+  ## Enable client source IP preservation
   ##
+  ## @ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
   externalTrafficPolicy: Cluster
-  ## @param service.extraPorts Extra port to expose on Horizon service
-  ##
+  ## Extra port to expose on Horizon service
   extraPorts: []
-  ## @param service.annotations Annotations for Horizon service
-  ##
+  ## Annotations for Horizon service
   annotations: {}
 
-## @section Horizon Ingress configuration
+## Ingress configuration
 ##
-## ref https://kubernetes.io/docs/concepts/services-networking/ingress/
+## @ref https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
-  ## @param ingress.enabled Set to true to enable ingress record generation
-  ##
+  ## Set to true to enable ingress record generation
   enabled: false
-  ## @param ingress.type Automatically configure your ingress for an ingress controller. Accepted values are nginx, traefik. This will override the clientCertificateHeader if set, and generate annotations, resources, and ingresses resources to ensure Horizon works correctly.
+  ## Ingress type
   ##
+  ## Automatically configure your ingress for an ingress controller. Accepted values are nginx, traefik.
+  ## This will override the clientCertificateHeader if set, and generate annotations, resources, and
+  ## ingresses resources to ensure Horizon works correctly.
   type: ""
-  ## @param ingress.clientCertificateAuth When ingress.type is set, determines whether the ingress controller should request client certificates.
+  ## Client certificate authentication
   ##
+  ## When ingress.type is set, determines whether the ingress controller should request client certificates.
   clientCertificateAuth: false
-  ## @param ingress.clientCertificateCASecrets If set, the ingress controller will only request client certificates signed by these CAs. Each secret should contain a `ca.crt` key containing the PEM-encoded AC certificate.
+  ## Client certificate CA secrets
   ##
+  ## If set, the ingress controller will only request client certificates signed by these CAs.
+  ## Each secret should contain a `ca.crt` key containing the PEM-encoded AC certificate.
   clientCertificateCASecrets: []
-  ## @param ingress.scepCompatibilityMode Adds a secondary ingress for SCEP support over HTTP
+  ## SCEP compatibility mode
   ##
+  ## Adds a secondary ingress for SCEP support over HTTP.
   scepCompatibilityMode: false
-  ## @param ingress.ingressClassName IngressClass that will be used to implement the Ingress (Kubernetes 1.18+)
-  ##
+  ## IngressClass that will be used to implement the Ingress (Kubernetes 1.18+)
   ingressClassName: ""
-  ## @param ingress.hostname Default host for the ingress resource
-  ## Eg. "horizon.local"
+  ## Default host for the ingress resource
   ##
+  ## @example
+  ## hostname: "horizon.local"
   hostname: ""
-  ## @param ingress.path Default path for the ingress record
-  ## NOTE: You may need to set this to '/*' in order to use this with ALB ingress controllers
+  ## Default path for the ingress record
   ##
+  ## NOTE: You may need to set this to '/*' in order to use this with ALB ingress controllers.
   path: /
-  ## @param ingress.pathType Ingress path type
-  ##
+  ## Ingress path type
   pathType: Prefix
-  ## @param ingress.annotations Additional annotations for the Ingress resource. To enable certificate autogeneration, place here your cert-manager annotations.
-  ## e.g:
+  ## Additional annotations for the Ingress resource
+  ##
+  ## To enable certificate autogeneration, place here your cert-manager annotations.
+  ##
+  ## @example
   ## annotations:
   ##   cert-manager.io/cluster-issuer: cluster-issuer-name
-  ##
   annotations: {}
-  ## @param ingress.tls Enable TLS configuration for the hostname defined at ingress.hostname parameter
+  ## Enable TLS configuration for the hostname defined at ingress.hostname parameter
+  ##
   ## TLS certificates will be retrieved from a TLS secret with name: {{- printf "%s-tls" .Values.ingress.hostname }}
   ## You can use the ingress.secrets parameter to create this TLS secret, relay on cert-manager to create it, or
-  ## let the chart create self-signed certificates for you
-  ##
+  ## let the chart create self-signed certificates for you.
   tls: false
-  ## @param ingress.extraHosts The list of additional hostnames to be covered with this ingress record.
-  ## Most likely the hostname above will be enough, but in the event more hosts are needed, this is an array
-  ## Example:
+  ## The list of additional hostnames to be covered with this ingress record
+  ##
+  ## Most likely the hostname above will be enough, but in the event more hosts are needed, this is an array.
+  ##
+  ## @example
   ## extraHosts:
   ## - name: horizon.local
   ##   path: /
-  ##
   extraHosts: []
-  ## @param ingress.extraPaths An array with additional arbitrary paths that may need to be added to the ingress under the main host
-  ## e.g:
+  ## An array with additional arbitrary paths that may need to be added to the ingress under the main host
+  ##
+  ## @example
   ## extraPaths:
   ## - path: /*
   ##   backend:
   ##     serviceName: ssl-redirect
   ##     servicePort: use-annotation
-  ##
   extraPaths: []
-  ## @param ingress.extraTls The tls configuration for additional hostnames to be covered with this ingress record.
-  ## see: https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
-  ## Example:
+  ## The tls configuration for additional hostnames to be covered with this ingress record
+  ##
+  ## @ref https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
+  ## @example
   ## extraTls:
   ## - hosts:
   ##     - horizon.local
   ##   secretName: horizon.local-tls
-  ##
   extraTls: []
-  ## @param ingress.extraRules Additional rules to be covered with this ingress record
-  ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-rules
-  ## e.g:
+  ## Additional rules to be covered with this ingress record
+  ##
+  ## @ref https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-rules
+  ## @example
   ## extraRules:
   ## - host: horizon.local
   ##     http:
@@ -426,351 +397,333 @@ ingress:
   ##           name: horizon
   ##           port:
   ##             name: http
-  ##
   extraRules: []
 
-## @section Prometheus monitor configuration
-## @param monitoring.enabled Enable the creation of a ServiceMonitor object for Horizon if the cluster has the monitoring.coreos.com/v1 capability.
+## Prometheus monitor configuration
 monitoring:
+  ## Enable the creation of a ServiceMonitor object for Horizon if the cluster has the monitoring.coreos.com/v1 capability
   enabled: true
 
-## @section Horizon application parameters
-
 ## Configure the Play secret for the Horizon instance.
-## As this is used for cryptographic purposes, it should be fetched
-## from the environment.
+## As this is used for cryptographic purposes, it should be fetched from the environment.
 ##
-## ref https://www.playframework.com/documentation/2.8.x/ApplicationSecret
-## @param appSecret [object] Application secret used for encrypting session data and cookies
-## E.g.
+## @ref https://www.playframework.com/documentation/2.8.x/ApplicationSecret Play Framework Application Secret
+## @example
 ## appSecret:
 ##   valueFrom:
 ##     secretKeyRef:
 ##       name: horizon-secret
 ##       key: appSecret
-##
 appSecret: {}
 
 ## A valid Horizon license is required for the software to run.
-## You should store it (base64-encoded) in a Kubernetes secret and specify
-## the secret details here.
-## ref: README.md
-## @param license.secretName Existing secret name where the Horizon license is stored
-## @param license.secretKey Existing secret key where the Horizon license is stored
+## You should store it (base64-encoded) in a Kubernetes secret and specify the secret details here.
+##
+## @ref README.md
 license:
+  ## Existing secret name where the Horizon license is stored
   secretName: ""
+  ## Existing secret key where the Horizon license is stored
   secretKey: ""
 
 ## Set up initial admin user.
-## @param initialAdminHashPassword.enabled Whether to enable the initial admin user
-## @param initialAdminHashPassword.secretName Existing secret name where the initial admin password is stored
-## @param initialAdminHashPassword.secretKey Existing secret key where the initial admin password is stored
 initialAdminHashPassword:
+  ## Whether to enable the initial admin user
   enabled: false
+  ## Existing secret name where the initial admin password is stored
   secretName: ""
+  ## Existing secret key where the initial admin password is stored
   secretKey: ""
 
-## Horizon Default vault configuration.
-##
+## Horizon Default vault configuration
 defaultVault:
   type: tink
   masterKeyURI: ""
-  ## keyset is a reference to a secret that contains the keyset.
-  ## You should store it (base64-encoded) in a Kubernetes secret and specify
-  ## the secret details here.
-  ## ref: README.md
-  ## @param defaultVault.keyset.secretName Existing secret name where the Horizon keyset is stored
-  ## @param defaultVault.keyset.secretKey Existing secret key where the Horizon keyset is stored
-  ## E.g.
+  ## Keyset
+  ##
+  ## A reference to a secret that contains the keyset.
+  ## You should store it (base64-encoded) in a Kubernetes secret and specify the secret details here.
+  ##
+  ## @ref README.md
+  ## @example
   ## keyset:
   ##  secretName: ""
   ##  secretKey: ""
-  ##
   keyset: {}
 
 ## Horizon legacy SSV password (Optional).
-## Should be set if upgrade from Horizon 2.7 or earlier to Horizon 2.8 or later.
+## Should be set if upgrading from Horizon 2.7 or earlier to Horizon 2.8 or later.
 ##
-## @param legacySsvPassword.secretName Existing secret name where the legacy SSV password is stored
-## @param legacySsvPassword.secretKey Existing secret key where the legacy SSV password is stored
-## E.g.
+## @example
 ## legacySsvPassword:
 ##   secretName: horizon-legacy-ssv-password
 ##   secretKey: legacySsvPassword
-##
 legacySsvPassword: {}
 
 ## Additional allowed hosts that are whitelisted to access the Horizon UI.
 ## Configured ingresses will automatically be added to the list, this should
 ## only be used when port forwarding or when an ingress is created manually.
-## @param allowedHosts [array] Additional allowed hosts.
-## E.g.
+##
+## @example
 ## allowedHosts:
 ##   - localhost:9000
 ##   - demo.example.org
-##
 allowedHosts:
   - localhost:9000
 
-## Depending on your Kubernetes environment, Ingress IPs may be unpredictable. In that case, you should trust whitelist every IP in your local addressing space.
-## @param trustedProxies [array] Trusted proxies.
-## E.g.
+## Depending on your Kubernetes environment, Ingress IPs may be unpredictable.
+## In that case, you should whitelist every IP in your local addressing space.
+##
+## @example
 ## trustedProxies:
 ##   - 0.0.0.0/0
 ##   - ::/0
-##
 trustedProxies:
   - 0.0.0.0/0
   - ::/0
 
 ## Configuration for Horizon events
-## @param events.chainsign Whether Horizon events should be signed and chained using the event seal secret.
-## @param events.secret [object] Secret used to sign and chain events.
-## @param events.ttl Duration during which events are kept in database.
-## @param events.discoveryTtl Duration during which discovery events are kept in database.
 events:
+  ## Whether Horizon events should be signed and chained using the event seal secret
   chainsign: true
-  ## The events.secret field can be a reference to a secret.
-  ## E.g.
+  ## Secret used to sign and chain events
+  ##
+  ## Can be a reference to a Kubernetes secret.
+  ##
+  ## @example
   ##   secret:
   ##     valueFrom:
   ##       secretKeyRef:
   ##         name: horizon-secret
   ##         key: eventSealSecret
-  ##
   secret: {}
+  ## Duration during which events are kept in database
   ttl: ""
+  ## Duration during which discovery events are kept in database
   discoveryTtl: ""
 
-## @param logFormat Format in which logs will be outputted. Can be set either to "console" or "json" for structured logging.
+## Format in which logs will be outputted. Can be set either to "console" or "json" for structured logging.
 logFormat: console
 
-## @param tls.enabled Whether to use the HTTPS port by default on ingresses and other services
-## @param tls.secretName Existing secret name where a PKCS12 certificate is stored
-## @param tls.secretKey Existing secret key where the PKCS12 certificate is stored
+## TLS configuration
 tls:
+  ## Whether to use the HTTPS port by default on ingresses and other services
   enabled: false
+  ## Existing secret name where a PKCS12 certificate is stored
   secretName: ""
+  ## Existing secret key where the PKCS12 certificate is stored
   secretKey: ""
 
 ## Configuration for the Horizon mailer.
-## You should configure this if you want your Horizon instance to be able
-## to send emails.
+## You should configure this if you want your Horizon instance to be able to send emails.
 ## You should fetch credentials from the environment if they are required.
-## @param mailer.host SMTP host
-## @param mailer.port SMTP host port
-## @param mailer.tls Enable TLS for this SMTP host
-## @param mailer.ssl Enable SSL for this SMTP host
-## @param mailer.user Authentication username for this SMTP host
-## @param mailer.password [object] Authentication password for this SMTP host
 mailer:
+  ## SMTP host
   host: ""
+  ## SMTP host port
   port: ""
+  ## Enable TLS for this SMTP host
   tls: ""
+  ## Enable SSL for this SMTP host
   ssl: ""
+  ## Authentication username for this SMTP host
   user: ""
-  ## The password field can be a reference to a secret.
-  ## E.g.
+  ## Authentication password for this SMTP host
+  ##
+  ## Can be a reference to a Kubernetes secret.
+  ##
+  ## @example
   ##   password:
   ##     valueFrom:
   ##       secretKeyRef:
   ##         name: horizon-secret
   ##         key: mailerPassword
-  ##
   password: {}
 
 ## Configure the logger for this Horizon instance.
-## Sensible defaults are set, but you may need a more verbose logging
-## experience when debugging the application.
+## Sensible defaults are set, but you may need a more verbose logging experience when debugging the application.
 ##
-## ref: https://www.playframework.com/documentation/2.8.x/ScalaLogging
-## @param logback.level Global logging level for all loggers
-## @param logback.pattern Log messages pattern
-## @param logback.loggers [array] Logging level overrides for specific loggers
+## @ref https://www.playframework.com/documentation/2.8.x/ScalaLogging Play Framework Logging
 logback:
+  ## Global logging level for all loggers
   level: info
+  ## Log messages pattern
   pattern: "%date{yyyy-MM-dd HH:mm:ss} - [%logger] - [%traceID] - [%level] - %message%n%xException{full}"
+  ## Logging level overrides for specific loggers
+  ##
+  ## @example You might want to use the following loggers to gather more info about your Horizon instance
+  ## loggers:
+  ##   - name: actors
+  ##     level: debug
+  ##   - name: actions
+  ##     level: debug
+  ##   - name: controllers
+  ##     level: debug
+  ##   - name: filters
+  ##     level: debug
+  ##   - name: models
+  ##     level: debug
+  ##   - name: modules
+  ##     level: debug
+  ##   - name: pki-connectors
+  ##     level: debug
+  ##   - name: racs-connectors
+  ##     level: debug
   loggers:
-    # In Kubernetes, we usually don't care to log functional events to stdout.
     - name: events
       level: warn
     - name: json_events
       level: info
-    ## You might want to uncomment the following loggers to gather more info about your Horizon instance.
-    ## E.g.
-    ## - name: actors
-    ##   level: debug
-    ## - name: actions
-    ##   level: debug
-    ## - name: controllers
-    ##   level: debug
-    ## - name: filters
-    ##   level: debug
-    ## - name: models
-    ##   level: debug
-    ## - name: modules
-    ##   level: debug
-    ## - name: pki-connectors
-    ##   level: debug
-    ## - name: racs-connectors
-    ##   level: debug
 
-## @param rbac.create Whether to create RBAC resources
 rbac:
+  ## Whether to create RBAC resources
   create: true
 
-## Horizon pods ServiceAccount
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
-##
+## @ref https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 serviceAccount:
-  ## @param serviceAccount.create Enable the creation of a ServiceAccount for Horizon pods
-  ##
+  ## Enable the creation of a ServiceAccount for Horizon pods
   create: true
-  ## @param serviceAccount.name Name of the created ServiceAccount
-  ## If not set and create is true, a name is generated using the horizon.fullname template
+  ## Name of the created ServiceAccount
   ##
+  ## If not set and create is true, a name is generated using the horizon.fullname template.
   name: ""
-  ## @param serviceAccount.annotations Annotations for Horizon Service Account
-  ##
+  ## Annotations for Horizon Service Account
   annotations:
     helm.sh/hook: pre-install, pre-upgrade, pre-rollback
     helm.sh/hook-delete-policy: before-hook-creation
     helm.sh/hook-weight: "0"
-
-  ## @param serviceAccount.automountServiceAccountToken Automount service account token for the server service account
-  ##
+  ## Automount service account token for the server service account
   automountServiceAccountToken: true
 
-## @param leases.enabled Whether leases should be used when launching multiple replicas of Horizon pods.
 leases:
+  ## Whether leases should be used when launching multiple replicas of Horizon pods
   enabled: true
 
-## @param clientCertificateHeader Indicates to Horizon in which header the client certificate will be passed. Will be automatically set by the ingress.clientCertificateAuth value if set.
+## Indicates to Horizon in which header the client certificate will be passed.
+## Will be automatically set by the ingress.clientCertificateAuth value if set.
 clientCertificateHeader: ""
 
-## @param podsDirectConnect Whether Horizon pods should connect to each other directly via IP, or through a DNS record generated by a Kubernetes DNS server.
-## Useful if the kube-dns server is configured with "pods disabled" or if you use GKE Cloud DNS
-## NOTE: This is not support by Istio
+## Whether Horizon pods should connect to each other directly via IP, or through a DNS record generated by a Kubernetes DNS server.
+## Useful if the kube-dns server is configured with "pods disabled" or if you use GKE Cloud DNS.
+## NOTE: This is not supported by Istio.
 podsDirectConnect: false
 
-## @param extraConfig Additional configuration for Horizon
+## Additional configuration for Horizon.
 ## Injecting arbitrary config could result in unexpected behavior. Proceed with caution.
-## ref: https://docs.evertrust.fr/horizon/admin-guide/-/parameters
 ##
-## Eg.
+## @ref https://docs.evertrust.fr/horizon/-/install-guide/advanced_config Horizon Configuration Parameters
+## @example
 ## extraConfig: |
 ##   horizon {
 ##     notification.mail.attachment.extension.der = "der"
 ##   }
 extraConfig: ""
 
-## @section Database parameters
-
 temporaryDatabase:
-  ## @param temporaryDatabase.enabled Whether to enable the deployment of a temporary MongoDB instance
+  ## Whether to enable the deployment of a temporary MongoDB instance
   enabled: true
 
-  ## @param temporaryDatabase.image.registry MongoDB image registry
-  ## @param temporaryDatabase.image.repository MongoDB image repository
-  ## @param temporaryDatabase.image.tag MongoDB image tag (immutable tags are recommended)
-  ## @param temporaryDatabase.image.pullPolicy MongoDB image pull policy
-  ## @param temporaryDatabase.image.pullSecrets MongoDB image pull secrets
-  ##
+  ## MongoDB image
   image:
+    ## MongoDB image registry
     registry: ~
+    ## MongoDB image repository
     repository: mongo
+    ## MongoDB image tag (immutable tags are recommended)
     tag: 7
+    ## MongoDB image pull policy
     pullPolicy: IfNotPresent
+    ## MongoDB image pull secrets
     pullSecrets: []
 
   persistence:
-    ## @param temporaryDatabase.persistence.enabled Whether to enable persistence on the temporary MongoDB
+    ## Whether to enable persistence on the temporary MongoDB
     enabled: true
-    ## @param temporaryDatabase.persistence.annotations Extra annotations to add to the PVC
+    ## Extra annotations to add to the PVC
     annotations: {}
-    ## @param temporaryDatabase.persistence.storageClass Storage class of backing PVC
+    ## Storage class of backing PVC
     storageClass: ""
-    ## @param temporaryDatabase.persistence.accessModes Access modes of the PVC
+    ## Access modes of the PVC
     accessModes:
       - ReadWriteOnce
-    ## @param temporaryDatabase.persistence.size Size of data volume for MongoDB
+    ## Size of data volume for MongoDB
     size: "1Gi"
 
-  ## @param temporaryDatabase.extraVolumes Optionally specify extra list of additional volumes for MongoDB pods
+  ## Optionally specify extra list of additional volumes for MongoDB pods
+  ##
+  ## @example
   ## extraVolumes:
   ##   - name: extra-volume-name
   ##     configMap:
   ##       name: example-configmap
   extraVolumes: []
 
-  ## @param temporaryDatabase.extraVolumeMounts Optionally specify extra list of additional volumeMounts for MongoDB container(s)
+  ## Optionally specify extra list of additional volumeMounts for MongoDB container(s)
+  ##
+  ## @example
   ## extraVolumeMounts:
   ##   - name: extra-volume-name
   ##     mountPath: /mnt/extra-volume
   extraVolumeMounts: []
 
-  ## MongoDB container resource requests and limits
-  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## @param temporaryDatabase.resources.limits [object] The resources limits for the Horizon container
-  ## @param temporaryDatabase.resources.requests [object] The requested resources for the Horizon container
+  ## MongoDB container resources
   ##
+  ## @ref https://kubernetes.io/docs/user-guide/compute-resources/
   resources:
+    ## The resources limits for the MongoDB container
     limits:
       memory: 512Mi
       cpu: 500m
+    ## The requested resources for the MongoDB container
     requests:
       memory: 512Mi
       cpu: 500m
 
   ## Configure Pods Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  ## @param temporaryDatabase.podSecurityContext.enabled Enabled Horizon pods' Security Context
-  ## @param temporaryDatabase.podSecurityContext.fsGroup Set Horizon pod's Security Context fsGroup
   ##
+  ## @ref https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   podSecurityContext:
+    ## Enabled Horizon pods' Security Context
     enabled: true
+    ## Set Horizon pod's Security Context fsGroup
     fsGroup: 1001
-  ## Configure Container Security Context (only main container)
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-  ## @param temporaryDatabase.containerSecurityContext.enabled Enabled Horizon containers' Security Context
-  ## @param temporaryDatabase.containerSecurityContext.runAsUser Set Horizon container's Security Context runAsUser
-  ## @param temporaryDatabase.containerSecurityContext.runAsNonRoot Set Horizon container's Security Context runAsNonRoot
+  ## Configure Container Security Context
   ##
+  ## @ref https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
   containerSecurityContext:
+    ## Enabled Horizon containers' Security Context
     enabled: true
+    ## Set Horizon container's Security Context runAsUser
     runAsUser: 1001
+    ## Set Horizon container's Security Context runAsNonRoot
     runAsNonRoot: true
 
-## @section Upgrade parameters
+## Upgrade job
 upgrade:
-  ## @param upgrade.enabled If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
-  ##
+  ## If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
   enabled: true
-  ## @param upgrade.enabled If true, an upgrade job will be run everytime the Chart is installed or upgraded.
-  ##
+  ## If true, an upgrade job will be run every time the Chart is installed or upgraded.
   force: false
-  ## @param upgrade.annotations Extra annotations to add to the upgrade job
+  ## Extra annotations to add to the upgrade job
   annotations:
     helm.sh/hook: post-upgrade
     helm.sh/hook-delete-policy: before-hook-creation
     helm.sh/hook-weight: "0"
-  ## @param upgrade.image.registry Horizon Migration image registry
-  ## @param upgrade.image.repository Horizon Migration image repository
-  ## @param upgrade.image.tag Horizon Migration image tag (immutable tags are recommended)
-  ## @param upgrade.image.pullPolicy Horizon Migration image pull policy
-  ## @param upgrade.image.pullSecrets Horizon Migration image pull secrets
-  ##
+  ## Upgrade image
   image:
+    ## Horizon Migration image registry
     registry: registry.evertrust.io
+    ## Horizon Migration image repository
     repository: horizon-migration
+    ## Horizon Migration image tag (immutable tags are recommended)
     tag: 1.13.0
+    ## Horizon Migration image pull policy
     pullPolicy: IfNotPresent
+    ## Horizon Migration image pull secrets
     pullSecrets: []
-  ## horizon-migration container resource requests and limits
-  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## @param upgrade.resources.limits [object] The resources limits for the Horizon container
-  ## @param upgrade.resources.requests [object] The requested resources for the Horizon container
+  ## horizon-migration container resources
   ##
+  ## @ref https://kubernetes.io/docs/user-guide/compute-resources/
   resources:
     limits:
       memory: 512Mi
@@ -778,68 +731,65 @@ upgrade:
     requests:
       memory: 512Mi
       cpu: 500m
-  ## @param upgrade.from Sets to the version you're upgrading from. If empty, the chart will try to infer the version from the database.
-  ##
+  ## Sets the version you're upgrading from. If empty, the chart will try to infer the version from the database.
   from: ""
-  ## @param upgrade.to Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.
-  ##
+  ## Sets the version you're upgrading to. If empty, the chart will use Chart.AppVersion.
   to: ""
-  ## @param upgrade.nodeSelector [object]  Node labels for upgrade pod assignment
-  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  ## Node labels for upgrade pod assignment
   ##
+  ## @ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
   nodeSelector: {}
-  ## @param upgrade.tolerations [array] Tolerations for upgrade pod assignment
-  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ## Tolerations for upgrade pod assignment
   ##
+  ## @ref https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations: []
   ## Configure Pods Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  ## @param upgrade.podSecurityContext.enabled Enabled upgrade pod Security Context
-  ## @param upgrade.podSecurityContext.fsGroup Set upgrade pod Security Context fsGroup
   ##
+  ## @ref https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   podSecurityContext:
+    ## Enabled upgrade pod Security Context
     enabled: true
+    ## Set upgrade pod Security Context fsGroup
     fsGroup: 1001
   ## Configure Container Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-  ## @param upgrade.containerSecurityContext.enabled Enabled upgrade container Security Context
-  ## @param upgrade.containerSecurityContext.runAsUser Set upgrade container Security Context runAsUser
-  ## @param upgrade.containerSecurityContext.runAsNonRoot Set upgrade container Security Context runAsNonRoot
   ##
+  ## @ref https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
   containerSecurityContext:
+    ## Enabled upgrade container Security Context
     enabled: true
+    ## Set upgrade container Security Context runAsUser
     runAsUser: 1001
+    ## Set upgrade container Security Context runAsNonRoot
     runAsNonRoot: true
-  ## @param upgrade.extraVolumes Optionally specify extra list of additional volumes for the upgrade pod
+  ## Optionally specify extra list of additional volumes for the upgrade pod
+  ##
+  ## @example
   ## extraVolumes:
   ##   - name: extra-volume-name
   ##     configMap:
   ##       name: example-configmap
   extraVolumes: []
-  ## @param upgrade.extraVolumeMounts Optionally specify extra list of additional volumeMounts for the upgrade container
+  ## Optionally specify extra list of additional volumeMounts for the upgrade container
+  ##
+  ## @example
   ## extraVolumeMounts:
   ##   - name: extra-volume-name
   ##     mountPath: /mnt/extra-volume
   extraVolumeMounts: []
-  ## @param upgrade.ignoreEmptyFrom
-  ##
+  ## Ignore empty from
   ignoreEmptyFrom: false
 
-## @section upgradeCompatibilityCheck parameters
 upgradeCompatibilityCheck:
-  ## @param upgradeCompatibilityCheck.enabled If true, a check job will be run before upgrading the release.
-  ##
+  ## If true, a check job will be run before upgrading the release.
   enabled: true
-  ## @param upgradeCompatibilityCheck.annotations Extra annotations to add to the upgrade job
+  ## Extra annotations to add to the upgrade compatibility check job
   annotations:
     helm.sh/hook: pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation
     helm.sh/hook-weight: "0"
-  ## horizon-migration container resource requests and limits
-  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## @param upgradeCompatibilityCheck.resources.limits [object] The resources limits for the Horizon container
-  ## @param upgradeCompatibilityCheck.resources.requests [object] The requested resources for the Horizon container
+  ## horizon-migration container resources
   ##
+  ## @ref https://kubernetes.io/docs/user-guide/compute-resources/
   resources:
     limits:
       memory: 512Mi
@@ -847,108 +797,114 @@ upgradeCompatibilityCheck:
     requests:
       memory: 512Mi
       cpu: 500m
-  ## @param upgradeCompatibilityCheck.nodeSelector [object]  Node labels for upgrade pod assignment
-  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  ## Node labels for upgrade pod assignment
   ##
+  ## @ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
   nodeSelector: {}
-  ## @param upgradeCompatibilityCheck.tolerations [array] Tolerations for upgrade pod assignment
-  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ## Tolerations for upgrade pod assignment
   ##
+  ## @ref https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations: []
   ## Configure Pods Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  ## @param upgradeCompatibilityCheck.podSecurityContext.enabled Enabled upgrade compatibility check pod Security Context
-  ## @param upgradeCompatibilityCheck.podSecurityContext.fsGroup Set upgrade compatibility check pod Security Context fsGroup
   ##
+  ## @ref https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   podSecurityContext:
+    ## Enabled upgrade compatibility check pod Security Context
     enabled: true
+    ## Set upgrade compatibility check pod Security Context fsGroup
     fsGroup: 1001
   ## Configure Container Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-  ## @param upgradeCompatibilityCheck.containerSecurityContext.enabled Enabled upgrade compatibility check container Security Context
-  ## @param upgradeCompatibilityCheck.containerSecurityContext.runAsUser Set upgrade compatibility check container Security Context runAsUser
-  ## @param upgradeCompatibilityCheck.containerSecurityContext.runAsNonRoot Set upgrade compatibility check container Security Context runAsNonRoot
   ##
+  ## @ref https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
   containerSecurityContext:
+    ## Enabled upgrade compatibility check container Security Context
     enabled: true
+    ## Set upgrade compatibility check container Security Context runAsUser
     runAsUser: 1001
+    ## Set upgrade compatibility check container Security Context runAsNonRoot
     runAsNonRoot: true
-  ## @param upgradeCompatibilityCheck.extraVolumes Optionally specify extra list of additional volumes for the upgrade compatibility check pod
+  ## Optionally specify extra list of additional volumes for the upgrade compatibility check pod
+  ##
+  ## @example
   ## extraVolumes:
   ##   - name: extra-volume-name
   ##     configMap:
   ##       name: example-configmap
   extraVolumes: []
-  ## @param upgradeCompatibilityCheck.extraVolumeMounts Optionally specify extra list of additional volumeMounts for the upgrade compatibility check container
+  ## Optionally specify extra list of additional volumeMounts for the upgrade compatibility check container
+  ##
+  ## @example
   ## extraVolumeMounts:
   ##   - name: extra-volume-name
   ##     mountPath: /mnt/extra-volume
   extraVolumeMounts: []
-  ## @param upgradeCompatibilityCheck.ignoreEmptyFrom
-  ##
+  ## Ignore empty from
   ignoreEmptyFrom: false
 
-## @section Backup parameters
 backup:
-  ## @param backup.enabled Whether to enable backup
+  ## Whether to enable backup
   enabled: false
-  ## @param backup.annotations Extra annotations to add to the backup job
+  ## Extra annotations to add to the backup job
   annotations: {}
-  ## @param backup.labels Extra labels to add to the backup job
+  ## Extra labels to add to the backup job
   labels: {}
-  ## @param backup.suspended Whether to suspend backup scheduling
+  ## Whether to suspend backup scheduling
   suspended: false
-  ## @param backup.schedule Cron expression for the backup job
+  ## Cron expression for the backup job
   schedule: "0 * * * *"
-  ## @param backup.schedule Cron expression for the backup job
+  ## Successful jobs history limit
   successfulJobsHistoryLimit: 1
-  ##@ param backup.failedJobsHistoryLimit Cron expression for the backup job
+  ## Failed jobs history limit
   failedJobsHistoryLimit: 3
-  ## @param backup.backoffLimit Cron expression for the backup job
+  ## Backoff limit for the backup job
   backoffLimit: 3
-  ## @param backup.image.repository toolbox image repository
-  ## @param backup.image.tag toolbox image tag (immutable tags are recommended)
-  ## @param backup.image.pullPolicy toolbox image pull policy
-  ## @param backup.image.pullSecrets toolbox image pull secrets
+  ## Toolbox image
   image:
     registry: quay.io/evertrust
+    ## Toolbox image repository
     repository: toolbox
+    ## Toolbox image tag (immutable tags are recommended)
     tag: v0.6.1
+    ## Toolbox image pull policy
     pullPolicy: IfNotPresent
+    ## Toolbox image pull secrets
     pullSecrets: []
   ## Configure Pods Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  ## @param backup.podSecurityContext.enabled Enabled Horizon pods' Security Context
-  ## @param backup.podSecurityContext.fsGroup Set Horizon pod's Security Context fsGroup
   ##
+  ## @ref https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   podSecurityContext:
+    ## Enabled Horizon pods' Security Context
     enabled: true
+    ## Set Horizon pod's Security Context fsGroup
     fsGroup: 1001
   ## Configure Container Security Context (only main container)
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-  ## @param backup.containerSecurityContext.enabled Enabled Horizon containers' Security Context
-  ## @param backup.containerSecurityContext.runAsUser Set Horizon container's Security Context runAsUser
-  ## @param backup.containerSecurityContext.runAsNonRoot Set Horizon container's Security Context runAsNonRoot
   ##
+  ## @ref https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
   containerSecurityContext:
+    ## Enabled Horizon containers' Security Context
     enabled: true
+    ## Set Horizon container's Security Context runAsUser
     runAsUser: 1001
+    ## Set Horizon container's Security Context runAsNonRoot
     runAsNonRoot: true
-  ## @param backup.extraVolumes Optionally specify extra list of additional volumes for the backup pod
+  ## Optionally specify extra list of additional volumes for the backup pod
+  ##
+  ## @example
   ## extraVolumes:
   ##   - name: extra-volume-name
   ##     configMap:
   ##       name: example-configmap
   extraVolumes: []
-  ## @param backup.extraVolumeMounts Optionally specify extra list of additional volumeMounts for the backup container
+  ## Optionally specify extra list of additional volumeMounts for the backup container
+  ##
+  ## @example
   ## extraVolumeMounts:
   ##   - name: extra-volume-name
   ##     mountPath: /mnt/extra-volume
   extraVolumeMounts: []
-  ## backup container resource requests and limits
-  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## @param backup.resources.limits [object] The resources limits for the backup container
-  ## @param backup.resources.requests [object] The requested resources for the backup container
+  ## Backup container resources
+  ##
+  ## @ref https://kubernetes.io/docs/user-guide/compute-resources/
   resources:
     limits:
       cpu: 500m
@@ -956,80 +912,85 @@ backup:
     requests:
       cpu: 500m
       memory: 512Mi
-  ## Configure environment variable injections into the backup pods.
-  ## This is the way you should inject secrets into the app if you wish
-  ## to use the Kubernetes secrets implementation.
+  ## Environment variable injections into the backup pods
   ##
-  ## ref: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
-  ## @param backup.environment [array] Extra env vars passed to the backup pods
+  ## This is the way you should inject secrets into the app if you wish to use the Kubernetes secrets implementation.
+  ##
+  ## @ref https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
   environment: []
-  ## @param backup.envFrom [array] Extra env vars passed to the backup pods
+  ## Extra env vars passed to the backup pods
   envFrom: []
-  ## @param backup.nodeSelector [object]  Node labels for backup pod assignment
-  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  ## Node labels for backup pod assignment
   ##
+  ## @ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
   nodeSelector: {}
-  ## @param backup.tolerations [array] Tolerations for backup pod assignment
-  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ## Tolerations for backup pod assignment
   ##
+  ## @ref https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations: []
-  ## @param backup.affinity [object] Affinity for the backup job (e.g., nodeAffinity, podAffinity, podAntiAffinity)
-  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
+  ## Affinity for the backup job (e.g., nodeAffinity, podAffinity, podAntiAffinity)
   ##
+  ## @ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
   affinity: {}
 
 ## Configuration for an Horizon external database
-## Refer to the Horizon installation guide to configure the installation correctly
 ##
-## @param externalDatabase.uri [object] External MongoDB URI. For an external database to be used, `mongodb.enabled` must be set to `false`.
+## Refer to the Horizon installation guide to configure the installation correctly.
 externalDatabase:
-  ## The uri field can be a reference to a secret.
-  ## E.g.
+  ## External MongoDB URI
+  ##
+  ## For an external database to be used, `mongodb.enabled` must be set to `false`.
+  ## Can be a reference to a Kubernetes secret.
+  ##
+  ## @example
   ##   uri:
   ##     valueFrom:
   ##       secretKeyRef:
   ##         name: horizon-secret
   ##         key: mongoDBUri
-  ##
   uri: {}
 
-## @param extraObjects [array] Create a dynamic manifests via values:
+## Create dynamic manifests via values
+##
+## @example
+## extraObjects:
+##   - apiVersion: "kubernetes-client.io/v1"
+##     kind: ExternalSecret
+##     metadata:
+##       name: horizon-secrets
+##     spec:
+##       backendType: gcpSecretsManager
+##       data:
+##         - key: horizon-secret-key
+##           name: horizon-secret-name
 extraObjects: []
-  ## - apiVersion: "kubernetes-client.io/v1"
-  ##   kind: ExternalSecret
-  ##   metadata:
-  ##     name: horizon-secrets
-  ##   spec:
-  ##     backendType: gcpSecretsManager
-  ##     data:
-  ##       - key: horizon-secret-key
-  ##         name: horizon-secret-name
 
 ## Enable Prometheus metrics
 metrics:
-  ## @param metrics.enabled Whether to enable Prometheus metrics
+  ## Whether to enable Prometheus metrics
   enabled: false
-  ## @param metrics.port Prometheus metrics port
+  ## Prometheus metrics port
   port: 9095
 
 ## Enable analytics engine
-## Refer to the Horizon installation guide to configure the installation correctly
-## ref: https://docs.evertrust.fr/horizon/install-guide/2.7/analytics
-## ref: https://docs.evertrust.fr/horizon/install-guide/2.7/docker#_docker_analytics_environment
+##
+## Refer to the Horizon installation guide to configure the installation correctly.
+##
+## @ref https://docs.evertrust.fr/horizon/-/install-guide/analytics Analytics guide
+## @ref https://docs.evertrust.fr/horizon/-/install-guide/docker#_docker_analytics_environment Analytics for docker guide
 analytics:
-  ## @param analytics.enabled Whether to enable analytics
+  ## Whether to enable analytics
   enabled: false
 
 ## Enable Persistence
-## When enabled, horizon will be deployed as a statefulset
 ##
+## When enabled, Horizon will be deployed as a statefulset.
 persistence:
-  ## @param persistence.enabled Whether to enable persistence
-  ##
+  ## Whether to enable persistence
   enabled: false
-  ## @param persistence.persistentVolumeClaimRetentionPolicy [object] Persistent Volume Claim Retention Policy
-  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
+  ## Persistent Volume Claim Retention Policy
   ##
+  ## @ref https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Delete
     whenScaled: Retain
