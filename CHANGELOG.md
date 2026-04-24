@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.13](https://github.com/evertrust/horizon-helm/compare/v2.0.12...v2.0.13) (2026-04-24)
+
+
+### Bug Fixes
+
+* Bump horizon to 2.8.6 and horizon migration to 1.15.0 ([#223](https://github.com/evertrust/horizon-helm/issues/223)) ([00d4870](https://github.com/evertrust/horizon-helm/commit/00d4870182ce2cbad6e77aac14994f78f8415ea0))
+
 ## [2.0.12](https://github.com/evertrust/horizon-helm/compare/v2.0.8...v2.0.12) (2026-04-01)
 
 
