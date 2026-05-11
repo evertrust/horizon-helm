@@ -4,6 +4,51 @@ templates:
   - deployment.yml
   - hpa.yml
 tests:
+  - it: should omit init containers by default
+    template: deployment.yml
+    asserts:
+      - isKind:
+          of: Deployment
+      - notExists:
+          path: spec.template.spec.initContainers
+
+  - it: should render init containers when provided
+    template: deployment.yml
+    set:
+      initContainers:
+        - name: wait-for-mongodb
+          image: busybox:1.36
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - "until nc -z mongodb 27017; do sleep 2; done"
+          env:
+            - name: HORIZON_IMAGE_REPOSITORY
+              value: "{{ .Values.image.repository }}"
+          volumeMounts:
+            - name: config
+              mountPath: /opt/horizon/etc
+    asserts:
+      - isKind:
+          of: Deployment
+      - contains:
+          path: spec.template.spec.initContainers
+          content:
+            name: wait-for-mongodb
+            image: busybox:1.36
+            imagePullPolicy: IfNotPresent
+            command:
+              - sh
+              - -c
+              - "until nc -z mongodb 27017; do sleep 2; done"
+            env:
+              - name: HORIZON_IMAGE_REPOSITORY
+                value: horizon
+            volumeMounts:
+              - name: config
+                mountPath: /opt/horizon/etc
+
   - it: should render deployment replicas from replicas when autoscaling is disabled
     template: deployment.yml
     set:
