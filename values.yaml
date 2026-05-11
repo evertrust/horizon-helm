@@ -96,6 +96,8 @@ extraVolumeMounts: []
 ##       - name: portname
 ##         containerPort: 1234
 sidecars: []
+## Add additional init containers to the Horizon pod
+initContainers: []
 ## Add lifecycle hooks to the Horizon deployment
 lifecycleHooks: {}
 ## Extra labels for Horizon pods
