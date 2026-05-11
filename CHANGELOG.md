@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/evertrust/horizon-helm/compare/v2.1.1...v2.2.0) (2026-05-11)
+
+
+### Features
+
+* **deployment:** initContainers ([#227](https://github.com/evertrust/horizon-helm/issues/227)) ([743af67](https://github.com/evertrust/horizon-helm/commit/743af676fb5097bb12981ddf5e27f0ca485f4b0a))
+
 ## [2.1.1](https://github.com/evertrust/horizon-helm/compare/v2.1.0...v2.1.1) (2026-04-27)
 
 
