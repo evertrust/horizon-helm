@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/evertrust/horizon-helm/compare/v2.2.0...v2.2.1) (2026-05-12)
+
+
+### Bug Fixes
+
+* **release:** bad release ([#231](https://github.com/evertrust/horizon-helm/issues/231)) ([0bb7d07](https://github.com/evertrust/horizon-helm/commit/0bb7d073c0a6d659725e99ebffd78585a0c262de))
+
 ## [2.2.0](https://github.com/evertrust/horizon-helm/compare/v2.1.1...v2.2.0) (2026-05-11)
 
 
