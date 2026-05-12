@@ -14,6 +14,7 @@ You can then use the Chart using the prefix you chose :
 ```shell
 helm install horizon evertrust/horizon
 ```
+
 ## Usage
 
 Moved to our [documentation portal](https://docs.evertrust.fr/horizon/install-guide/-/k8s/installation)
