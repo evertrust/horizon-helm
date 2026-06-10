@@ -119,6 +119,20 @@ Prints Horizon loggers.
 {{- end }}
 
 {{/*
+Prints true when the controller should render spec.replicas.
+*/}}
+{{- define "horizon.shouldRenderReplicas" -}}
+{{- if and .Values.horizontalAutoscaler.enabled .Values.externalAutoscaler.enabled -}}
+    {{- fail "horizontalAutoscaler.enabled and externalAutoscaler.enabled are mutually exclusive" -}}
+{{- end -}}
+{{- if or .Values.horizontalAutoscaler.enabled .Values.externalAutoscaler.enabled -}}
+    {{- print "false" -}}
+{{- else -}}
+    {{- print "true" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Prints true if an client certificate auth should be enable, false if not
 */}}
 {{- define "horizon.shouldEnableClientCertificateAuth" }}
