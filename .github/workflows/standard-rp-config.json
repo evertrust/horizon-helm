@@ -1,5 +1,4 @@
 {
-  "last-release-sha": "3fa8cb8a70ad65d619942244937ee810927387ea",
   "packages": {
     ".": {
       "release-type": "helm",
