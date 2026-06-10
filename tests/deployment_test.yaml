@@ -87,6 +87,15 @@ tests:
       - notExists:
           path: spec.replicas
 
+  - it: should fail when chart and external autoscalers are enabled
+    set:
+      horizontalAutoscaler.enabled: true
+      externalAutoscaler.enabled: true
+    template: deployment.yml
+    asserts:
+      - failedTemplate:
+          errorMessage: horizontalAutoscaler.enabled and externalAutoscaler.enabled are mutually exclusive
+
   - it: should render hpa minReplicas when autoscaling is enabled
     set:
       horizontalAutoscaler.enabled: true
