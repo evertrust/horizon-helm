@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/evertrust/horizon-helm/compare/v2.2.2...v2.3.0) (2026-06-10)
+
+
+### Features
+
+* **external-autoscaler:** support external autoscaler replicas ([#240](https://github.com/evertrust/horizon-helm/issues/240)) ([40674c8](https://github.com/evertrust/horizon-helm/commit/40674c87711f14f9f55710dce517962cb5108260))
+
 ## [2.2.2](https://github.com/evertrust/horizon-helm/compare/v2.2.1...v2.2.2) (2026-05-13)
 
 
