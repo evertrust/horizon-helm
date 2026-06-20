@@ -83,6 +83,12 @@ Prints all Horizon allowed hosts.
 */}}
 {{- define "horizon.allowedHosts" }}
 {{- $allowedHosts := list }}
+{{- /* Always allow in-cluster callers that reach Horizon by its Service FQDN.
+       A leading-dot pattern matches the domain and all of its subdomains on any
+       port, so ".<namespace>.svc.<clusterDomain>" covers
+       <release>.<namespace>.svc.<clusterDomain> without hardcoding the release
+       name or the service port. */}}
+{{- $allowedHosts = append $allowedHosts (printf ".%s.svc.%s" .Release.Namespace (.Values.clusterDomain | default "cluster.local")) }}
 {{- if .Values.ingress.enabled -}}
   {{- $allowedHosts = append $allowedHosts .Values.ingress.hostname }}
   {{- range .Values.ingress.extraHosts }}
