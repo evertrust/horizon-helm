@@ -450,7 +450,10 @@ defaultVault:
   ## Keyset
   ##
   ## A reference to a secret that contains the keyset.
-  ## You should store it (base64-encoded) in a Kubernetes secret and specify the secret details here.
+  ## Store the *raw* Tink JSON keyset (do not base64-encode the JSON yourself):
+  ## JsonKeysetReader expects raw JSON, and Kubernetes already base64-encodes
+  ## secret `data`. Creating it from the file does the right thing, e.g.:
+  ##   kubectl create secret generic horizon-keyset --from-file=keyset=keyset.json
   ##
   ## @ref README.md
   ## @example
