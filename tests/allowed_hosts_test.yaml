@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: allowed hosts
+templates:
+  - deployment.yml
+tests:
+  - it: should always allow the in-cluster Service FQDN even with no ingress and no extra hosts
+    template: deployment.yml
+    release:
+      namespace: horizon-test
+    set:
+      ingress.enabled: false
+      allowedHosts: []
+    asserts:
+      - isKind:
+          of: Deployment
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: HOSTS_ALLOWED.0
+            value: ".horizon-test.svc.cluster.local"
+
+  - it: should build the Service FQDN from a custom clusterDomain
+    template: deployment.yml
+    release:
+      namespace: horizon-test
+    set:
+      clusterDomain: cluster.internal
+      ingress.enabled: false
+      allowedHosts: []
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: HOSTS_ALLOWED.0
+            value: ".horizon-test.svc.cluster.internal"
+
+  - it: should derive the Service FQDN from the release namespace
+    template: deployment.yml
+    release:
+      namespace: another-ns
+    set:
+      ingress.enabled: false
+      allowedHosts: []
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: HOSTS_ALLOWED.0
+            value: ".another-ns.svc.cluster.local"
+
+  - it: should keep the Service FQDN first and append user-provided allowedHosts after it
+    template: deployment.yml
+    release:
+      namespace: horizon-test
+    set:
+      ingress.enabled: false
+      allowedHosts:
+        - "localhost:9000"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: HOSTS_ALLOWED.0
+            value: ".horizon-test.svc.cluster.local"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: HOSTS_ALLOWED.1
+            value: "localhost:9000"
+
+  - it: should keep the Service FQDN first and add the ingress hostname when ingress is enabled
+    template: deployment.yml
+    release:
+      namespace: horizon-test
+    set:
+      ingress.enabled: true
+      ingress.hostname: horizon.example.com
+      allowedHosts: []
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: HOSTS_ALLOWED.0
+            value: ".horizon-test.svc.cluster.local"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: HOSTS_ALLOWED.1
+            value: "horizon.example.com"

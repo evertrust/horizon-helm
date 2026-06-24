@@ -468,9 +468,17 @@ defaultVault:
 ##   secretKey: legacySsvPassword
 legacySsvPassword: {}
 
+## Kubernetes cluster domain. Used to build the in-cluster Service FQDN that is
+## always allowed (see allowedHosts below), so service-to-service calls work
+## out of the box.
+clusterDomain: cluster.local
+
 ## Additional allowed hosts that are whitelisted to access the Horizon UI.
-## Configured ingresses will automatically be added to the list, this should
-## only be used when port forwarding or when an ingress is created manually.
+## Configured ingresses are added automatically, and the in-cluster Service FQDN
+## (.<namespace>.svc.<clusterDomain>, matched on any port) is always allowed.
+## This list is appended to those; use it for port-forwarding or a manually
+## created ingress. Note: Helm replaces (does not merge) arrays, so if you
+## override this value keep localhost:9000 if you still need it.
 ##
 ## @example
 ## allowedHosts:
