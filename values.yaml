@@ -36,7 +36,7 @@ image:
   ## Horizon image repository
   repository: horizon
   ## Horizon image tag (immutable tags are recommended)
-  tag: 2.10.1
+  tag: 2.10.2
   ## Horizon image flavor (for HSM compatible images)
   flavor: ""
   ## Horizon image pull policy
@@ -732,7 +732,7 @@ upgrade:
     ## Horizon Migration image repository
     repository: horizon-migration
     ## Horizon Migration image tag (immutable tags are recommended)
-    tag: 1.20.0
+    tag: 1.21.0
     ## Horizon Migration image pull policy
     pullPolicy: IfNotPresent
     ## Horizon Migration image pull secrets
