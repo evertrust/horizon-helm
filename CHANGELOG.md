@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.2](https://github.com/evertrust/horizon-helm/compare/v2.4.1...v2.4.2) (2026-06-25)
+
+
+### Bug Fixes
+
+* **allowedHosts:** always allow the in-cluster Service FQDN ([#248](https://github.com/evertrust/horizon-helm/issues/248)) ([79f97a9](https://github.com/evertrust/horizon-helm/commit/79f97a96c0da7ab75c2854dead6d315bd9aabb8d))
+* bump horizon to 2.10.2 and horizon migration to 1.21.0 ([#250](https://github.com/evertrust/horizon-helm/issues/250)) ([481eeb3](https://github.com/evertrust/horizon-helm/commit/481eeb33fe19b7bcb4a9b9dcac90b82d65d3dd1f))
+
 ## [2.4.1](https://github.com/evertrust/horizon-helm/compare/v2.4.0...v2.4.1) (2026-06-17)
 
 
