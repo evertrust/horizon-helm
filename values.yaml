@@ -732,7 +732,7 @@ upgrade:
     ## Horizon Migration image repository
     repository: horizon-migration
     ## Horizon Migration image tag (immutable tags are recommended)
-    tag: 1.25.0
+    tag: 1.26.0
     ## Horizon Migration image pull policy
     pullPolicy: IfNotPresent
     ## Horizon Migration image pull secrets
