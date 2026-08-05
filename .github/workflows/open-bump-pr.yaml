@@ -1,0 +1,50 @@
+name: Open Horizon bump PR
+
+# Runs in the context of the branch it is dispatched on (master or a legacy/horizon-X.Y
+# branch, selected by bump-version.yaml). It bumps that branch's chart versions and opens
+# the pull request against it.
+
+on:
+  workflow_dispatch:
+    inputs:
+      horizon_version:
+        description: "The released Horizon version, without the leading v (e.g. 2.10.7)"
+        required: true
+        type: string
+      migration_version:
+        description: "The Horizon Migration image version (e.g. 1.27.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo curl -fsSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.53.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          yq --version
+
+      - name: Bump chart versions
+        env:
+          HORIZON_VERSION: ${{ inputs.horizon_version }}
+          MIGRATION_VERSION: ${{ inputs.migration_version }}
+        run: make bump HORIZON_VERSION="$HORIZON_VERSION" MIGRATION_VERSION="$MIGRATION_VERSION"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7.0.8
+        with:
+          add-paths: |
+            Chart.yaml
+            values.yaml
+          title: "fix: bump horizon to ${{ inputs.horizon_version }} and horizon-migration to ${{ inputs.migration_version }}"
+          commit-message: "fix: bump horizon to ${{ inputs.horizon_version }} and horizon-migration to ${{ inputs.migration_version }}"
+          branch: "bump_horizon_${{ inputs.horizon_version }}"

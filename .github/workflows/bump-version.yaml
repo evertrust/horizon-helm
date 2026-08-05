@@ -1,0 +1,64 @@
+name: Bump Horizon version
+
+# Entry point (dispatched from the Horizon release pipeline). This workflow only
+# routes: it resolves which branch the bump belongs on (legacy/horizon-X.Y if it
+# exists, otherwise master) and dispatches open-bump-pr.yaml on that branch, which
+# opens the actual pull request in the context of the target branch.
+
+on:
+  workflow_dispatch:
+    inputs:
+      horizon_version:
+        description: "The released Horizon version, without the leading v (e.g. 2.10.7)"
+        required: true
+        type: string
+      migration_version:
+        description: "The Horizon Migration image version (e.g. 1.27.0)"
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  route:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch secrets via Vault
+        uses: hashicorp/vault-action@v2
+        with:
+          url: ${{ vars.VAULT_ADDR }}
+          method: ${{ vars.VAULT_AUTH_METHOD }}
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          secrets: |
+            ci/data/global/webhooks horizon_helm_webhook | EVT_HELM_TOKEN ;
+
+      - name: Resolve target branch
+        id: branch
+        env:
+          HORIZON_VERSION: ${{ inputs.horizon_version }}
+        run: echo "base=$(make -s resolve-base-branch HORIZON_VERSION="$HORIZON_VERSION")" >> "$GITHUB_OUTPUT"
+
+      - name: Dispatch PR workflow on target branch
+        env:
+          BASE: ${{ steps.branch.outputs.base }}
+          HORIZON_VERSION: ${{ inputs.horizon_version }}
+          MIGRATION_VERSION: ${{ inputs.migration_version }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          curl -L \
+          -X POST \
+          --fail \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${EVT_HELM_TOKEN}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          "https://api.github.com/repos/${REPOSITORY}/actions/workflows/open-bump-pr.yaml/dispatches" \
+          -d "$(jq -n \
+            --arg ref "$BASE" \
+            --arg hv "$HORIZON_VERSION" \
+            --arg mv "$MIGRATION_VERSION" \
+            '{ref: $ref, inputs: {horizon_version: $hv, migration_version: $mv}}')"
