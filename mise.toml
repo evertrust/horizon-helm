@@ -1,0 +1,16 @@
+[tools]
+"aqua:mikefarah/yq" = "4.47.2"
+
+[tasks.check-image-tag]
+description = "Verify that the Horizon image tag matches the chart appVersion"
+run = """
+set -eu
+
+image_tag="$(yq -er '.image.tag' values.yaml)"
+app_version="$(yq -er '.appVersion' Chart.yaml)"
+
+if [ "$image_tag" != "$app_version" ]; then
+  printf 'values.yaml image.tag (%s) does not match Chart.yaml appVersion (%s)\\n' "$image_tag" "$app_version" >&2
+  exit 1
+fi
+"""
