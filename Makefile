@@ -13,17 +13,9 @@ resolve-base-branch:
 bump:
 	@if [ -z "$(HORIZON_VERSION)" ]; then echo "HORIZON_VERSION is not set"; exit 1; fi
 	@if [ -z "$(MIGRATION_VERSION)" ]; then echo "MIGRATION_VERSION is not set"; exit 1; fi
-	awk -v v="$(HORIZON_VERSION)" '/^appVersion:/ { sub(/appVersion:.*/, "appVersion: \"" v "\"") } { print }' \
-		Chart.yaml > Chart.yaml.tmp && mv Chart.yaml.tmp Chart.yaml
-	awk -v hv="$(HORIZON_VERSION)" -v mv="$(MIGRATION_VERSION)" ' \
-		/^[[:space:]]*repository:[[:space:]]*horizon[[:space:]]*$$/           { pending="horizon" } \
-		/^[[:space:]]*repository:[[:space:]]*horizon-migration[[:space:]]*$$/ { pending="migration" } \
-		/^[[:space:]]*tag:[[:space:]]/ { \
-			if (pending=="horizon")        { sub(/tag:[[:space:]].*/, "tag: " hv); pending="" } \
-			else if (pending=="migration") { sub(/tag:[[:space:]].*/, "tag: " mv); pending="" } \
-		} \
-		{ print }' \
-		values.yaml > values.yaml.tmp && mv values.yaml.tmp values.yaml
+	HORIZON_VERSION="$(HORIZON_VERSION)" yq -i '.appVersion = strenv(HORIZON_VERSION) | .appVersion style="double"' Chart.yaml
+	HORIZON_VERSION="$(HORIZON_VERSION)" yq -i '.image.tag = strenv(HORIZON_VERSION)' values.yaml
+	MIGRATION_VERSION="$(MIGRATION_VERSION)" yq -i '.upgrade.image.tag = strenv(MIGRATION_VERSION)' values.yaml
 
 dependencies:
 	helm dependencies build .

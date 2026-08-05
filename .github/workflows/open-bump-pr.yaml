@@ -27,6 +27,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install yq
+        run: |
+          sudo curl -fsSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.53.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          yq --version
+
       - name: Bump chart versions
         env:
           HORIZON_VERSION: ${{ inputs.horizon_version }}
