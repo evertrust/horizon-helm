@@ -14,7 +14,6 @@ global:
   ##   - myRegistryKeySecretName
   ##
   imagePullSecrets: []
-
 ## @section Common parameters
 ##
 
@@ -36,7 +35,6 @@ commonLabels: {}
 ## @param commonAnnotations Annotations to add to all deployed objects
 ##
 commonAnnotations: {}
-
 ## @section Horizon deployment parameters
 
 ## By default, we fetch the Horizon image from the Evertrust registry.
@@ -56,11 +54,10 @@ commonAnnotations: {}
 image:
   registry: registry.evertrust.io
   repository: horizon
-  tag: 2.7.23
+  tag: 2.7.24
   flavor: ""
   pullPolicy: IfNotPresent
   pullSecrets: []
-
 ## @param updateStrategy.type Horizon deployment strategy type
 ## @param updateStrategy.rollingUpdate [object] Rolling update spec
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
@@ -75,15 +72,12 @@ image:
 ##
 updateStrategy:
   type: Recreate
-
 ## @param deploymentAnnotations Annotations to add to the deployment object
 ##
 deploymentAnnotations: {}
-
 ## @param deploymentAnnotations Annotations to add to the deployment object
 ##
 deploymentLabels: {}
-
 ## @param priorityClassName Horizon pod priority class name
 ##
 priorityClassName: ""
@@ -246,7 +240,6 @@ readinessProbe:
   timeoutSeconds: 3
   successThreshold: 1
   failureThreshold: 3
-
 ## Horizon Autoscaling configuration
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 ## @param horizontalAutoscaler.enabled Enable Horizontal POD autoscaling for Horizon
@@ -261,7 +254,6 @@ horizontalAutoscaler:
   maxReplicas: 3
   targetCPU: 50
   targetMemory: 50
-
 ## Pod Disruption Budget configuration
 ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 ##
@@ -275,7 +267,6 @@ disruptionBudget:
   ## @param disruptionBudget.maxUnavailable Max number of pods that can be unavailable after the eviction
   ##
   maxUnavailable: 0
-
 ## Configure environment variable injections into Horizon's pods.
 ## This is the way you should inject secrets into the app if you wish
 ## to use the Kubernetes secrets implementation.
@@ -287,7 +278,6 @@ disruptionBudget:
 ##     - name: KEY
 ##       value: VALUE
 environment: []
-
 ## Pod's DNS Configuration
 ## https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
 ## This value is useful if you need to resolve your custom domain for ACME challenges
@@ -301,11 +291,9 @@ environment: []
 ##    - name: ndots
 ##      value: "2"
 dnsConfig: {}
-
 # Pod's DNS Policy
 # https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
 dnsPolicy: ""
-
 ## @section Horizon Service configuration
 ##
 service:
@@ -338,7 +326,6 @@ service:
   ## @param service.annotations Annotations for Horizon service
   ##
   annotations: {}
-
 ## @section Horizon Ingress configuration
 ##
 ## ref https://kubernetes.io/docs/concepts/services-networking/ingress/
@@ -424,12 +411,10 @@ ingress:
   ##             name: http
   ##
   extraRules: []
-
 ## @section Prometheus monitor configuration
 ## @param monitoring.enabled Enable the creation of a ServiceMonitor object for Horizon if the cluster has the monitoring.coreos.com/v1 capability.
 monitoring:
   enabled: true
-
 ## @section Horizon application parameters
 
 ## Configure the Play secret for the Horizon instance.
@@ -446,7 +431,6 @@ monitoring:
 ##       key: appSecret
 ##
 appSecret: {}
-
 ## A valid Horizon license is required for the software to run.
 ## You should store it (base64-encoded) in a Kubernetes secret and specify
 ## the secret details here.
@@ -456,7 +440,6 @@ appSecret: {}
 license:
   secretName: ""
   secretKey: ""
-
 ## Set up initial admin user.
 ## @param initialAdminHashPassword.enabled Whether to enable the initial admin user
 ## @param initialAdminHashPassword.secretName Existing secret name where the initial admin password is stored
@@ -465,7 +448,6 @@ initialAdminHashPassword:
   enabled: false
   secretName: ""
   secretKey: ""
-
 ## For backwards-compatibility reasons, this array should contain
 ## only one element.
 ## For more information, refer to the Horizon installation guide.
@@ -482,7 +464,6 @@ vaults:
     ##         key: defaultMasterPassword
     ##
     master_password: {}
-
 ## Additional allowed hosts that are whitelisted to access the Horizon UI.
 ## Configured ingresses will automatically be added to the list, this should
 ## only be used when port forwarding or when an ingress is created manually.
@@ -494,7 +475,6 @@ vaults:
 ##
 allowedHosts:
   - localhost:9000
-
 ## Depending on your Kubernetes environment, Ingress IPs may be unpredictable. In that case, you should trust whitelist every IP in your local addressing space.
 ## @param trustedProxies [array] Trusted proxies.
 ## E.g.
@@ -505,7 +485,6 @@ allowedHosts:
 trustedProxies:
   - 0.0.0.0/0
   - ::/0
-
 ## Configuration for Horizon events
 ## @param events.chainsign Whether Horizon events should be signed and chained using the event seal secret.
 ## @param events.secret [object] Secret used to sign and chain events.
@@ -524,10 +503,8 @@ events:
   secret: {}
   ttl: ""
   discoveryTtl: ""
-
 ## @param logFormat Format in which logs will be outputted. Can be set either to "console" or "json" for structured logging.
 logFormat: console
-
 ## @param tls.enabled Whether to use the HTTPS port by default on ingresses and other services
 ## @param tls.secretName Existing secret name where a PKCS12 certificate is stored
 ## @param tls.secretKey Existing secret key where the PKCS12 certificate is stored
@@ -535,7 +512,6 @@ tls:
   enabled: false
   secretName: ""
   secretKey: ""
-
 ## Configuration for the Horizon mailer.
 ## You should configure this if you want your Horizon instance to be able
 ## to send emails.
@@ -561,7 +537,6 @@ mailer:
   ##         key: mailerPassword
   ##
   password: {}
-
 ## Configure the logger for this Horizon instance.
 ## Sensible defaults are set, but you may need a more verbose logging
 ## experience when debugging the application.
@@ -579,29 +554,27 @@ logback:
       level: warn
     - name: json_events
       level: info
-    ## You might want to uncomment the following loggers to gather more info about your Horizon instance.
-    ## E.g.
-    ## - name: actors
-    ##   level: debug
-    ## - name: actions
-    ##   level: debug
-    ## - name: controllers
-    ##   level: debug
-    ## - name: filters
-    ##   level: debug
-    ## - name: models
-    ##   level: debug
-    ## - name: modules
-    ##   level: debug
-    ## - name: pki-connectors
-    ##   level: debug
-    ## - name: racs-connectors
-    ##   level: debug
-
+      ## You might want to uncomment the following loggers to gather more info about your Horizon instance.
+      ## E.g.
+      ## - name: actors
+      ##   level: debug
+      ## - name: actions
+      ##   level: debug
+      ## - name: controllers
+      ##   level: debug
+      ## - name: filters
+      ##   level: debug
+      ## - name: models
+      ##   level: debug
+      ## - name: modules
+      ##   level: debug
+      ## - name: pki-connectors
+      ##   level: debug
+      ## - name: racs-connectors
+      ##   level: debug
 ## @param rbac.create Whether to create RBAC resources
 rbac:
   create: true
-
 ## Horizon pods ServiceAccount
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 ##
@@ -619,19 +592,15 @@ serviceAccount:
   ## @param serviceAccount.automountServiceAccountToken Automount service account token for the server service account
   ##
   automountServiceAccountToken: true
-
 ## @param leases.enabled Whether leases should be used when launching multiple replicas of Horizon pods.
 leases:
   enabled: true
-
 ## @param clientCertificateHeader Indicates to Horizon in which header the client certificate will be passed. Will be automatically set by the ingress.clientCertificateAuth value if set.
 clientCertificateHeader: ""
-
 ## @param podsDirectConnect Whether Horizon pods should connect to each other directly via IP, or through a DNS record generated by a Kubernetes DNS server.
 ## Useful if the kube-dns server is configured with "pods disabled" or if you use GKE Cloud DNS
 ## NOTE: This is not support by Istio
 podsDirectConnect: false
-
 ## @param extraConfig Additional configuration for Horizon
 ## Injecting arbitrary config could result in unexpected behavior. Proceed with caution.
 ## ref: https://docs.evertrust.fr/horizon/admin-guide/-/parameters
@@ -642,13 +611,10 @@ podsDirectConnect: false
 ##     notification.mail.attachment.extension.der = "der"
 ##   }
 extraConfig: ""
-
 ## @section Database parameters
-
 temporaryDatabase:
   ## @param temporaryDatabase.enabled Whether to enable the deployment of a temporary MongoDB instance
   enabled: true
-
   ## @param temporaryDatabase.image.registry MongoDB image registry
   ## @param temporaryDatabase.image.repository MongoDB image repository
   ## @param temporaryDatabase.image.tag MongoDB image tag (immutable tags are recommended)
@@ -661,7 +627,6 @@ temporaryDatabase:
     tag: 7
     pullPolicy: IfNotPresent
     pullSecrets: []
-
   persistence:
     ## @param temporaryDatabase.persistence.enabled Whether to enable persistence on the temporary MongoDB
     enabled: true
@@ -674,7 +639,6 @@ temporaryDatabase:
       - ReadWriteOnce
     ## @param temporaryDatabase.persistence.size Size of data volume for MongoDB
     size: "1Gi"
-
   ## MongoDB container resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param temporaryDatabase.resources.limits [object] The resources limits for the Horizon container
@@ -687,7 +651,6 @@ temporaryDatabase:
     requests:
       memory: 512Mi
       cpu: 500m
-
   ## Configure Pods Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   ## @param temporaryDatabase.podSecurityContext.enabled Enabled Horizon pods' Security Context
@@ -706,7 +669,6 @@ temporaryDatabase:
     enabled: true
     runAsUser: 1001
     runAsNonRoot: true
-
 ## @section Upgrade parameters
 upgrade:
   ## @param upgrade.enabled If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
@@ -724,7 +686,7 @@ upgrade:
   image:
     registry: registry.evertrust.io
     repository: horizon-upgrade
-    tag: 2.7.23
+    tag: 2.7.24
     pullPolicy: IfNotPresent
     pullSecrets: []
   ## horizon-upgrade container resource requests and limits
@@ -753,7 +715,6 @@ upgrade:
   ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
   tolerations: []
-
 ## @section Backup parameters
 backup:
   ## @param backup.enabled Whether to enable backup
@@ -832,7 +793,6 @@ backup:
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
   ##
   affinity: {}
-
 ## Configuration for an Horizon external database
 ## Refer to the Horizon installation guide to configure the installation correctly
 ##
@@ -847,18 +807,17 @@ externalDatabase:
   ##         key: mongoDBUri
   ##
   uri: {}
-
 ## @param extraObjects [array] Create a dynamic manifests via values:
 extraObjects: []
-  ## - apiVersion: "kubernetes-client.io/v1"
-  ##   kind: ExternalSecret
-  ##   metadata:
-  ##     name: horizon-secrets
-  ##   spec:
-  ##     backendType: gcpSecretsManager
-  ##     data:
-  ##       - key: horizon-secret-key
-  ##         name: horizon-secret-name
+## - apiVersion: "kubernetes-client.io/v1"
+##   kind: ExternalSecret
+##   metadata:
+##     name: horizon-secrets
+##   spec:
+##     backendType: gcpSecretsManager
+##     data:
+##       - key: horizon-secret-key
+##         name: horizon-secret-name
 
 ## Enable Prometheus metrics
 metrics:
@@ -866,7 +825,6 @@ metrics:
   enabled: false
   ## @param metrics.port Prometheus metrics port
   port: 9095
-
 ## Enable analytics engine
 ## Refer to the Horizon installation guide to configure the installation correctly
 ## ref: https://docs.evertrust.fr/horizon/install-guide/2.7/analytics
@@ -874,7 +832,6 @@ metrics:
 analytics:
   ## @param analytics.enabled Whether to enable analytics
   enabled: false
-
 ## Enable Persistence
 ## When enabled, horizon will be deployed as a statefulset
 ##
