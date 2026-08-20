@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/evertrust/horizon-helm/compare/v2.4.7...v2.5.0) (2026-08-20)
+
+
+### Features
+
+* add enableServiceLinks support to deployment ([#281](https://github.com/evertrust/horizon-helm/issues/281)) ([12bde71](https://github.com/evertrust/horizon-helm/commit/12bde715e2f2f960288818b8bf5b5fc011c8c901))
+
 ## [2.4.7](https://github.com/evertrust/horizon-helm/compare/v2.4.6...v2.4.7) (2026-08-04)
 
 
