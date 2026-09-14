@@ -888,7 +888,7 @@ backup:
     ## Toolbox image repository
     repository: toolbox
     ## Toolbox image tag (immutable tags are recommended)
-    tag: v0.6.1
+    tag: v0.9.1
     ## Toolbox image pull policy
     pullPolicy: IfNotPresent
     ## Toolbox image pull secrets
