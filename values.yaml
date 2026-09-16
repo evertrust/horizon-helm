@@ -9,7 +9,6 @@ global:
   ## imagePullSecrets:
   ##   - myRegistryKeySecretName
   imagePullSecrets: []
-
 ## Force target Kubernetes version (using Helm capabilities if not set)
 kubeVersion: ""
 ## String to partially override horizon.fullname
@@ -22,7 +21,6 @@ imageRegistry: ""
 commonLabels: {}
 ## Annotations to add to all deployed objects
 commonAnnotations: {}
-
 ## By default, we fetch the Horizon image from the Evertrust registry.
 ## If the tag is null or unset, the default value will be set to the chart appVersion.
 ## As the official Evertrust registry is not in open-access,
@@ -36,14 +34,13 @@ image:
   ## Horizon image repository
   repository: horizon
   ## Horizon image tag (immutable tags are recommended)
-  tag: 2.10.7
+  tag: 2.10.8
   ## Horizon image flavor (for HSM compatible images)
   flavor: ""
   ## Horizon image pull policy
   pullPolicy: IfNotPresent
   ## Horizon image pull secrets
   pullSecrets: []
-
 ## @ref https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
 ## @example
 ## updateStrategy:
@@ -57,13 +54,10 @@ updateStrategy:
   ## Rolling update spec
   rollingUpdate:
     maxUnavailable: 1
-
 ## Annotations to add to the deployment object
 deploymentAnnotations: {}
-
 ## Annotations to add to the deployment object
 deploymentLabels: {}
-
 ## Horizon pod priority class name
 priorityClassName: ""
 ## Horizon pod host aliases
@@ -228,7 +222,6 @@ readinessProbe:
   successThreshold: 1
   ## Failure threshold for readinessProbe
   failureThreshold: 3
-
 ## @ref https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 horizontalAutoscaler:
   ## Enable Horizontal POD autoscaling for Horizon
@@ -241,13 +234,11 @@ horizontalAutoscaler:
   targetCPU: 50
   ## Target Memory utilization percentage
   targetMemory: 50
-
 externalAutoscaler:
   ## Set to true when replicas are managed by an autoscaler not created by this chart.
   ## For example, this can be used with a KEDA ScaledObject rendered through extraObjects.
   ## When enabled, spec.replicas is omitted from the Deployment/StatefulSet.
   enabled: false
-
 ## @ref https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 disruptionBudget:
   ## Created a PodDisruptionBudget
@@ -256,7 +247,6 @@ disruptionBudget:
   minAvailable: 1
   ## Max number of pods that can be unavailable after the eviction
   maxUnavailable: 0
-
 ## Configure environment variable injections into Horizon's pods.
 ## This is the way you should inject secrets into the app if you wish to use the Kubernetes secrets implementation.
 ##
@@ -266,7 +256,6 @@ disruptionBudget:
 ##     - name: KEY
 ##       value: VALUE
 environment: []
-
 ## This value is useful if you need to resolve your custom domain for ACME challenges.
 ##
 ## @ref https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
@@ -280,15 +269,12 @@ environment: []
 ##    - name: ndots
 ##      value: "2"
 dnsConfig: {}
-
 ## @ref https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
 dnsPolicy: ""
-
 ## Whether information about services should be injected into pod's environment variable
 ##
 ## @ref https://kubernetes.io/docs/tutorials/services/connect-applications-service/#accessing-the-service
 enableServiceLinks: true
-
 ## Service configuration
 service:
   ## Kubernetes service type
@@ -317,7 +303,6 @@ service:
   extraPorts: []
   ## Annotations for Horizon service
   annotations: {}
-
 ## Ingress configuration
 ##
 ## @ref https://kubernetes.io/docs/concepts/services-networking/ingress/
@@ -411,12 +396,10 @@ ingress:
   ##           port:
   ##             name: http
   extraRules: []
-
 ## Prometheus monitor configuration
 monitoring:
   ## Enable the creation of a ServiceMonitor object for Horizon if the cluster has the monitoring.coreos.com/v1 capability
   enabled: true
-
 ## Configure the Play secret for the Horizon instance.
 ## As this is used for cryptographic purposes, it should be fetched from the environment.
 ##
@@ -428,7 +411,6 @@ monitoring:
 ##       name: horizon-secret
 ##       key: appSecret
 appSecret: {}
-
 ## A valid Horizon license is required for the software to run.
 ## You should store it (base64-encoded) in a Kubernetes secret and specify the secret details here.
 ##
@@ -438,7 +420,6 @@ license:
   secretName: ""
   ## Existing secret key where the Horizon license is stored
   secretKey: ""
-
 ## Set up initial admin user.
 initialAdminHashPassword:
   ## Whether to enable the initial admin user
@@ -447,7 +428,6 @@ initialAdminHashPassword:
   secretName: ""
   ## Existing secret key where the initial admin password is stored
   secretKey: ""
-
 ## Horizon Default vault configuration
 defaultVault:
   type: tink
@@ -466,7 +446,6 @@ defaultVault:
   ##  secretName: ""
   ##  secretKey: ""
   keyset: {}
-
 ## Horizon legacy SSV password (Optional).
 ## Should be set if upgrading from Horizon 2.7 or earlier to Horizon 2.8 or later.
 ##
@@ -475,12 +454,10 @@ defaultVault:
 ##   secretName: horizon-legacy-ssv-password
 ##   secretKey: legacySsvPassword
 legacySsvPassword: {}
-
 ## Kubernetes cluster domain. Used to build the in-cluster Service FQDN that is
 ## always allowed (see allowedHosts below), so service-to-service calls work
 ## out of the box.
 clusterDomain: cluster.local
-
 ## Additional allowed hosts that are whitelisted to access the Horizon UI.
 ## Configured ingresses are added automatically, and the in-cluster Service FQDN
 ## (.<namespace>.svc.<clusterDomain>, matched on any port) is always allowed.
@@ -494,7 +471,6 @@ clusterDomain: cluster.local
 ##   - demo.example.org
 allowedHosts:
   - localhost:9000
-
 ## Depending on your Kubernetes environment, Ingress IPs may be unpredictable.
 ## In that case, you should whitelist every IP in your local addressing space.
 ##
@@ -505,7 +481,6 @@ allowedHosts:
 trustedProxies:
   - 0.0.0.0/0
   - ::/0
-
 ## Configuration for Horizon events
 events:
   ## Whether Horizon events should be signed and chained using the event seal secret
@@ -525,10 +500,8 @@ events:
   ttl: ""
   ## Duration during which discovery events are kept in database
   discoveryTtl: ""
-
 ## Format in which logs will be outputted. Can be set either to "console" or "json" for structured logging.
 logFormat: console
-
 ## TLS configuration
 tls:
   ## Whether to use the HTTPS port by default on ingresses and other services
@@ -537,7 +510,6 @@ tls:
   secretName: ""
   ## Existing secret key where the PKCS12 certificate is stored
   secretKey: ""
-
 ## Configuration for the Horizon mailer.
 ## You should configure this if you want your Horizon instance to be able to send emails.
 ## You should fetch credentials from the environment if they are required.
@@ -563,7 +535,6 @@ mailer:
   ##         name: horizon-secret
   ##         key: mailerPassword
   password: {}
-
 ## Configure the logger for this Horizon instance.
 ## Sensible defaults are set, but you may need a more verbose logging experience when debugging the application.
 ##
@@ -598,11 +569,9 @@ logback:
       level: warn
     - name: json_events
       level: info
-
 rbac:
   ## Whether to create RBAC resources
   create: true
-
 ## @ref https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 serviceAccount:
   ## Enable the creation of a ServiceAccount for Horizon pods
@@ -618,20 +587,16 @@ serviceAccount:
     helm.sh/hook-weight: "0"
   ## Automount service account token for the server service account
   automountServiceAccountToken: true
-
 leases:
   ## Whether leases should be used when launching multiple replicas of Horizon pods
   enabled: true
-
 ## Indicates to Horizon in which header the client certificate will be passed.
 ## Will be automatically set by the ingress.clientCertificateAuth value if set.
 clientCertificateHeader: ""
-
 ## Whether Horizon pods should connect to each other directly via IP, or through a DNS record generated by a Kubernetes DNS server.
 ## Useful if the kube-dns server is configured with "pods disabled" or if you use GKE Cloud DNS.
 ## NOTE: This is not supported by Istio.
 podsDirectConnect: false
-
 ## Additional configuration for Horizon.
 ## Injecting arbitrary config could result in unexpected behavior. Proceed with caution.
 ##
@@ -642,11 +607,9 @@ podsDirectConnect: false
 ##     notification.mail.attachment.extension.der = "der"
 ##   }
 extraConfig: ""
-
 temporaryDatabase:
   ## Whether to enable the deployment of a temporary MongoDB instance
   enabled: true
-
   ## MongoDB image
   image:
     ## MongoDB image registry
@@ -659,7 +622,6 @@ temporaryDatabase:
     pullPolicy: IfNotPresent
     ## MongoDB image pull secrets
     pullSecrets: []
-
   persistence:
     ## Whether to enable persistence on the temporary MongoDB
     enabled: true
@@ -672,7 +634,6 @@ temporaryDatabase:
       - ReadWriteOnce
     ## Size of data volume for MongoDB
     size: "1Gi"
-
   ## Optionally specify extra list of additional volumes for MongoDB pods
   ##
   ## @example
@@ -681,7 +642,6 @@ temporaryDatabase:
   ##     configMap:
   ##       name: example-configmap
   extraVolumes: []
-
   ## Optionally specify extra list of additional volumeMounts for MongoDB container(s)
   ##
   ## @example
@@ -689,7 +649,6 @@ temporaryDatabase:
   ##   - name: extra-volume-name
   ##     mountPath: /mnt/extra-volume
   extraVolumeMounts: []
-
   ## MongoDB container resources
   ##
   ## @ref https://kubernetes.io/docs/user-guide/compute-resources/
@@ -702,7 +661,6 @@ temporaryDatabase:
     requests:
       memory: 512Mi
       cpu: 500m
-
   ## Configure Pods Security Context
   ##
   ## @ref https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
@@ -721,7 +679,6 @@ temporaryDatabase:
     runAsUser: 1001
     ## Set Horizon container's Security Context runAsNonRoot
     runAsNonRoot: true
-
 ## Upgrade job
 upgrade:
   ## If true, an upgrade job will be run when upgrading the release, modifying your database schema. This works even if `mongodb.enabled` is set to false.
@@ -740,7 +697,7 @@ upgrade:
     ## Horizon Migration image repository
     repository: horizon-migration
     ## Horizon Migration image tag (immutable tags are recommended)
-    tag: 1.27.0
+    tag: 1.31.0
     ## Horizon Migration image pull policy
     pullPolicy: IfNotPresent
     ## Horizon Migration image pull secrets
@@ -802,7 +759,6 @@ upgrade:
   extraVolumeMounts: []
   ## Ignore empty from
   ignoreEmptyFrom: false
-
 upgradeCompatibilityCheck:
   ## If true, a check job will be run before upgrading the release.
   enabled: true
@@ -864,7 +820,6 @@ upgradeCompatibilityCheck:
   extraVolumeMounts: []
   ## Ignore empty from
   ignoreEmptyFrom: false
-
 backup:
   ## Whether to enable backup
   enabled: false
@@ -956,7 +911,6 @@ backup:
   ##
   ## @ref https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
   affinity: {}
-
 ## Configuration for an Horizon external database
 ##
 ## Refer to the Horizon installation guide to configure the installation correctly.
@@ -973,7 +927,6 @@ externalDatabase:
   ##         name: horizon-secret
   ##         key: mongoDBUri
   uri: {}
-
 ## Create dynamic manifests via values
 ##
 ## @example
@@ -988,14 +941,12 @@ externalDatabase:
 ##         - key: horizon-secret-key
 ##           name: horizon-secret-name
 extraObjects: []
-
 ## Enable Prometheus metrics
 metrics:
   ## Whether to enable Prometheus metrics
   enabled: false
   ## Prometheus metrics port
   port: 9095
-
 ## Enable analytics engine
 ##
 ## Refer to the Horizon installation guide to configure the installation correctly.
@@ -1005,7 +956,6 @@ metrics:
 analytics:
   ## Whether to enable analytics
   enabled: false
-
 ## Enable Persistence
 ##
 ## When enabled, Horizon will be deployed as a statefulset.
