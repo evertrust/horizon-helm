@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.1](https://github.com/evertrust/horizon-helm/compare/v2.5.0...v2.5.1) (2026-09-14)
+
+
+### Bug Fixes
+
+* **backup:** v0.9.1 to 0.9.1 ([#285](https://github.com/evertrust/horizon-helm/issues/285)) ([03a2d40](https://github.com/evertrust/horizon-helm/commit/03a2d40783775cec46ed699513cd1a981e369b49))
+
 ## [2.5.0](https://github.com/evertrust/horizon-helm/compare/v2.4.7...v2.5.0) (2026-08-20)
 
 
