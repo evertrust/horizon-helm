@@ -1,0 +1,266 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: monitoring features
+templates:
+  - monitor.yml
+tests:
+  - it: should not render a ServiceMonitor when the monitoring.coreos.com/v1 API is unavailable
+    template: monitor.yml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render a ServiceMonitor by default when the API is available
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ServiceMonitor
+
+  - it: should not render a ServiceMonitor when monitoring.enabled is false
+    set:
+      monitoring.enabled: false
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render a ServiceMonitor when monitoring.enabled is true and the API is available
+    set:
+      monitoring.enabled: true
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ServiceMonitor
+      - isAPIVersion:
+          of: monitoring.coreos.com/v1
+      - equal:
+          path: spec.endpoints
+          value:
+            - port: kamon
+              path: /metrics
+      - equal:
+          path: spec.namespaceSelector.matchNames
+          value:
+            - NAMESPACE
+
+  - it: should not render a ServiceMonitor when monitoring.enabled is true but the API is unavailable
+    set:
+      monitoring.enabled: true
+    template: monitor.yml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should omit ServiceMonitor annotations by default
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - isKind:
+          of: ServiceMonitor
+      - notExists:
+          path: metadata.annotations
+
+  - it: should render ServiceMonitor annotations when commonAnnotations is specified
+    set:
+      commonAnnotations:
+        test: value
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - isKind:
+          of: ServiceMonitor
+      - equal:
+          path: metadata.annotations
+          value:
+            test: value
+
+  - it: should render ServiceMonitor labels in addition to standard labels when commonLabels is specified
+    set:
+      commonLabels:
+        test: value
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - isKind:
+          of: ServiceMonitor
+      - equal:
+          path: metadata.labels["test"]
+          value: value
+      - equal:
+          path: metadata.labels["app.kubernetes.io/managed-by"]
+          value: Helm
+
+  - it: should omit all optional endpoint fields by default
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - isKind:
+          of: ServiceMonitor
+      - notExists:
+          path: spec.endpoints[0].interval
+      - notExists:
+          path: spec.endpoints[0].scrapeTimeout
+      - notExists:
+          path: spec.endpoints[0].honorLabels
+      - notExists:
+          path: spec.endpoints[0].metricRelabelings
+      - notExists:
+          path: spec.endpoints[0].relabelings
+
+  - it: should keep honorLabels omitted when explicitly set to false
+    set:
+      monitoring.serviceMonitor.honorLabels: false
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - isKind:
+          of: ServiceMonitor
+      - notExists:
+          path: spec.endpoints[0].honorLabels
+
+  - it: should render honorLabels when set to true
+    set:
+      monitoring.serviceMonitor.honorLabels: true
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - equal:
+          path: spec.endpoints[0].honorLabels
+          value: true
+
+  - it: should render interval when set
+    set:
+      monitoring.serviceMonitor.interval: 30s
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - equal:
+          path: spec.endpoints[0].interval
+          value: 30s
+
+  - it: should render scrapeTimeout when set
+    set:
+      monitoring.serviceMonitor.scrapeTimeout: 10s
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - equal:
+          path: spec.endpoints[0].scrapeTimeout
+          value: 10s
+
+  - it: should render metricRelabelings when set
+    set:
+      monitoring.serviceMonitor.metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: expensive_metric.*
+          action: drop
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - equal:
+          path: spec.endpoints[0].metricRelabelings
+          value:
+            - sourceLabels: [__name__]
+              regex: expensive_metric.*
+              action: drop
+
+  - it: should render relabelings when set
+    set:
+      monitoring.serviceMonitor.relabelings:
+        - sourceLabels: [__meta_kubernetes_pod_node_name]
+          targetLabel: node
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - equal:
+          path: spec.endpoints[0].relabelings
+          value:
+            - sourceLabels: [__meta_kubernetes_pod_node_name]
+              targetLabel: node
+
+  - it: should template relabelings values via common.tplvalues.render
+    release:
+      name: my-horizon
+    set:
+      monitoring.serviceMonitor.relabelings:
+        - targetLabel: release
+          replacement: "{{ .Release.Name }}"
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - equal:
+          path: spec.endpoints[0].relabelings
+          value:
+            - targetLabel: release
+              replacement: my-horizon
+
+  - it: should template metricRelabelings values via common.tplvalues.render
+    set:
+      monitoring.serviceMonitor.metricRelabelings:
+        - sourceLabels: [namespace]
+          regex: "{{ .Release.Namespace }}"
+          targetLabel: kube_namespace
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - equal:
+          path: spec.endpoints[0].metricRelabelings
+          value:
+            - sourceLabels: [namespace]
+              regex: NAMESPACE
+              targetLabel: kube_namespace
+
+  - it: should render all endpoint fields together when set
+    set:
+      monitoring.serviceMonitor.interval: 30s
+      monitoring.serviceMonitor.scrapeTimeout: 10s
+      monitoring.serviceMonitor.honorLabels: true
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    template: monitor.yml
+    asserts:
+      - equal:
+          path: spec.endpoints
+          value:
+            - port: kamon
+              path: /metrics
+              interval: 30s
+              scrapeTimeout: 10s
+              honorLabels: true

@@ -416,6 +416,26 @@ ingress:
 monitoring:
   ## Enable the creation of a ServiceMonitor object for Horizon if the cluster has the monitoring.coreos.com/v1 capability
   enabled: true
+  ## Prometheus Operator ServiceMonitor configuration
+  serviceMonitor:
+    ## Chooses the metric's labels on collisions with target labels
+    honorLabels: false
+    ## Interval at which metrics should be scraped.
+    ## @ref https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#monitoring.coreos.com/v1.Endpoint
+    ## @example
+    ## interval: 10s
+    ##
+    interval: ""
+    ## Timeout after which the scrape is ended
+    ## @ref https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#monitoring.coreos.com/v1.Endpoint
+    ## @example
+    ## scrapeTimeout: 10s
+    ##
+    scrapeTimeout: ""
+    ## Specify additional relabeling of metrics
+    metricRelabelings: []
+    ## Specify general relabeling
+    relabelings: []
 
 ## Configure the Play secret for the Horizon instance.
 ## As this is used for cryptographic purposes, it should be fetched from the environment.

@@ -14,6 +14,21 @@ spec:
   endpoints:
     - port: kamon
       path: /metrics
+      {{- if .Values.monitoring.serviceMonitor.interval }}
+      interval: {{ .Values.monitoring.serviceMonitor.interval }}
+      {{- end }}
+      {{- if .Values.monitoring.serviceMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ .Values.monitoring.serviceMonitor.scrapeTimeout }}
+      {{- end }}
+      {{- if .Values.monitoring.serviceMonitor.honorLabels }}
+      honorLabels: {{ .Values.monitoring.serviceMonitor.honorLabels }}
+      {{- end }}
+      {{- if .Values.monitoring.serviceMonitor.metricRelabelings }}
+      metricRelabelings: {{- include "common.tplvalues.render" ( dict "value" .Values.monitoring.serviceMonitor.metricRelabelings "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.monitoring.serviceMonitor.relabelings }}
+      relabelings: {{- include "common.tplvalues.render" ( dict "value" .Values.monitoring.serviceMonitor.relabelings "context" $) | nindent 8 }}
+      {{- end }}
   selector:
     matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
   namespaceSelector:
