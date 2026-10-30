@@ -30,7 +30,7 @@ commonAnnotations: {}
 ## @ref https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 image:
   ## Horizon image registry
-  registry: registry.evertrust.io
+  registry: harbor.infra.evertrust.io/library
   ## Horizon image repository
   repository: horizon
   ## Horizon image tag (immutable tags are recommended)
@@ -693,7 +693,7 @@ upgrade:
   ## Upgrade image
   image:
     ## Horizon Migration image registry
-    registry: registry.evertrust.io
+    registry: harbor.infra.evertrust.io/library
     ## Horizon Migration image repository
     repository: horizon-migration
     ## Horizon Migration image tag (immutable tags are recommended)
@@ -839,7 +839,7 @@ backup:
   backoffLimit: 3
   ## Toolbox image
   image:
-    registry: quay.io/evertrust
+    registry: harbor.infra.evertrust.io
     ## Toolbox image repository
     repository: toolbox
     ## Toolbox image tag (immutable tags are recommended)
