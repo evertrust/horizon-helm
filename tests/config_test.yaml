@@ -4,6 +4,26 @@ templates:
   - deployment.yml
   - config.yml
 tests:
+  - it: should append mandatory service accounts after customer configuration
+    set:
+      extraConfig: |
+        horizon.cloud.service-accounts = [{ name = "customer" }]
+        horizon.cloud.release-channel = "customer"
+      extraInternalConfig: |
+        horizon.cloud.service-accounts += {
+          name = "evertrust-customer-support"
+          identifier-mapping = "{{application_properties.kp_app_name.v}}"
+        }
+        horizon.cloud.release-channel = "Stable"
+    template: config.yml
+    asserts:
+      - matchRegex:
+          path: data["application.conf"]
+          pattern: '(?s)service-accounts = \[\{ name = "customer" \}\].*release-channel = "customer".*service-accounts \+= \{.*name = "evertrust-customer-support".*release-channel = "Stable"'
+      - matchRegex:
+          path: data["application.conf"]
+          pattern: 'identifier-mapping = "\{\{application_properties.kp_app_name.v\}\}"'
+
   - it: should properly configure extraConfig when provided
     set:
       extraConfig: |
