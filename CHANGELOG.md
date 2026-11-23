@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.9](https://github.com/evertrust/horizon-helm/compare/v2.3.8...v2.3.9) (2026-11-23)
+
+
+### Bug Fixes
+
+* add Gateway API HTTPRoute support (backport of [#216](https://github.com/evertrust/horizon-helm/issues/216)) ([#344](https://github.com/evertrust/horizon-helm/issues/344)) ([628b8d0](https://github.com/evertrust/horizon-helm/commit/628b8d02e8661e13ba264689e04d84ec3a9472b4))
+
 ## [2.3.8](https://github.com/evertrust/horizon-helm/compare/v2.3.7...v2.3.8) (2026-11-18)
 
 
