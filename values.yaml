@@ -402,14 +402,15 @@ ingress:
 ## Route contract (names are stable, platforms can target them with policies):
 ##   <fullname>         Protectable. The whole application over HTTPS (PathPrefix route.path).
 ##                      A platform may attach an access policy (e.g. an IP allowlist) to it.
-##   <fullname>-public  Public. route.publicPaths over HTTPS. Never put an access policy on it:
-##                      SCEP and NDES (MS-WCCE) clients must reach these endpoints from anywhere.
-##                      Longest prefix matching makes these paths win over the protectable route.
-##   <fullname>-http    Public. Only rendered when route.http.parentRefs is set. Serves
-##                      route.publicPaths in plain HTTP (never redirected, as SCEP clients commonly
-##                      use http:// URLs and do not follow redirects) and redirects everything else
-##                      to HTTPS. When route.http.redirect is false, it serves the whole application
-##                      over HTTP instead and is no longer public: protect it like <fullname>.
+##   <fullname>-http    Protectable. Only rendered when route.http.parentRefs is set. Serves
+##                      route.http.plainPaths in plain HTTP (never redirected, as SCEP clients
+##                      commonly use http:// URLs and do not follow redirects) and redirects
+##                      everything else to HTTPS, or serves the whole application over HTTP when
+##                      route.http.redirect is false. Protect it like <fullname>.
+##   <fullname>-public  Public. Only rendered when route.publicPaths is not empty. Serves
+##                      route.publicPaths over HTTPS (route.parentRefs) and plain HTTP
+##                      (route.http.parentRefs, when set). Never put an access policy on it.
+##                      Longest prefix matching makes these paths win over the other routes.
 ##
 route:
   ## Set to true to enable Gateway API HTTPRoute generation
@@ -440,7 +441,7 @@ route:
   ##
   annotations: {}
   ## Extra filters applied to the application rule of the protectable route (and of the HTTP route
-  ## when route.http.redirect is false). Never applied to public paths. Rendered as a template.
+  ## when route.http.redirect is false). Never applied to public or plain paths. Rendered as a template.
   ## @ref https://gateway-api.sigs.k8s.io/reference/spec/#httproutefilter
   ## @example
   ## filters:
@@ -451,17 +452,19 @@ route:
   ##           value: some-value
   ##
   filters: []
-  ## Unauthenticated protocol endpoints of Horizon, matched as PathPrefix on the <fullname>-public and
-  ## <fullname>-http routes. Matching is case sensitive, hence both /certsrv and /certSrv (NDES).
-  ## Set to [] to disable both the public route and the public HTTP rule.
+  ## Path prefixes that must bypass any access policy, served on the <fullname>-public route over
+  ## HTTPS and plain HTTP. Empty by default: nothing bypasses the access policy. Protocol endpoints
+  ## such as /intune, /jamf, /.well-known/est, /acme or /.well-known/cmp can be listed here when
+  ## their clients are not covered by the access policy. Must not share a path with
+  ## route.http.plainPaths. Matching is case sensitive.
+  ## @example
+  ## publicPaths:
+  ##   - /intune
   ##
-  publicPaths:
-    - /scep
-    - /certsrv
-    - /certSrv
+  publicPaths: []
   http:
     ## Parent references (HTTP listeners) of the <fullname>-http route. Leave empty to not render it.
-    ## Rendered as a template.
+    ## Also used by the <fullname>-public route. Rendered as a template.
     ## @example
     ## parentRefs:
     ##   - name: my-gateway
@@ -469,10 +472,18 @@ route:
     ##     sectionName: http
     ##
     parentRefs: []
-    ## Redirect every non public path to HTTPS with a 301. When false, the application is served
-    ## over plain HTTP on the <fullname>-http route, with route.filters.
+    ## Redirect every path that is neither plain nor public to HTTPS with a 301. When false, the
+    ## application is served over plain HTTP on the <fullname>-http route, with route.filters.
     ##
     redirect: true
+    ## Path prefixes served over plain HTTP without redirect on the protectable <fullname>-http route.
+    ## Defaults to the SCEP and NDES (MS-WCCE) endpoints. Matching is case sensitive, hence both
+    ## /certsrv and /certSrv. Must not share a path with route.publicPaths.
+    ##
+    plainPaths:
+      - /scep
+      - /certsrv
+      - /certSrv
 ## Prometheus monitor configuration
 monitoring:
   ## Enable the creation of a ServiceMonitor object for Horizon if the cluster has the monitoring.coreos.com/v1 capability
