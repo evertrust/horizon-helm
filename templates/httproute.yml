@@ -1,0 +1,98 @@
+{{- if .Values.route.enabled }}
+{{- if empty .Values.route.parentRefs }}
+{{- fail "route.parentRefs must be specified when route.enabled is true" }}
+{{- end }}
+{{- if empty .Values.route.hostnames }}
+{{- fail "route.hostnames must contain at least one hostname when route.enabled is true" }}
+{{- end }}
+{{- range .Values.route.http.plainPaths }}
+{{- if has . $.Values.route.publicPaths }}
+{{- fail (printf "route.http.plainPaths and route.publicPaths must not share a path: %s" .) }}
+{{- end }}
+{{- end }}
+{{- $fullName := include "common.names.fullname" . }}
+{{- $backendRefs := list (dict "name" $fullName "port" 9000) }}
+{{- /* Protectable route: the whole application, served over HTTPS. */}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+{{ include "horizon.route.metadata" (dict "name" $fullName "context" $) }}
+spec:
+  parentRefs: {{- include "common.tplvalues.render" (dict "value" .Values.route.parentRefs "context" $) | nindent 4 }}
+  hostnames:
+    {{- range .Values.route.hostnames }}
+    - {{ . | quote }}
+    {{- end }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: {{ .Values.route.path | quote }}
+      {{- if .Values.route.filters }}
+      filters: {{- include "common.tplvalues.render" (dict "value" .Values.route.filters "context" $) | nindent 8 }}
+      {{- end }}
+      backendRefs: {{- toYaml $backendRefs | nindent 8 }}
+{{- if .Values.route.publicPaths }}
+---
+{{- /* Public route: never under an access policy, served over HTTPS and, when set, plain HTTP. */}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+{{ include "horizon.route.metadata" (dict "name" (printf "%s-public" $fullName) "context" $) }}
+spec:
+  parentRefs: {{- include "common.tplvalues.render" (dict "value" (concat .Values.route.parentRefs .Values.route.http.parentRefs) "context" $) | nindent 4 }}
+  hostnames:
+    {{- range .Values.route.hostnames }}
+    - {{ . | quote }}
+    {{- end }}
+  rules:
+    - matches:
+        {{- range .Values.route.publicPaths }}
+        - path:
+            type: PathPrefix
+            value: {{ . | quote }}
+        {{- end }}
+      backendRefs: {{- toYaml $backendRefs | nindent 8 }}
+{{- end }}
+{{- if .Values.route.http.parentRefs }}
+---
+{{- /* Protectable plain HTTP route: plain paths are never redirected, everything else is. */}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+{{ include "horizon.route.metadata" (dict "name" (printf "%s-http" $fullName) "context" $) }}
+spec:
+  parentRefs: {{- include "common.tplvalues.render" (dict "value" .Values.route.http.parentRefs "context" $) | nindent 4 }}
+  hostnames:
+    {{- range .Values.route.hostnames }}
+    - {{ . | quote }}
+    {{- end }}
+  rules:
+    {{- if .Values.route.http.plainPaths }}
+    - matches:
+        {{- range .Values.route.http.plainPaths }}
+        - path:
+            type: PathPrefix
+            value: {{ . | quote }}
+        {{- end }}
+      backendRefs: {{- toYaml $backendRefs | nindent 8 }}
+    {{- end }}
+    {{- if .Values.route.http.redirect }}
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: 301
+    {{- else }}
+    - matches:
+        - path:
+            type: PathPrefix
+            value: {{ .Values.route.path | quote }}
+      {{- if .Values.route.filters }}
+      filters: {{- include "common.tplvalues.render" (dict "value" .Values.route.filters "context" $) | nindent 8 }}
+      {{- end }}
+      backendRefs: {{- toYaml $backendRefs | nindent 8 }}
+    {{- end }}
+{{- end }}
+{{- end }}
