@@ -396,6 +396,83 @@ ingress:
   ##           port:
   ##             name: http
   extraRules: []
+## Gateway API HTTPRoute configuration
+## @ref https://gateway-api.sigs.k8s.io/api-types/httproute/
+##
+## Route contract (names are stable, platforms can target them with policies):
+##   <fullname>         Protectable. The whole application over HTTPS (PathPrefix route.path).
+##                      A platform may attach an access policy (e.g. an IP allowlist) to it.
+##   <fullname>-public  Public. route.publicPaths over HTTPS. Never put an access policy on it:
+##                      SCEP and NDES (MS-WCCE) clients must reach these endpoints from anywhere.
+##                      Longest prefix matching makes these paths win over the protectable route.
+##   <fullname>-http    Public. Only rendered when route.http.parentRefs is set. Serves
+##                      route.publicPaths in plain HTTP (never redirected, as SCEP clients commonly
+##                      use http:// URLs and do not follow redirects) and redirects everything else
+##                      to HTTPS. When route.http.redirect is false, it serves the whole application
+##                      over HTTP instead and is no longer public: protect it like <fullname>.
+##
+route:
+  ## Set to true to enable Gateway API HTTPRoute generation
+  ##
+  enabled: false
+  ## Parent references (Gateway or ListenerSet HTTPS listeners) of the <fullname> and <fullname>-public routes.
+  ## Required when route.enabled is true. Rendered as a template.
+  ## @example
+  ## parentRefs:
+  ##   - group: gateway.networking.k8s.io
+  ##     kind: Gateway
+  ##     name: my-gateway
+  ##     namespace: gateway-system
+  ##     sectionName: https
+  ##
+  parentRefs: []
+  ## Hostnames served by every route. Required when route.enabled is true.
+  ## They are also added to the Horizon allowed hosts.
+  ## @example
+  ## hostnames:
+  ##   - horizon.example.com
+  ##
+  hostnames: []
+  ## Path prefix of the protectable route (Gateway API PathPrefix, no wildcard)
+  ##
+  path: /
+  ## Additional annotations for every HTTPRoute
+  ##
+  annotations: {}
+  ## Extra filters applied to the application rule of the protectable route (and of the HTTP route
+  ## when route.http.redirect is false). Never applied to public paths. Rendered as a template.
+  ## @ref https://gateway-api.sigs.k8s.io/reference/spec/#httproutefilter
+  ## @example
+  ## filters:
+  ##   - type: RequestHeaderModifier
+  ##     requestHeaderModifier:
+  ##       set:
+  ##         - name: x-custom-header
+  ##           value: some-value
+  ##
+  filters: []
+  ## Unauthenticated protocol endpoints of Horizon, matched as PathPrefix on the <fullname>-public and
+  ## <fullname>-http routes. Matching is case sensitive, hence both /certsrv and /certSrv (NDES).
+  ## Set to [] to disable both the public route and the public HTTP rule.
+  ##
+  publicPaths:
+    - /scep
+    - /certsrv
+    - /certSrv
+  http:
+    ## Parent references (HTTP listeners) of the <fullname>-http route. Leave empty to not render it.
+    ## Rendered as a template.
+    ## @example
+    ## parentRefs:
+    ##   - name: my-gateway
+    ##     namespace: gateway-system
+    ##     sectionName: http
+    ##
+    parentRefs: []
+    ## Redirect every non public path to HTTPS with a 301. When false, the application is served
+    ## over plain HTTP on the <fullname>-http route, with route.filters.
+    ##
+    redirect: true
 ## Prometheus monitor configuration
 monitoring:
   ## Enable the creation of a ServiceMonitor object for Horizon if the cluster has the monitoring.coreos.com/v1 capability
@@ -459,7 +536,7 @@ legacySsvPassword: {}
 ## out of the box.
 clusterDomain: cluster.local
 ## Additional allowed hosts that are whitelisted to access the Horizon UI.
-## Configured ingresses are added automatically, and the in-cluster Service FQDN
+## Configured ingresses and routes are added automatically, and the in-cluster Service FQDN
 ## (.<namespace>.svc.<clusterDomain>, matched on any port) is always allowed.
 ## This list is appended to those; use it for port-forwarding or a manually
 ## created ingress. Note: Helm replaces (does not merge) arrays, so if you
