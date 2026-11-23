@@ -413,6 +413,105 @@ ingress:
   ##             name: http
   ##
   extraRules: []
+## @section Gateway API HTTPRoute configuration
+##
+## @ref https://gateway-api.sigs.k8s.io/api-types/httproute/
+##
+## Route contract (names are stable, platforms can target them with policies):
+##   <fullname>         Protectable. The whole application over HTTPS (PathPrefix route.path).
+##                      A platform may attach an access policy (e.g. an IP allowlist) to it.
+##   <fullname>-http    Protectable. Only rendered when route.http.parentRefs is set. Serves
+##                      route.http.plainPaths in plain HTTP (never redirected, as SCEP clients
+##                      commonly use http:// URLs and do not follow redirects) and redirects
+##                      everything else to HTTPS, or serves the whole application over HTTP when
+##                      route.http.redirect is false. Protect it like <fullname>.
+##   <fullname>-public  Public. Only rendered when route.publicPaths is not empty. Serves
+##                      route.publicPaths over HTTPS (route.parentRefs) and plain HTTP
+##                      (route.http.parentRefs, when set). Never put an access policy on it.
+##                      Longest prefix matching makes these paths win over the other routes.
+##
+route:
+  ## @param route.enabled Set to true to enable Gateway API HTTPRoute generation
+  ## Set to true to enable Gateway API HTTPRoute generation
+  ##
+  enabled: false
+  ## @param route.parentRefs Parent references (HTTPS listeners) of the <fullname> and <fullname>-public routes
+  ## Parent references (Gateway or ListenerSet HTTPS listeners) of the <fullname> and <fullname>-public routes.
+  ## Required when route.enabled is true. Rendered as a template.
+  ## @example
+  ## parentRefs:
+  ##   - group: gateway.networking.k8s.io
+  ##     kind: Gateway
+  ##     name: my-gateway
+  ##     namespace: gateway-system
+  ##     sectionName: https
+  ##
+  parentRefs: []
+  ## @param route.hostnames Hostnames served by every route, also added to the Horizon allowed hosts
+  ## Hostnames served by every route. Required when route.enabled is true.
+  ## They are also added to the Horizon allowed hosts.
+  ## @example
+  ## hostnames:
+  ##   - horizon.example.com
+  ##
+  hostnames: []
+  ## @param route.path Path prefix of the protectable route
+  ## Path prefix of the protectable route (Gateway API PathPrefix, no wildcard)
+  ##
+  path: /
+  ## @param route.annotations Additional annotations for every HTTPRoute
+  ## Additional annotations for every HTTPRoute
+  ##
+  annotations: {}
+  ## @param route.filters Extra filters applied to the application rule only
+  ## Extra filters applied to the application rule of the protectable route (and of the HTTP route
+  ## when route.http.redirect is false). Never applied to public or plain paths. Rendered as a template.
+  ## @ref https://gateway-api.sigs.k8s.io/reference/spec/#httproutefilter
+  ## @example
+  ## filters:
+  ##   - type: RequestHeaderModifier
+  ##     requestHeaderModifier:
+  ##       set:
+  ##         - name: x-custom-header
+  ##           value: some-value
+  ##
+  filters: []
+  ## @param route.publicPaths Path prefixes that bypass any access policy, served on <fullname>-public over HTTPS and HTTP
+  ## Path prefixes that must bypass any access policy, served on the <fullname>-public route over
+  ## HTTPS and plain HTTP. Empty by default: nothing bypasses the access policy. Protocol endpoints
+  ## such as /intune, /jamf, /.well-known/est, /acme or /.well-known/cmp can be listed here when
+  ## their clients are not covered by the access policy. Must not share a path with
+  ## route.http.plainPaths. Matching is case sensitive.
+  ## @example
+  ## publicPaths:
+  ##   - /intune
+  ##
+  publicPaths: []
+  http:
+    ## @param route.http.parentRefs Parent references (HTTP listeners) of the <fullname>-http route
+    ## Parent references (HTTP listeners) of the <fullname>-http route. Leave empty to not render it.
+    ## Also used by the <fullname>-public route. Rendered as a template.
+    ## @example
+    ## parentRefs:
+    ##   - name: my-gateway
+    ##     namespace: gateway-system
+    ##     sectionName: http
+    ##
+    parentRefs: []
+    ## @param route.http.redirect Redirect every path that is neither plain nor public to HTTPS with a 301
+    ## Redirect every path that is neither plain nor public to HTTPS with a 301. When false, the
+    ## application is served over plain HTTP on the <fullname>-http route, with route.filters.
+    ##
+    redirect: true
+    ## @param route.http.plainPaths Path prefixes served over plain HTTP without redirect on <fullname>-http
+    ## Path prefixes served over plain HTTP without redirect on the protectable <fullname>-http route.
+    ## Defaults to the SCEP and NDES (MS-WCCE) endpoints. Matching is case sensitive, hence both
+    ## /certsrv and /certSrv. Must not share a path with route.publicPaths.
+    ##
+    plainPaths:
+      - /scep
+      - /certsrv
+      - /certSrv
 ## @section Prometheus monitor configuration
 ## @param monitoring.enabled Enable the creation of a ServiceMonitor object for Horizon if the cluster has the monitoring.coreos.com/v1 capability.
 monitoring:
