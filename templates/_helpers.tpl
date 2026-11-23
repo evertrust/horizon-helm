@@ -100,8 +100,11 @@ Prints all Horizon allowed hosts.
   {{- end }}
   {{- end }}
 {{- end }}
+{{- if .Values.route.enabled -}}
+  {{- $allowedHosts = concat $allowedHosts .Values.route.hostnames }}
+{{- end }}
 {{- $allowedHosts = concat $allowedHosts .Values.allowedHosts }}
-{{- toJson $allowedHosts}}
+{{- toJson $allowedHosts }}
 {{- end }}
 
 {{/*
@@ -253,4 +256,27 @@ is true or default otherwise.
     {{- else -}}
         {{- default "default" (print .Values.serviceAccount.name) -}}
     {{- end -}}
+{{- end -}}
+
+{{/*
+Renders the metadata block shared by every Gateway API HTTPRoute.
+Usage: {{ include "horizon.route.metadata" (dict "name" "my-route" "context" $) }}
+*/}}
+{{- define "horizon.route.metadata" -}}
+{{- $ctx := .context -}}
+metadata:
+  name: {{ .name }}
+  labels: {{- include "horizon.labels.standard" $ctx | nindent 4 }}
+  {{- if $ctx.Values.commonLabels }}
+  {{- include "common.tplvalues.render" (dict "value" $ctx.Values.commonLabels "context" $ctx) | nindent 4 }}
+  {{- end }}
+  {{- if or $ctx.Values.route.annotations $ctx.Values.commonAnnotations }}
+  annotations:
+    {{- if $ctx.Values.route.annotations }}
+    {{- include "common.tplvalues.render" (dict "value" $ctx.Values.route.annotations "context" $ctx) | nindent 4 }}
+    {{- end }}
+    {{- if $ctx.Values.commonAnnotations }}
+    {{- include "common.tplvalues.render" (dict "value" $ctx.Values.commonAnnotations "context" $ctx) | nindent 4 }}
+    {{- end }}
+  {{- end }}
 {{- end -}}
