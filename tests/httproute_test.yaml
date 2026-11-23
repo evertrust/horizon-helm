@@ -1,0 +1,358 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: gateway api httproute
+templates:
+  - httproute.yml
+  - deployment.yml
+release:
+  name: horizon
+tests:
+  - it: should not render any HTTPRoute by default
+    template: httproute.yml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should fail when route.parentRefs is missing
+    template: httproute.yml
+    set:
+      route:
+        enabled: true
+        hostnames:
+          - horizon.example.com
+    asserts:
+      - failedTemplate:
+          errorMessage: route.parentRefs must be specified when route.enabled is true
+
+  - it: should fail when route.hostnames is missing
+    template: httproute.yml
+    set:
+      route:
+        enabled: true
+        parentRefs:
+          - name: gw
+            sectionName: https
+    asserts:
+      - failedTemplate:
+          errorMessage: route.hostnames must contain at least one hostname when route.enabled is true
+
+  - it: should fail when a path is both public and plain
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    set:
+      route.publicPaths:
+        - /intune
+        - /scep
+    asserts:
+      - failedTemplate:
+          errorMessage: "route.http.plainPaths and route.publicPaths must not share a path: /scep"
+
+  - it: should render the protectable and http routes by default
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isKind:
+          of: HTTPRoute
+      - isAPIVersion:
+          of: gateway.networking.k8s.io/v1
+      - equal:
+          path: metadata.name
+          value: horizon
+        documentIndex: 0
+      - equal:
+          path: metadata.name
+          value: horizon-http
+        documentIndex: 1
+      - equal:
+          path: spec.hostnames
+          value:
+            - horizon.example.com
+
+  - it: should route the whole application on the protectable route
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.parentRefs
+          value:
+            - name: gw
+              namespace: gateway-system
+              sectionName: https
+      - equal:
+          path: spec.rules
+          value:
+            - matches:
+                - path:
+                    type: PathPrefix
+                    value: /
+              backendRefs:
+                - name: horizon
+                  port: 9000
+
+  - it: should serve plain paths over HTTP and redirect the rest with a 301
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.parentRefs
+          value:
+            - name: gw
+              namespace: gateway-system
+              sectionName: http
+      - equal:
+          path: spec.rules
+          value:
+            - matches:
+                - path: {type: PathPrefix, value: /scep}
+                - path: {type: PathPrefix, value: /certsrv}
+                - path: {type: PathPrefix, value: /certSrv}
+              backendRefs:
+                - name: horizon
+                  port: 9000
+            - matches:
+                - path:
+                    type: PathPrefix
+                    value: /
+              filters:
+                - type: RequestRedirect
+                  requestRedirect:
+                    scheme: https
+                    statusCode: 301
+
+  - it: should serve the application over HTTP with filters when redirect is false
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    set:
+      route.http.redirect: false
+      route.filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: x-test
+                value: test
+    documentIndex: 1
+    asserts:
+      - lengthEqual:
+          path: spec.rules
+          count: 2
+      - notExists:
+          path: spec.rules[0].filters
+      - equal:
+          path: spec.rules[1]
+          value:
+            matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            filters:
+              - type: RequestHeaderModifier
+                requestHeaderModifier:
+                  set:
+                    - name: x-test
+                      value: test
+            backendRefs:
+              - name: horizon
+                port: 9000
+
+  - it: should only redirect when plainPaths is empty
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    set:
+      route.http.plainPaths: []
+    documentIndex: 1
+    asserts:
+      - lengthEqual:
+          path: spec.rules
+          count: 1
+      - equal:
+          path: spec.rules[0].filters[0].type
+          value: RequestRedirect
+
+  - it: should use custom plain paths
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    set:
+      route.http.plainPaths:
+        - /custom
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.rules[0].matches
+          value:
+            - path: {type: PathPrefix, value: /custom}
+
+  - it: should serve public paths over HTTPS and HTTP on the public route without filters
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    set:
+      route.publicPaths:
+        - /intune
+        - /jamf
+      route.filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: x-test
+                value: test
+    asserts:
+      - hasDocuments:
+          count: 3
+      - equal:
+          path: metadata.name
+          value: horizon-public
+        documentIndex: 1
+      - equal:
+          path: spec.parentRefs
+          value:
+            - name: gw
+              namespace: gateway-system
+              sectionName: https
+            - name: gw
+              namespace: gateway-system
+              sectionName: http
+        documentIndex: 1
+      - equal:
+          path: spec.rules
+          value:
+            - matches:
+                - path: {type: PathPrefix, value: /intune}
+                - path: {type: PathPrefix, value: /jamf}
+              backendRefs:
+                - name: horizon
+                  port: 9000
+        documentIndex: 1
+      - equal:
+          path: metadata.name
+          value: horizon-http
+        documentIndex: 2
+
+  - it: should attach the public route to HTTPS only without route.http.parentRefs
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    set:
+      route.http.parentRefs: []
+      route.publicPaths:
+        - /intune
+    asserts:
+      - hasDocuments:
+          count: 2
+      - equal:
+          path: metadata.name
+          value: horizon-public
+        documentIndex: 1
+      - equal:
+          path: spec.parentRefs
+          value:
+            - name: gw
+              namespace: gateway-system
+              sectionName: https
+        documentIndex: 1
+
+  - it: should not render the http route without route.http.parentRefs
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    set:
+      route.http.parentRefs: []
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: horizon
+
+  - it: should render custom filters on the protectable route only
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    set:
+      route.publicPaths:
+        - /intune
+      route.filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: x-release
+                value: "{{ .Release.Name }}"
+    asserts:
+      - equal:
+          path: spec.rules[0].filters
+          value:
+            - type: RequestHeaderModifier
+              requestHeaderModifier:
+                set:
+                  - name: x-release
+                    value: horizon
+        documentIndex: 0
+      - notExists:
+          path: spec.rules[0].filters
+        documentIndex: 1
+      - notExists:
+          path: spec.rules[0].filters
+        documentIndex: 2
+      - notExists:
+          path: spec.rules[1].filters[1]
+        documentIndex: 2
+
+  - it: should use route.path on the protectable route
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    set:
+      route.path: /app
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /app
+
+  - it: should render route, common labels and annotations on every route
+    template: httproute.yml
+    values:
+      - ./values/route.yaml
+    set:
+      route.publicPaths:
+        - /intune
+      commonLabels:
+        team: pki
+      commonAnnotations:
+        common: "yes"
+      route.annotations:
+        route: "yes"
+    asserts:
+      - hasDocuments:
+          count: 3
+      - equal:
+          path: metadata.labels.team
+          value: pki
+      - equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: horizon
+      - equal:
+          path: metadata.annotations
+          value:
+            route: "yes"
+            common: "yes"
+
+  - it: should add route hostnames to the Horizon allowed hosts
+    template: deployment.yml
+    values:
+      - ./values/route.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: HOSTS_ALLOWED.0
+            value: horizon.example.com
