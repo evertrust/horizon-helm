@@ -1,0 +1,13 @@
+route:
+  enabled: true
+  hostnames:
+    - horizon.example.com
+  parentRefs:
+    - name: gw
+      namespace: gateway-system
+      sectionName: https
+  http:
+    parentRefs:
+      - name: gw
+        namespace: gateway-system
+        sectionName: http
